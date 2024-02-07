@@ -28,10 +28,10 @@ print("- cvxpy installed solvers:", cp.installed_solvers())
 Set up 'Approximate' and 'Exact' tolerances
 """
 
-APPROXIMATE_THR = 0.02
-EXACT_TOL = 1e-5
-E2TOL = 1e-5
-E3TOL = 1e-5
+APPROXIMATE_THR = 0.01
+EXACT_TOL = 1e-6
+E2TOL = 1e-6
+E3TOL = 1e-6
 
 def eps_approx_eq(N, M, D, B, p, x, E2Tol=E2TOL, E3Tol=E3TOL, report_all=False, ignore_print=False):
 
@@ -242,8 +242,8 @@ def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
         m.Params.LogToConsole = 0
         m.Params.FeasibilityTol = 1e-9
         m.Params.OptimalityTol = 1e-9
-        m.Params.BarConvTol = 1e-15
-        m.Params.BarCorrectors = 10000
+        m.Params.BarConvTol = 1e-16
+        # m.Params.BarCorrectors = 10000
 
         u = m.addMVar(N)
         x = m.addMVar(A.shape[1] - N)
@@ -356,7 +356,6 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
             u_, min_dist = u_obj_list[np.argmin(res_dict['feasible objective value'])]
             if print_quality:
                 res_table = pd.DataFrame(res_dict)
-                display(res_table)
                 print(selected_solver)
 
         # choose one specific solver
@@ -371,8 +370,6 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
             )
             solve_QP_time += time.time() - QP_start
             solve_QP_num += 1
-            if print_quality:
-                print_quality_QMO(u_, min_dist, N, A, b, C, d, solver_name=QMO_solver)
 
         u_, x = ux_[:N], ux_[N:].reshape(N, M)
         a = u_ - u
