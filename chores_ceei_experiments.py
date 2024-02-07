@@ -240,9 +240,9 @@ def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
         m = gp.Model(env=env)
 
         m.Params.LogToConsole = 0
-        m.Params.FeasibilityTol = 1e-9
-        m.Params.OptimalityTol = 1e-9
-        m.Params.BarConvTol = 1e-16
+        # m.Params.FeasibilityTol = 1e-9
+        # m.Params.OptimalityTol = 1e-9
+        m.Params.BarConvTol = 0
         # m.Params.BarCorrectors = 10000
 
         u = m.addMVar(N)
@@ -439,7 +439,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 run, save, and plot
 """
 
-def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=100, running_time_max_cap=100, return_eq=False):
+def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, return_eq=False):
 
     def average(lst):  # return the average of a list
         num_nonNone = 0
@@ -534,6 +534,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     data_EPM['solved-e'] = num_ins_EPM_solved[1]
     data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
     data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+
+    print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
 
     return data_GFW, data_EPM
 
@@ -631,13 +633,13 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
 
 if __name__ == "__main__": 
 
-    size_list = [2, 50, 100, 150, 200, 250]
-    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint', ]
+    size_list = [2, 50, 100, 150, 200, 250, 300]
+    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=10, download_csv=True)
-        plot_and_save(data, random_generating_method=rgm, num_seeds=10, download_fig=True)
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=10)
+        plot_and_save(data, random_generating_method=rgm, num_seeds=10)
 
 
 """
