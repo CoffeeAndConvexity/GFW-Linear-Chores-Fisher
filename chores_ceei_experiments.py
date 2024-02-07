@@ -631,15 +631,15 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"sr_{random_generating_method}.png")
 
 
-if __name__ == "__main__": 
+# if __name__ == "__main__": 
 
-    size_list = [2, 50, 100, 150, 200, 250, 300]
-    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
+#     size_list = [2, 50, 100, 150, 200, 250, 300]
+#     rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
-    for rgm in rgm_list:
-        print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=10)
-        plot_and_save(data, random_generating_method=rgm, num_seeds=10)
+#     for rgm in rgm_list:
+#         print(f"================== {rgm} ==================")
+#         data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=10)
+#         plot_and_save(data, random_generating_method=rgm, num_seeds=10)
 
 
 """
@@ -656,49 +656,7 @@ Note:
 Experiments on AAMAS bidding data
 """
 
-df = pd.read_csv('./bidding-data.csv')
 
-dict_bidder_index = dict()
-i = 0
-for bidder in df['Bidder']:
-    if bidder not in dict_bidder_index.keys():
-        dict_bidder_index[bidder] = i
-        i += 1
-
-N, M = len(np.unique(df['Bidder'])), max(df['Submission'])
-print(f"N = {N}, M = {M}")
-B = np.ones(shape=N)
-
-dict_pref_value = {
-    'yes': 1,
-    'maybe': 3,
-    'no response': 5,
-    'no': 7,
-    'conflict': 7 * M + 1  # optimal price bound?
-}
-
-dict_pref_value_1 = {
-    'yes': 0.1,
-    'maybe': 1,
-    'no response': 10,
-    'no': 100,
-    'conflict': 100 * M + 1  # optimal price bound?
-}
-
-dict_pref_value_2 = {
-    'yes': 1,
-    'maybe': np.sqrt(3),
-    'no response': np.sqrt(5),
-    'no': np.sqrt(7),
-    'conflict': np.sqrt(7) * M + 1  # optimal price bound?
-}
-
-D = dict_pref_value['no response'] * np.ones(shape=(N, M))
-for row in list(df.itertuples(index=False, name=None)):
-    D[dict_bidder_index[row[0]]][row[1] - 1] = dict_pref_value[row[2]]
-
-unique, counts = np.unique(D, return_counts=True)
-print(unique, counts)
 
 def run_GFW_vs_EPM_on_bidding_data(D_):
 
@@ -818,7 +776,7 @@ def get_sampled_bidding_data(D, clusters, selected_label, show_selected=True):
 plot and save
 """
 
-def run_and_save_sampled_bidding_data(D, cut_list=[9, 20, 30, 40, 50, 55, 60], with_noise=True, download_csv=False, show_selected=True):
+def run_and_save_sampled_bidding_data(D, cut_list=[9, 30, 50, 55, 58, 60], with_noise=True, download_csv=False, show_selected=True):
 
     clusters, count_sorted_groups = cluster_and_sort(D)
 
@@ -913,9 +871,53 @@ def plot_and_save_bidding_data(data, file_name, download_fig=False):
     plt.savefig(f"ni_{file_name}.png")
 
 
+if __name__ == "__main__": 
+    df = pd.read_csv('./bidding-data.csv')
 
-data, file_name = run_and_save_sampled_bidding_data(D, with_noise=False, download_csv=True, show_selected=False)
-plot_and_save_bidding_data(data, file_name, download_fig=True)
+    dict_bidder_index = dict()
+    i = 0
+    for bidder in df['Bidder']:
+        if bidder not in dict_bidder_index.keys():
+            dict_bidder_index[bidder] = i
+            i += 1
 
-data, file_name = run_and_save_sampled_bidding_data(D, with_noise=True, download_csv=True, show_selected=False)
-plot_and_save_bidding_data(data, file_name, download_fig=True)
+    N, M = len(np.unique(df['Bidder'])), max(df['Submission'])
+    print(f"N = {N}, M = {M}")
+    B = np.ones(shape=N)
+
+    dict_pref_value = {
+        'yes': 1,
+        'maybe': 3,
+        'no response': 5,
+        'no': 7,
+        'conflict': 7 * M + 1  # optimal price bound?
+    }
+
+    dict_pref_value_1 = {
+        'yes': 0.1,
+        'maybe': 1,
+        'no response': 10,
+        'no': 100,
+        'conflict': 100 * M + 1  # optimal price bound?
+    }
+
+    dict_pref_value_2 = {
+        'yes': 1,
+        'maybe': np.sqrt(3),
+        'no response': np.sqrt(5),
+        'no': np.sqrt(7),
+        'conflict': np.sqrt(7) * M + 1  # optimal price bound?
+    }
+
+    D = dict_pref_value['no response'] * np.ones(shape=(N, M))
+    for row in list(df.itertuples(index=False, name=None)):
+        D[dict_bidder_index[row[0]]][row[1] - 1] = dict_pref_value[row[2]]
+
+    unique, counts = np.unique(D, return_counts=True)
+    print(unique, counts)
+
+    data, file_name = run_and_save_sampled_bidding_data(D, with_noise=False, download_csv=True, show_selected=False)
+    plot_and_save_bidding_data(data, file_name, download_fig=True)
+
+    data, file_name = run_and_save_sampled_bidding_data(D, with_noise=True, download_csv=True, show_selected=False)
+    plot_and_save_bidding_data(data, file_name, download_fig=True)
