@@ -29,7 +29,7 @@ Set up 'Approximate' and 'Exact' tolerances
 """
 
 APPROXIMATE_THR = 0.01
-EXACT_TOL = 1e-6
+EXACT_THR = 1e-6
 E2TOL = 1e-6
 E3TOL = 1e-6
 
@@ -139,7 +139,7 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
     A, b, C, d = polytope_dual(N, M, D, B)
 
     # initialize
-    MAX_NUM_ITER = 50
+    MAX_NUM_ITER = 80
     num_LMO_a1, num_LMO_e = MAX_NUM_ITER, MAX_NUM_ITER
     solved_a1, solved_e = False, False
     running_time_a1, running_time_e = None, None
@@ -175,9 +175,11 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
         # evaluation
         eps = eps_approx_eq(N, M, D, B, p, x, ignore_print=True)
 
-        if type(eps) is str:
-            print(eps)
-            break  # terminate the algorithm
+        if type(eps) is str:  # then this step should not be considered as one candidate for approximate and exact equilibrium
+            if k == MAX_NUM_ITER - 1:  # if reach the maximum number of iterations, then we terminate the algorithm
+                break 
+            else:  # otherwise, continue to the next iteration 
+                continue 
 
         if type(eps) is not str:
             if eps <= APPROXIMATE_THR and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated
@@ -185,7 +187,7 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
                 num_LMO_a1 = num_LMO
                 running_time_a1 = running_time
 
-            if eps <= EXACT_TOL:
+            if eps <= EXACT_THR:
                 solved_e = True
                 num_LMO_e = num_LMO
                 running_time_e = running_time
@@ -417,7 +419,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time
 
-            if type(eps) is not str and eps <= EXACT_TOL:
+            if type(eps) is not str and eps <= EXACT_THR:
                 solved_e = True
                 num_QMO_e = num_QMO
                 running_time_e = running_time
@@ -535,7 +537,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
     data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
 
-    print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+    # print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
 
     return data_GFW, data_EPM
 
@@ -585,10 +587,10 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
 def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
 
     plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact (1e-5)', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact (1e-5)', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -601,10 +603,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
 
 
     plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact (1e-5)', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact (1e-5)', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -616,10 +618,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"ni_{random_generating_method}.png")
 
     plt.figure()
-    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact (1e-5)', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact (1e-5)', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -631,15 +633,15 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"sr_{random_generating_method}.png")
 
 
-# if __name__ == "__main__": 
+if __name__ == "__main__": 
 
-#     size_list = [2, 50, 100, 150, 200, 250, 300]
-#     rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
+    size_list = [2, 50, 100, 150, 200, 250, 300]
+    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
-#     for rgm in rgm_list:
-#         print(f"================== {rgm} ==================")
-#         data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=10)
-#         plot_and_save(data, random_generating_method=rgm, num_seeds=10)
+    for rgm in rgm_list:
+        print(f"================== {rgm} ==================")
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
+        plot_and_save(data, random_generating_method=rgm, num_seeds=100)
 
 
 """
@@ -841,10 +843,10 @@ def run_and_save_sampled_bidding_data(D, cut_list=[9, 30, 50, 55, 58, 60], with_
 def plot_and_save_bidding_data(data, file_name, download_fig=False):
 
     plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact (1e-5)', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact (1e-5)', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -856,10 +858,10 @@ def plot_and_save_bidding_data(data, file_name, download_fig=False):
     plt.savefig(f"rt_{file_name}.png")
 
     plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact (1e-5)', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact (1e-5)', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
