@@ -63,7 +63,6 @@ def eps_approx_eq(N, M, D, B, p, x, E2Tol=E2TOL, E3Tol=E3TOL, report_all=False, 
 
     if report_all:
         if not ignore_print:
-            print()
             print("===============================================================")
             print("(E1) Equal Budget \t\t (E2) Optimal Bundle \t\t (E3) Market Clearance")
             print("---------------------------------------------------------------")
@@ -184,11 +183,15 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
         if type(eps) is not str:
             if eps <= APPROXIMATE_THR and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated
                 solved_a1 = True
+                # print("GFW - a1")
+                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_LMO_a1 = num_LMO
                 running_time_a1 = running_time
 
             if eps <= EXACT_THR:
                 solved_e = True
+                # print("GFW: e")
+                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_LMO_e = num_LMO
                 running_time_e = running_time
                 break
@@ -244,7 +247,7 @@ def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
         m.Params.LogToConsole = 0
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
-        m.Params.BarConvTol = 0
+        m.Params.BarConvTol = 0.0
         # m.Params.BarCorrectors = 10000
 
         u = m.addMVar(N)
@@ -299,7 +302,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
     u = u0 = np.amin(D, axis=1) / (N + 1) ** 2  # or / (N + 1)
 
     # initialize
-    MAX_NUM_ITER = 50
+    MAX_NUM_ITER = 80
     MAX_FEASIBILITY_TOL = 1e-6
     num_QMO_a1, num_QMO_e = MAX_NUM_ITER, MAX_NUM_ITER
     solved_a1, solved_e = False, False
@@ -373,7 +376,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
             solve_QP_time += time.time() - QP_start
             solve_QP_num += 1
 
-        u_, x = ux_[:N], ux_[N:].reshape(N, M)
+        u_, x_ = ux_[:N], ux_[N:].reshape(N, M)
         a = u_ - u
         a = N * a / sum(a * u_)
         u = 1 / a
@@ -385,7 +388,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
         c = a.reshape(-1, 1) * D
         p = np.amin(c, axis=0)
         try:
-            eps = eps_approx_eq(N, M, D, B, p, x)
+            eps = eps_approx_eq(N, M, D, B, p, x_)
         except:
             print("--- Note ---")
             break
@@ -399,6 +402,8 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
         if type(eps) is not str:
             if eps <= APPROXIMATE_THR and num_QMO_a1 == MAX_NUM_ITER:
                 solved_a1 = True
+                # print("EPM - a1")
+                # eps_approx_eq(N, M, D, B, p, x_, report_all=True)
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time
         if print_progress:
@@ -416,16 +421,21 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 
             if type(eps) is not str and eps <= APPROXIMATE_THR and num_QMO_a1 > num_QMO:
                 solved_a1 = True
+                # print("EPM - a1")
+                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time
 
             if type(eps) is not str and eps <= EXACT_THR:
                 solved_e = True
+                # print("EPM - e")
+                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_QMO_e = num_QMO
                 running_time_e = running_time
 
             if print_progress:
                 print()
+
             break
 
     # print("Average QP solving time:", solve_QP_time / solve_QP_num)
@@ -441,7 +451,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 run, save, and plot
 """
 
-def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, return_eq=False):
+def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=180, running_time_max_cap=200, return_eq=False):
 
     def average(lst):  # return the average of a list
         num_nonNone = 0
@@ -537,7 +547,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
     data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
 
-    # print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+    print(f"STATS: {data_GFW['num-iter-a1']}/{data_GFW['solved-a1']}/{data_GFW['running-time-a1']} vs {data_EPM['num-iter-a1']}/{data_EPM['solved-a1']}/{data_EPM['running-time-a1']}")
+    print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
 
     return data_GFW, data_EPM
 
@@ -580,7 +591,7 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
         dict_['r_z2'].append(res_EPM['running-time-e'])
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{random_generating_method}.csv')
+    df.to_csv(f'test_U_{random_generating_method}.csv')
 
     return dict_
 
@@ -599,7 +610,7 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"rt_{random_generating_method}.png")
+    plt.savefig(f"test_U_rt_{random_generating_method}.png")
 
 
     plt.figure()
@@ -615,7 +626,7 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"ni_{random_generating_method}.png")
+    plt.savefig(f"test_U_ni_{random_generating_method}.png")
 
     plt.figure()
     plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
@@ -630,297 +641,15 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"sr_{random_generating_method}.png")
+    plt.savefig(f"test_U_sr_{random_generating_method}.png")
 
 
 if __name__ == "__main__": 
 
-    size_list = [2, 50, 100, 150, 200, 250, 300]
-    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
-    rgm_list = ['exponential', 'randint']
+    size_list = [150, 200, 250]
+    rgm_list = ['uniform', ]
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
-        plot_and_save(data, random_generating_method=rgm, num_seeds=100)
-
-
-"""
-Note:
-1.   'randint (1-10)' 102*102 EPM -> simple because all equilibrium p = 1;
-2.   We can change p0 to help GFW;
-"""
-
-
-
-
-
-"""
-Experiments on AAMAS bidding data
-"""
-
-
-
-def run_GFW_vs_EPM_on_bidding_data(D_):
-
-    def average(lst):  # return the average of a list
-        num_nonNone = 0
-        sum = 0
-
-        for e in lst:
-            if e is not None:
-                num_nonNone += 1
-                sum += e
-
-        if num_nonNone > 0:
-            return sum / num_nonNone
-        else:
-            return np.inf
-
-    N, M = D_.shape
-    num_LMO_list = [[], []]
-    running_time_GFW_list = [[], []]
-    num_ins_GFW_solved = [0, 0]
-    data_GFW = {
-        'size': f'N*M = {N}*{M}',
-        'num-iter-a1': None,
-        'num-iter-e': None,
-        'solved-a1': None,
-        'solved-e': None,
-        'running-time-a1': None,
-        'running-time-e': None,
-    }
-    num_QMO_list = [[], []]
-    running_time_EPM_list = [[], []]
-    num_ins_EPM_solved = [0, 0]
-    data_EPM = {
-        'size': f'N*M = {N}*{M}',
-        'num-iter-a1': None,
-        'num-iter-e': None,
-        'solved-a1': None,
-        'solved-e': None,
-        'running-time-a1': None,
-        'running-time-e': None,
-    }
-
-    B = np.ones(shape=N)
-
-    '''
-    Run the Greedy Frank Wolfe algorithm
-    '''
-
-    res_GFW = GFW(N, M, D_, B)
-    # res_GFW = GFW(N, M, D_, B, return_eq=True)
-    res_EPM = EPM(N, M, D_, B, QMO_solver='GUROBI', ignore_print=True)
-    # res_EPM = EPM(N, M, D_, B, QMO_solver='GUROBI', ignore_print=True, return_eq=True)
-
-    for i in range(2):
-        num_ins_GFW_solved[i] += res_GFW[2 + i]
-        num_ins_EPM_solved[i] += res_EPM[2 + i]
-        if res_GFW[2 + i] and res_EPM[2 + i]:
-            num_LMO_list[i].append(res_GFW[i])
-            num_QMO_list[i].append(res_EPM[i])
-            running_time_GFW_list[i].append(res_GFW[4 + i])
-            running_time_EPM_list[i].append(res_EPM[4 + i])
-
-    data_GFW['num-iter-a1'] = average(num_LMO_list[0])
-    data_GFW['num-iter-e'] = average(num_LMO_list[1])
-    data_GFW['solved-a1'] = num_ins_GFW_solved[0]
-    data_GFW['solved-e'] = num_ins_GFW_solved[1]
-    data_GFW['running-time-a1'] = average(running_time_GFW_list[0])
-    data_GFW['running-time-e'] = average(running_time_GFW_list[1])
-
-    data_EPM['num-iter-a1'] = average(num_QMO_list[0])
-    data_EPM['num-iter-e'] = average(num_QMO_list[1])
-    data_EPM['solved-a1'] = num_ins_EPM_solved[0]
-    data_EPM['solved-e'] = num_ins_EPM_solved[1]
-    data_EPM['running-time-a1'] = average(running_time_EPM_list[0])
-    data_EPM['running-time-e'] = average(running_time_EPM_list[1])
-
-    return data_GFW, data_EPM
-
-def cluster_and_sort(D, n_clusters=60, random_state=2024):  # sort groups by frequency
-
-    X = D.T
-    clusters = KMeans(n_clusters=n_clusters, random_state=random_state, n_init="auto").fit(X)
-    unique, counts = np.unique(clusters.labels_, return_counts=True)
-    # print(unique, counts)
-    count_sorted_groups = np.argsort(counts)
-
-    return clusters, count_sorted_groups
-
-def get_sampled_bidding_data(D, clusters, selected_label, show_selected=True):
-
-    N, M = D.shape
-    selected_reviewers = []
-    selected_papers = []
-    for j in range(M):
-        if clusters.labels_[j] in selected_label:
-            selected_papers.append(j)
-            for i in range(N):
-                if D[i][j] != 5:
-                    selected_reviewers.append(i)
-    selected_reviewers = np.unique(selected_reviewers)
-    selected_papers = np.unique(selected_papers)
-    selected_reviewers = np.random.choice(selected_reviewers, size=len(selected_papers), replace=False)
-    selected_papers = np.sort(selected_papers)
-    selected_reviewers = np.sort(selected_reviewers)
-
-    if show_selected:
-        print()
-        print("selected papers", selected_papers)
-        print("selected reviewers", selected_reviewers)
-
-    D_sampled = D[np.ix_(selected_reviewers, selected_papers)]
-
-    return D_sampled
-
-"""
-plot and save
-"""
-
-def run_and_save_sampled_bidding_data(D, cut_list=[9, 30, 50, 55, 58, 60], with_noise=True, download_csv=False, show_selected=True):
-
-    clusters, count_sorted_groups = cluster_and_sort(D)
-
-    dict_ = {
-        'x': list(),
-        'i_y1': list(),
-        'i_y2': list(),
-        'i_z1': list(),
-        'i_z2': list(),
-        's_y1': list(),
-        's_y2': list(),
-        's_z1': list(),
-        's_z2': list(),
-        'r_y1': list(),
-        'r_y2': list(),
-        'r_z1': list(),
-        'r_z2': list()
-    }
-
-    if with_noise:
-        print("================== Sampled Bidding Data with Uniform Noise ==================")
-    else:
-        print("================== Sampled Bidding Data without Noise ==================")
-
-    for i in cut_list:
-        selected_label = count_sorted_groups[:i + 1]
-        D_sampled = get_sampled_bidding_data(D, clusters, selected_label, show_selected)
-        size = D_sampled.shape[0]
-        dict_['x'].append(size)
-        print(f"================== Cut: {i}; Size: {size} ==================")
-        N, M = D_sampled.shape
-        if with_noise:
-            noise = np.random.uniform(size=(N, M))
-            res_GFW_bidding_data, res_EPM_bidding_data = run_GFW_vs_EPM_on_bidding_data(np.maximum(D_sampled + noise, 1e-3))
-        else:
-            res_GFW_bidding_data, res_EPM_bidding_data = run_GFW_vs_EPM_on_bidding_data(D_sampled)
-
-        dict_['i_y1'].append(res_GFW_bidding_data['num-iter-a1'])
-        dict_['s_y1'].append(res_GFW_bidding_data['solved-a1'])
-        dict_['r_y1'].append(res_GFW_bidding_data['running-time-a1'])
-        dict_['i_y2'].append(res_GFW_bidding_data['num-iter-e'])
-        dict_['s_y2'].append(res_GFW_bidding_data['solved-e'])
-        dict_['r_y2'].append(res_GFW_bidding_data['running-time-e'])
-
-        dict_['i_z1'].append(res_EPM_bidding_data['num-iter-a1'])
-        dict_['s_z1'].append(res_EPM_bidding_data['solved-a1'])
-        dict_['r_z1'].append(res_EPM_bidding_data['running-time-a1'])
-        dict_['i_z2'].append(res_EPM_bidding_data['num-iter-e'])
-        dict_['s_z2'].append(res_EPM_bidding_data['solved-e'])
-        dict_['r_z2'].append(res_EPM_bidding_data['running-time-e'])
-
-    df = pd.DataFrame.from_dict(dict_)
-
-    if with_noise:
-        file_name = "bidding_data_with_noise"
-    else:
-        file_name = "bidding_data_without_noise"
-    df.to_csv(f"{file_name}.csv")
-
-    return dict_, file_name
-
-def plot_and_save_bidding_data(data, file_name, download_fig=False):
-
-    plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
-
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("Running time in seconds", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
-
-    plt.savefig(f"rt_{file_name}.png")
-
-    plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
-
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("# iterations to reach CE", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
-
-    plt.savefig(f"ni_{file_name}.png")
-
-
-if __name__ == "__main__": 
-    df = pd.read_csv('./bidding-data.csv')
-
-    dict_bidder_index = dict()
-    i = 0
-    for bidder in df['Bidder']:
-        if bidder not in dict_bidder_index.keys():
-            dict_bidder_index[bidder] = i
-            i += 1
-
-    N, M = len(np.unique(df['Bidder'])), max(df['Submission'])
-    print(f"N = {N}, M = {M}")
-    B = np.ones(shape=N)
-
-    dict_pref_value = {
-        'yes': 1,
-        'maybe': 3,
-        'no response': 5,
-        'no': 7,
-        'conflict': 7 * M + 1  # optimal price bound?
-    }
-
-    dict_pref_value_1 = {
-        'yes': 0.1,
-        'maybe': 1,
-        'no response': 10,
-        'no': 100,
-        'conflict': 100 * M + 1  # optimal price bound?
-    }
-
-    dict_pref_value_2 = {
-        'yes': 1,
-        'maybe': np.sqrt(3),
-        'no response': np.sqrt(5),
-        'no': np.sqrt(7),
-        'conflict': np.sqrt(7) * M + 1  # optimal price bound?
-    }
-
-    D = dict_pref_value['no response'] * np.ones(shape=(N, M))
-    for row in list(df.itertuples(index=False, name=None)):
-        D[dict_bidder_index[row[0]]][row[1] - 1] = dict_pref_value[row[2]]
-
-    unique, counts = np.unique(D, return_counts=True)
-    print(unique, counts)
-
-    data, file_name = run_and_save_sampled_bidding_data(D, with_noise=False, download_csv=True, show_selected=False)
-    plot_and_save_bidding_data(data, file_name, download_fig=True)
-
-    data, file_name = run_and_save_sampled_bidding_data(D, with_noise=True, download_csv=True, show_selected=False)
-    plot_and_save_bidding_data(data, file_name, download_fig=True)
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=50)
+        plot_and_save(data, random_generating_method=rgm, num_seeds=50)
