@@ -637,6 +637,7 @@ if __name__ == "__main__":
 
     size_list = [2, 50, 100, 150, 200, 250, 300]
     rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
+    rgm_list = ['exponential', 'randint']
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
@@ -812,7 +813,7 @@ def run_and_save_sampled_bidding_data(D, cut_list=[9, 30, 50, 55, 58, 60], with_
         N, M = D_sampled.shape
         if with_noise:
             noise = np.random.uniform(size=(N, M))
-            res_GFW_bidding_data, res_EPM_bidding_data = run_GFW_vs_EPM_on_bidding_data(D_sampled + noise)
+            res_GFW_bidding_data, res_EPM_bidding_data = run_GFW_vs_EPM_on_bidding_data(np.maximum(D_sampled + noise, 1e-3))
         else:
             res_GFW_bidding_data, res_EPM_bidding_data = run_GFW_vs_EPM_on_bidding_data(D_sampled)
 
