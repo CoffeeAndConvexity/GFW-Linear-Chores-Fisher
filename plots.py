@@ -3,18 +3,25 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 import pandas as pd 
+import math 
+
+l = [None, 1, None]
 
 def average_and_std(lst):
     nonNone_list = list()
 
     for e in lst:
-        if e is not None:
+        if (e is not None) and (e is not np.nan) and (e is not pd.NA) and (not math.isnan(e)):
             nonNone_list.append(e)
 
     if len(nonNone_list) > 0:
+        print(np.mean(nonNone_list), np.std(nonNone_list))
         return np.mean(nonNone_list), np.std(nonNone_list)
     else:
+        print(None, None)
         return None, None
+    
+print(average_and_std(l))
 
 def plot_and_save(data, name):
 
@@ -59,8 +66,8 @@ def plot_and_save(data, name):
 
 if __name__ == "__main__": 
 
-    size_list = [2, 50, 100, 150, 200, 250]
-    name_list = ['bidding_data', ]
+    size_list = [2, 50, 100, 150, ]
+    name_list = ['bidding_data_with_noise', ]
 
     for name in name_list:
         data = {

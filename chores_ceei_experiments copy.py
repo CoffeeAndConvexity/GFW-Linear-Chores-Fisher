@@ -740,7 +740,7 @@ def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, nu
 
         if with_noise:
             np.random.seed(s)
-            noise = np.random.normal(size=(N, M)) 
+            noise = 0.2 * np.random.normal(size=(N, M)) 
             D_sampled = np.maximum(D_sampled + noise, 1e-3)
 
         # all budgets are set to 1 
@@ -764,9 +764,15 @@ def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, nu
             if res_GFW[2 + i]:
                 num_LMO_list[i].append(res_GFW[i])
                 running_time_GFW_list[i].append(res_GFW[4 + i])
+            else:
+                num_LMO_list[i].append(None)
+                running_time_GFW_list[i].append(None)
             if res_EPM[2 + i]:
                 num_QMO_list[i].append(res_EPM[i])
                 running_time_EPM_list[i].append(res_EPM[4 + i])
+            else:
+                num_QMO_list[i].append(None)
+                running_time_EPM_list[i].append(None)
 
     data_GFW['num-iter-a1'] = num_LMO_list[0]
     data_GFW['num-iter-e'] = num_LMO_list[1]
@@ -787,9 +793,9 @@ def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, nu
 
 def run_and_save_bidding_data(D, distance_matrix, size_list=[2, 50, 100], num_seeds=10, with_noise=True):
 
-    dict_ = dict() 
+    for size in size_list: 
+        dict_ = dict() 
 
-    for size in size_list:
         N = size
         M = size
         
@@ -865,10 +871,7 @@ if __name__ == "__main__":
     # unique, counts = np.unique(D, return_counts=True)
     # print(unique, counts)
 
-    size_list = [200, 250, 300]
+    size_list = [2, 50, 100, 200, 250, 300]
 
-    data = run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False)
+    data = run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True)
     # plot_and_save_bidding_data(data, num_seeds=100, with_noise=False)
-
-    # data, file_name = run_and_save_sampled_bidding_data(D, with_noise=True, download_csv=True, show_selected=False)
-    # plot_and_save_bidding_data(data, file_name, download_fig=True)
