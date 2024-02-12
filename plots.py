@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd 
 import math 
 
-l = [None, 1, None]
-
 def average_and_std(lst):
     nonNone_list = list()
 
@@ -15,29 +13,26 @@ def average_and_std(lst):
             nonNone_list.append(e)
 
     if len(nonNone_list) > 0:
-        print(np.mean(nonNone_list), np.std(nonNone_list))
         return np.mean(nonNone_list), np.std(nonNone_list)
     else:
-        print(None, None)
         return None, None
-    
-print(average_and_std(l))
 
 def plot_and_save(data, name):
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
     fig.set_figheight(5)
-    fig.set_figwidth(18)
+    fig.set_figwidth(20)
 
     ax1.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
     ax1.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=12)
     ax1.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
     ax1.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
 
-    # ax1.set_xticks(fontsize=16)
+    ax1.set_xticks(data['x'])
     # ax1.set_yticks(fontsize=16)
-    ax1.set(xlabel='', ylabel='# iterations to reach CE')
-    # plt.legend(fontsize=16)
+    ax1.set(xlabel='')
+    ax1.set_ylabel("# iterations to reach CE", fontsize=18)
+    ax1.legend(fontsize=16)
     # plt.tight_layout() 
 
     ax2.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
@@ -45,10 +40,11 @@ def plot_and_save(data, name):
     ax2.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
     ax2.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
 
-    # ax2.set_ticks('x', fontsize=16)
+    ax2.set_xticks(data['x'])
     # ax2.set_ticks('y', fontsize=16)
-    ax2.set(xlabel='', ylabel="Running time in seconds")
-    # plt.legend(fontsize=16)
+    ax2.set(xlabel='')
+    ax2.set_ylabel("Running time in seconds", fontsize=18)
+    ax2.legend(fontsize=16)
     # plt.tight_layout()
 
     ax3.plot(data['x'], np.array(data['s_y1']), label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
@@ -56,18 +52,20 @@ def plot_and_save(data, name):
     ax3.plot(data['x'], np.array(data['s_z1']), label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
     ax3.plot(data['x'], np.array(data['s_z2']), label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
 
-    # ax3.set_xticks(fontsize=16)
+    ax3.set_xticks(data['x'])
     # ax3.set_yticks(fontsize=16)
-    ax3.set(xlabel='', ylabel="Ratio of solved instances")
-    # plt.legend(fontsize=16)
+    ax3.set(xlabel='')
+    ax3.set_ylabel("Ratio of solved instances", fontsize=18)
+    ax3.legend(fontsize=16)
     # plt.tight_layout()
 
-    plt.show()
+    fig.tight_layout()
+    fig.savefig(f"{name}_int.png")
 
 if __name__ == "__main__": 
 
-    size_list = [2, 50, 100, 150, ]
-    name_list = ['bidding_data_with_noise', ]
+    size_list = [2, 50, 100, 150, 200, 250, 300]
+    name_list = ['bidding_data', 'bidding_data_with_noise', ]
 
     for name in name_list:
         data = {

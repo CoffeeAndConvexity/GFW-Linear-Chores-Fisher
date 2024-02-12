@@ -441,28 +441,13 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 run, save, and plot
 """
 
-def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, return_eq=False):
-
-    def average(lst):  # return the average of a list
-        num_nonNone = 0
-        sum = 0
-
-        for e in lst:
-            if e is not None:
-                num_nonNone += 1
-                sum += e
-
-        if num_nonNone > 0:
-            return sum / num_nonNone
-        else:
-            return np.inf
+def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, return_eq=False):
 
     seeds = range(num_seeds)  # set how many instances we want to try for one size
     num_LMO_list = [[], []]
     running_time_GFW_list = [[], []]
-    num_ins_GFW_solved = [0, 0]
+    num_ins_GFW_solved = [[], []]
     data_GFW = {
-        'size': f'N*M = {N}*{M}',
         'num-iter-a1': None,
         'num-iter-e': None,
         'solved-a1': None,
@@ -472,9 +457,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     }
     num_QMO_list = [[], []]
     running_time_EPM_list = [[], []]
-    num_ins_EPM_solved = [0, 0]
+    num_ins_EPM_solved = [[], []]
     data_EPM = {
-        'size': f'N*M = {N}*{M}',
         'num-iter-a1': None,
         'num-iter-e': None,
         'solved-a1': None,
@@ -487,6 +471,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     print("PROGRESS: ", end ="")
 
     for s in seeds:
+        # generate simulated instances
         np.random.seed(s)
         if random_generating_method == 'randint':
             D = np.random.randint(low=1, high=1001, size=(N, M))
@@ -514,135 +499,75 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
             print("o")
 
         for i in range(2):
-            num_ins_GFW_solved[i] += res_GFW[2 + i]
-            num_ins_EPM_solved[i] += res_EPM[2 + i]
+            num_ins_GFW_solved[i].append(res_GFW[2 + i])
+            num_ins_EPM_solved[i].append(res_EPM[2 + i])
             if res_GFW[2 + i]:
                 num_LMO_list[i].append(res_GFW[i])
                 running_time_GFW_list[i].append(res_GFW[4 + i])
+            else:
+                num_LMO_list[i].append(None)
+                running_time_GFW_list[i].append(None)
             if res_EPM[2 + i]:
                 num_QMO_list[i].append(res_EPM[i])
                 running_time_EPM_list[i].append(res_EPM[4 + i])
+            else:
+                num_QMO_list[i].append(None)
+                running_time_EPM_list[i].append(None)
 
-    data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
-    data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
+    data_GFW['num-iter-a1'] = num_LMO_list[0]
+    data_GFW['num-iter-e'] = num_LMO_list[1]
     data_GFW['solved-a1'] = num_ins_GFW_solved[0]
     data_GFW['solved-e'] = num_ins_GFW_solved[1]
-    data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
-    data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
+    data_GFW['running-time-a1'] = running_time_GFW_list[0]
+    data_GFW['running-time-e'] = running_time_GFW_list[1]
 
-    data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
-    data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
+    data_EPM['num-iter-a1'] = num_QMO_list[0]
+    data_EPM['num-iter-e'] = num_QMO_list[1]
     data_EPM['solved-a1'] = num_ins_EPM_solved[0]
     data_EPM['solved-e'] = num_ins_EPM_solved[1]
-    data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
-    data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
-
-    # print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+    data_EPM['running-time-a1'] = running_time_EPM_list[0]
+    data_EPM['running-time-e'] = running_time_EPM_list[1]
 
     return data_GFW, data_EPM
 
-def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num_seeds=10, download_csv=False):
+def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num_seeds=10):
 
-    dict_ = {
-        'x': list(),
-        'i_y1': list(),
-        'i_y2': list(),
-        'i_z1': list(),
-        'i_z2': list(),
-        's_y1': list(),
-        's_y2': list(),
-        's_z1': list(),
-        's_z2': list(),
-        'r_y1': list(),
-        'r_y2': list(),
-        'r_z1': list(),
-        'r_z2': list()
-    }
+    for size in size_list: 
+        dict_ = dict() 
 
-    for size in size_list:
         N = size
         M = size
-        dict_['x'].append(size)
-        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds)
+        
+        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method=random_generating_method, num_seeds=num_seeds)
 
-        dict_['i_y1'].append(res_GFW['num-iter-a1'])
-        dict_['s_y1'].append(res_GFW['solved-a1'])
-        dict_['r_y1'].append(res_GFW['running-time-a1'])
-        dict_['i_y2'].append(res_GFW['num-iter-e'])
-        dict_['s_y2'].append(res_GFW['solved-e'])
-        dict_['r_y2'].append(res_GFW['running-time-e'])
+        dict_['i_y1'] = res_GFW['num-iter-a1']
+        dict_['s_y1'] = res_GFW['solved-a1']
+        dict_['r_y1'] = res_GFW['running-time-a1']
+        dict_['i_y2'] = res_GFW['num-iter-e']
+        dict_['s_y2'] = res_GFW['solved-e']
+        dict_['r_y2'] = res_GFW['running-time-e']
 
-        dict_['i_z1'].append(res_EPM['num-iter-a1'])
-        dict_['s_z1'].append(res_EPM['solved-a1'])
-        dict_['r_z1'].append(res_EPM['running-time-a1'])
-        dict_['i_z2'].append(res_EPM['num-iter-e'])
-        dict_['s_z2'].append(res_EPM['solved-e'])
-        dict_['r_z2'].append(res_EPM['running-time-e'])
+        dict_['i_z1'] = res_EPM['num-iter-a1']
+        dict_['s_z1'] = res_EPM['solved-a1']
+        dict_['r_z1'] = res_EPM['running-time-a1']
+        dict_['i_z2'] = res_EPM['num-iter-e']
+        dict_['s_z2'] = res_EPM['solved-e']
+        dict_['r_z2'] = res_EPM['running-time-e']
 
-    df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{random_generating_method}.csv')
+        df = pd.DataFrame.from_dict(dict_)
+        df.to_csv(f'{random_generating_method}_{size}.csv')
 
     return dict_
 
-def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
+if __name__ == "__main__": 
 
-    plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    size_list = [2, 50, 100, 150, 200, 250, 300]
+    size_list = [300, ]
+    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("Running time in seconds", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
-
-    plt.savefig(f"rt_{random_generating_method}.png")
-
-
-    plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
-
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("# iterations to reach CE", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
-
-    plt.savefig(f"ni_{random_generating_method}.png")
-
-    plt.figure()
-    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
-
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("Ratio of solved instances", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
-
-    plt.savefig(f"sr_{random_generating_method}.png")
-
-
-# if __name__ == "__main__": 
-
-#     size_list = [2, 50, 100, 150, 200, 250, 300]
-#     rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
-#     rgm_list = ['exponential', 'randint']
-
-#     for rgm in rgm_list:
-#         print(f"================== {rgm} ==================")
-#         data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
-#         plot_and_save(data, random_generating_method=rgm, num_seeds=100)
+    for rgm in rgm_list:
+        print(f"================== {rgm} ==================")
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
 
 
 """
@@ -871,7 +796,6 @@ if __name__ == "__main__":
     # unique, counts = np.unique(D, return_counts=True)
     # print(unique, counts)
 
-    size_list = [2, 50, 100, 200, 250, 300]
+    size_list = [300]
 
-    data = run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True)
-    # plot_and_save_bidding_data(data, num_seeds=100, with_noise=False)
+    # data = run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False)
