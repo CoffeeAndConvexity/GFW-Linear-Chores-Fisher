@@ -23,47 +23,42 @@ def plot_and_save(data, name):
     fig.set_figheight(5)
     fig.set_figwidth(20)
 
-    # ax1.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
-    # ax1.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=12)
-    # ax1.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
-    # ax1.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
-
-    ax1.errorbar(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
-    ax1.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=12)
-    ax1.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
-    ax1.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
+    ax1.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    ax1.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    ax1.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    ax1.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     ax1.set_xticks(data['x'])
     # ax1.set_yticks(fontsize=16)
-    ax1.tick_params(axis='both', which='major', labelsize=18)
-    ax1.set(xlabel='')
-    ax1.set_ylabel("# iterations to reach CE", fontsize=18)
+    ax1.tick_params(axis='both', which='major', labelsize=16)
+    ax1.set_xlabel("Size of instances", fontsize=20)
+    ax1.set_ylabel("# iterations to reach CE", fontsize=20)
     ax1.legend(fontsize=16)
     # plt.tight_layout() 
 
-    ax2.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
-    ax2.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=12)
-    ax2.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
-    ax2.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
+    ax2.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    ax2.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    ax2.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    ax2.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     ax2.set_xticks(data['x'])
     # ax2.set_ticks('y', fontsize=16)
-    ax2.tick_params(axis='both', which='major', labelsize=18)
-    ax2.set(xlabel='')
-    ax2.set_ylabel("Running time in seconds", fontsize=18)
+    ax2.tick_params(axis='both', which='major', labelsize=16)
+    ax2.set_xlabel("Size of instances", fontsize=20)
+    ax2.set_ylabel("Running time in seconds", fontsize=20)
     ax2.legend(fontsize=16)
     # plt.tight_layout()
 
-    ax3.plot(data['x'], np.array(data['s_y1']), label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=12)
-    ax3.plot(data['x'], np.array(data['s_y2']), label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=12)
-    ax3.plot(data['x'], np.array(data['s_z1']), label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=12)
-    ax3.plot(data['x'], np.array(data['s_z2']), label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=12)
+    ax3.plot(data['x'], np.array(data['s_y1']), label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    ax3.plot(data['x'], np.array(data['s_y2']), label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    ax3.plot(data['x'], np.array(data['s_z1']), label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    ax3.plot(data['x'], np.array(data['s_z2']), label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     ax3.set_xticks(data['x'])
     # ax3.set_yticks(fontsize=16)
-    ax3.tick_params(axis='both', which='major', labelsize=18)
-    ax3.set(xlabel='')
-    ax3.set_ylabel("Ratio of solved instances", fontsize=18)
+    ax3.tick_params(axis='both', which='major', labelsize=16)
+    ax3.set_xlabel("Size of instances", fontsize=20)
+    ax3.set_ylabel("Ratio of solved instances", fontsize=20)
     ax3.legend(fontsize=16)
     # plt.tight_layout()
 
@@ -72,9 +67,8 @@ def plot_and_save(data, name):
 
 if __name__ == "__main__": 
 
-    size_list = [2, 50, 100, 150, 200, 250]
+    size_list = [2, 50, 100, 150, 200, 250, 300]
     name_list = ['bidding_data', 'bidding_data_with_noise', ]
-    name_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
     for name in name_list:
         data = {
