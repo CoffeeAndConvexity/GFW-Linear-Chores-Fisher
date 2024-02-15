@@ -1,0 +1,4586 @@
+%%% ====================================================================
+%%%  BibTeX-file{
+%%%     author          = "Gerry Murray",
+%%%     version         = "1.2",
+%%%     date            = "2 April 2012",
+%%%     filename        = "acmsmall-sample-bibfile.bib",
+%%%     address         = "ACM, NY",
+%%%     email           = "murray at hq.acm.org",
+%%%     codetable       = "ISO/ASCII",
+%%%     keywords        = "ACM Reference Format, bibliography, citation, references",
+%%%     supported       = "yes",
+%%%     docstring       = "This BibTeX database file contains 'bibdata' entries
+%%%                        that 'match' the examples provided in the Specifications Document
+%%%                        AND, also, 'legacy'-type bibs. It should assist authors in 
+%%%                        choosing the 'correct' at-bibtype and necessary bib-fields
+%%%                        so as to obtain the appropriate ACM Reference Format output. 
+%%%			   It also contains many 'Standard Abbreviations'. "
+%%%  }
+%%% ====================================================================
+
+% Journals
+
+% First the Full Name is given, then the abbreviation used in the AMS Math
+% Reviews, with an indication if it could not be found there.
+% Note the 2nd overwrites the 1st, so swap them if you want the full name.
+
+ %{AMS}
+ @String{AMSTrans = "American Mathematical Society Translations" }
+ @String{AMSTrans = "Amer. Math. Soc. Transl." }
+ @String{BullAMS = "Bulletin of the American Mathematical Society" }
+ @String{BullAMS = "Bull. Amer. Math. Soc." }
+ @String{ProcAMS = "Proceedings of the American Mathematical Society" }
+ @String{ProcAMS = "Proc. Amer. Math. Soc." }
+ @String{TransAMS = "Transactions of the American Mathematical Society" }
+ @String{TransAMS = "Trans. Amer. Math. Soc." }
+
+ %ACM
+ @String{CACM = "Communications of the {ACM}" }
+ @String{CACM = "Commun. {ACM}" }
+ @String{CompServ = "Comput. Surveys" }
+ @String{JACM = "J. ACM" }
+ @String{ACMMathSoft = "{ACM} Transactions on Mathematical Software" }
+ @String{ACMMathSoft = "{ACM} Trans. Math. Software" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newsletter" }
+ @String{SIGNUM = "{ACM} {SIGNUM} Newslett." }
+
+ @String{AmerSocio = "American Journal of Sociology" }
+ @String{AmerStatAssoc = "Journal of the American Statistical Association" }
+ @String{AmerStatAssoc = "J. Amer. Statist. Assoc." }
+ @String{ApplMathComp = "Applied Mathematics and Computation" }
+ @String{ApplMathComp = "Appl. Math. Comput." }
+ @String{AmerMathMonthly = "American Mathematical Monthly" }
+ @String{AmerMathMonthly = "Amer. Math. Monthly" }
+ @String{BIT = "{BIT}" }
+ @String{BritStatPsych = "British Journal of Mathematical and Statistical
+          Psychology" }
+ @String{BritStatPsych = "Brit. J. Math. Statist. Psych." }
+ @String{CanMathBull = "Canadian Mathematical Bulletin" }
+ @String{CanMathBull = "Canad. Math. Bull." }
+ @String{CompApplMath = "Journal of Computational and Applied Mathematics" }
+ @String{CompApplMath = "J. Comput. Appl. Math." }
+ @String{CompPhys = "Journal of Computational Physics" }
+ @String{CompPhys = "J. Comput. Phys." }
+ @String{CompStruct = "Computers and Structures" }
+ @String{CompStruct = "Comput. \& Structures" }
+ @String{CompJour = "The Computer Journal" }
+ @String{CompJour = "Comput. J." }
+ @String{CompSysSci = "Journal of Computer and System Sciences" }
+ @String{CompSysSci = "J. Comput. System Sci." }
+ @String{Computing = "Computing" }
+ @String{ContempMath = "Contemporary Mathematics" }
+ @String{ContempMath = "Contemp. Math." }
+ @String{Crelle = "Crelle's Journal" }
+ @String{GiornaleMath = "Giornale di Mathematiche" }
+ @String{GiornaleMath = "Giorn. Mat." } % didn't find in AMS MR., ibid.
+
+ %IEEE
+ @String{Computer = "{IEEE} Computer" }
+ @String{IEEETransComp = "{IEEE} Transactions on Computers" }
+ @String{IEEETransComp = "{IEEE} Trans. Comput." }
+ @String{IEEETransAC = "{IEEE} Transactions on Automatic Control" }
+ @String{IEEETransAC = "{IEEE} Trans. Automat. Control" }
+ @String{IEEESpec = "{IEEE} Spectrum" } % didn't find in AMS MR
+ @String{ProcIEEE = "Proceedings of the {IEEE}" }
+ @String{ProcIEEE = "Proc. {IEEE}" } % didn't find in AMS MR
+ @String{IEEETransAeroElec = "{IEEE} Transactions on Aerospace and Electronic
+     Systems" }
+ @String{IEEETransAeroElec = "{IEEE} Trans. Aerospace Electron. Systems" }
+
+ @String{IMANumerAna = "{IMA} Journal of Numerical Analysis" }
+ @String{IMANumerAna = "{IMA} J. Numer. Anal." }
+ @String{InfProcLet = "Information Processing Letters" }
+ @String{InfProcLet = "Inform. Process. Lett." }
+ @String{InstMathApp = "Journal of the Institute of Mathematics and
+     its Applications" }
+ @String{InstMathApp = "J. Inst. Math. Appl." }
+ @String{IntControl = "International Journal of Control" }
+ @String{IntControl = "Internat. J. Control" }
+ @String{IntNumerEng = "International Journal for Numerical Methods in
+     Engineering" }
+ @String{IntNumerEng = "Internat. J. Numer. Methods Engrg." }
+ @String{IntSuper = "International Journal of Supercomputing Applications" }
+ @String{IntSuper = "Internat. J. Supercomputing Applic." } % didn't find
+%% in AMS MR
+ @String{Kibernetika = "Kibernetika" }
+ @String{JResNatBurStand = "Journal of Research of the National Bureau
+     of Standards" }
+ @String{JResNatBurStand = "J. Res. Nat. Bur. Standards" }
+ @String{LinAlgApp = "Linear Algebra and its Applications" }
+ @String{LinAlgApp = "Linear Algebra Appl." }
+ @String{MathAnaAppl = "Journal of Mathematical Analysis and Applications" }
+ @String{MathAnaAppl = "J. Math. Anal. Appl." }
+ @String{MathAnnalen = "Mathematische Annalen" }
+ @String{MathAnnalen = "Math. Ann." }
+ @String{MathPhys = "Journal of Mathematical Physics" }
+ @String{MathPhys = "J. Math. Phys." }
+ @String{MathComp = "Mathematics of Computation" }
+ @String{MathComp = "Math. Comp." }
+ @String{MathScand = "Mathematica Scandinavica" }
+ @String{MathScand = "Math. Scand." }
+ @String{TablesAidsComp = "Mathematical Tables and Other Aids to Computation" }
+ @String{TablesAidsComp = "Math. Tables Aids Comput." }
+ @String{NumerMath = "Numerische Mathematik" }
+ @String{NumerMath = "Numer. Math." }
+ @String{PacificMath = "Pacific Journal of Mathematics" }
+ @String{PacificMath = "Pacific J. Math." }
+ @String{ParDistComp = "Journal of Parallel and Distributed Computing" }
+ @String{ParDistComp = "J. Parallel and Distrib. Comput." } % didn't find
+%% in AMS MR
+ @String{ParComputing = "Parallel Computing" }
+ @String{ParComputing = "Parallel Comput." }
+ @String{PhilMag = "Philosophical Magazine" }
+ @String{PhilMag = "Philos. Mag." }
+ @String{ProcNAS = "Proceedings of the National Academy of Sciences
+                    of the USA" }
+ @String{ProcNAS = "Proc. Nat. Acad. Sci. U. S. A." }
+ @String{Psychometrika = "Psychometrika" }
+ @String{QuartMath = "Quarterly Journal of Mathematics, Oxford, Series (2)" }
+ @String{QuartMath = "Quart. J. Math. Oxford Ser. (2)" }
+ @String{QuartApplMath = "Quarterly of Applied Mathematics" }
+ @String{QuartApplMath = "Quart. Appl. Math." }
+ @String{RevueInstStat = "Review of the International Statisical Institute" }
+ @String{RevueInstStat = "Rev. Inst. Internat. Statist." }
+
+ %SIAM
+ @String{JSIAM = "Journal of the Society for Industrial and Applied
+     Mathematics" }
+ @String{JSIAM = "J. Soc. Indust. Appl. Math." }
+ @String{JSIAMB = "Journal of the Society for Industrial and Applied
+     Mathematics, Series B, Numerical Analysis" }
+ @String{JSIAMB = "J. Soc. Indust. Appl. Math. Ser. B Numer. Anal." }
+ @String{SIAMAlgMeth = "{SIAM} Journal on Algebraic and Discrete Methods" }
+ @String{SIAMAlgMeth = "{SIAM} J. Algebraic Discrete Methods" }
+ @String{SIAMAppMath = "{SIAM} Journal on Applied Mathematics" }
+ @String{SIAMAppMath = "{SIAM} J. Appl. Math." }
+ @String{SIAMComp = "{SIAM} Journal on Computing" }
+ @String{SIAMComp = "{SIAM} J. Comput." }
+ @String{SIAMMatrix = "{SIAM} Journal on Matrix Analysis and Applications" }
+ @String{SIAMMatrix = "{SIAM} J. Matrix Anal. Appl." }
+ @String{SIAMNumAnal = "{SIAM} Journal on Numerical Analysis" }
+ @String{SIAMNumAnal = "{SIAM} J. Numer. Anal." }
+ @String{SIAMReview = "{SIAM} Review" }
+ @String{SIAMReview = "{SIAM} Rev." }
+ @String{SIAMSciStat = "{SIAM} Journal on Scientific and Statistical
+     Computing" }
+ @String{SIAMSciStat = "{SIAM} J. Sci. Statist. Comput." }
+
+ @String{SoftPracExp = "Software Practice and Experience" }
+ @String{SoftPracExp = "Software Prac. Experience" } % didn't find in AMS MR
+ @String{StatScience = "Statistical Science" }
+ @String{StatScience = "Statist. Sci." }
+ @String{Techno = "Technometrics" }
+ @String{USSRCompMathPhys = "{USSR} Computational Mathematics and Mathematical
+     Physics" }
+ @String{USSRCompMathPhys = "{U. S. S. R.} Comput. Math. and Math. Phys." }
+ @String{VLSICompSys = "Journal of {VLSI} and Computer Systems" }
+ @String{VLSICompSys = "J. {VLSI} Comput. Syst." }
+ @String{ZAngewMathMech = "Zeitschrift fur Angewandte Mathematik und
+     Mechanik" }
+ @String{ZAngewMathMech = "Z. Angew. Math. Mech." }
+ @String{ZAngewMathPhys = "Zeitschrift fur Angewandte Mathematik und Physik" }
+ @String{ZAngewMathPhys = "Z. Angew. Math. Phys." }
+
+% Publishers % ================================================= |
+
+ @String{Academic = "Academic Press" }
+ @String{ACMPress = "{ACM} Press" }
+ @String{AdamHilger = "Adam Hilger" }
+ @String{AddisonWesley = "Addison-Wesley" }
+ @String{AllynBacon = "Allyn and Bacon" }
+ @String{AMS = "American Mathematical Society" }
+ @String{Birkhauser = "Birkha{\"u}ser" }
+ @String{CambridgePress = "Cambridge University Press" }
+ @String{Chelsea = "Chelsea" }
+ @String{ClaredonPress = "Claredon Press" }
+ @String{DoverPub = "Dover Publications" }
+ @String{Eyolles = "Eyolles" }
+ @String{HoltRinehartWinston = "Holt, Rinehart and Winston" }
+ @String{Interscience = "Interscience" }
+ @String{JohnsHopkinsPress = "The Johns Hopkins University Press" }
+ @String{JohnWileySons = "John Wiley and Sons" }
+ @String{Macmillan = "Macmillan" }
+ @String{MathWorks = "The Math Works Inc." }
+ @String{McGrawHill = "McGraw-Hill" }
+ @String{NatBurStd = "National Bureau of Standards" }
+ @String{NorthHolland = "North-Holland" }
+ @String{OxfordPress = "Oxford University Press" }  %address Oxford or London?
+ @String{PergamonPress = "Pergamon Press" }
+ @String{PlenumPress = "Plenum Press" }
+ @String{PrenticeHall = "Prentice-Hall" }
+ @String{SIAMPub = "{SIAM} Publications" }
+ @String{Springer = "Springer-Verlag" }
+ @String{TexasPress = "University of Texas Press" }
+ @String{VanNostrand = "Van Nostrand" }
+ @String{WHFreeman = "W. H. Freeman and Co." }
+
+@article{journee2010generalized,
+  title={Generalized power method for sparse principal component analysis.},
+  author={Journ{\'e}e, Michel and Nesterov, Yurii and Richt{\'a}rik, Peter and Sepulchre, Rodolphe},
+  journal={Journal of Machine Learning Research},
+  volume={11},
+  number={2},
+  year={2010}
+} 
+
+@incollection{mangasarian1996machine,
+  title={Machine learning via polyhedral concave minimization},
+  author={Mangasarian, Olvi L.},
+  booktitle={Applied Mathematics and Parallel Computing: Festschrift for Klaus Ritter},
+  pages={175--188},
+  year={1996},
+  publisher={Springer}
+}
+
+@article{berry1995automobile,
+  title={Automobile prices in market equilibrium},
+  author={Berry, Steven and Levinsohn, James and Pakes, Ariel},
+  journal={Econometrica: Journal of the Econometric Society},
+  pages={841--890},
+  year={1995},
+  publisher={JSTOR}
+}
+
+@book{ljungqvist2018recursive,
+  title={Recursive macroeconomic theory},
+  author={Ljungqvist, Lars and Sargent, Thomas J},
+  year={2018},
+  publisher={MIT press}
+}
+
+@inproceedings{branzei2014fisher,
+  title={The fisher market game: equilibrium and welfare},
+  author={Br{\^a}nzei, Simina and Chen, Yiling and Deng, Xiaotie and Filos-Ratsikas, Aris and Frederiksen, S{\o}ren Kristoffer Stiil and Zhang, Jie},
+  booktitle={Twenty-Eighth AAAI Conference on Artificial Intelligence},
+  year={2014}
+}
+
+@article{hommes2006heterogeneous,
+  title={Heterogeneous agent models in economics and finance},
+  author={Hommes, Cars H},
+  journal={Handbook of computational economics},
+  volume={2},
+  pages={1109--1186},
+  year={2006},
+  publisher={Elsevier}
+}
+
+@inproceedings{conitzer2019group,
+  title={Group fairness for the allocation of indivisible goods},
+  author={Conitzer, Vincent and Freeman, Rupert and Shah, Nisarg and Vaughan, Jennifer Wortman},
+  booktitle={Proceedings of the 33rd AAAI Conference on Artificial Intelligence (AAAI)},
+  year={2019}
+}
+
+@inproceedings{kroer2019computing,
+  title={Computing large market equilibria using abstractions},
+  author={Kroer, Christian and Peysakhovich, Alexander and Sodomka, Eric and Stier-Moses, Nicolas E},
+  booktitle={Proceedings of the 2019 ACM Conference on Economics and Computation},
+  pages={745--746},
+  year={2019}
+}
+
+
+@inproceedings{aleksandrov2018group,
+  title={Group envy freeness and group pareto efficiency in fair division with indivisible items},
+  author={Aleksandrov, Martin and Walsh, Toby},
+  booktitle={Joint German/Austrian Conference on Artificial Intelligence (K{\"u}nstliche Intelligenz)},
+  pages={57--72},
+  year={2018},
+  organization={Springer}
+}
+
+@book{roth2015gets,
+  title={Who gets what-and why: the hidden world of matchmaking and market design},
+  author={Roth, Alvin},
+  year={2015},
+  publisher={HarperCollins UK}
+}
+
+@article{recht2011simpler,
+  title={A simpler approach to matrix completion},
+  author={Recht, Benjamin},
+  journal={Journal of Machine Learning Research},
+  volume={12},
+  pages={3413--3430},
+  year={2011}
+}
+
+@article{lerer2017maintaining,
+  title={Maintaining cooperation in complex social dilemmas using deep reinforcement learning},
+  author={Lerer, Adam and Peysakhovich, Alexander},
+  journal={arXiv preprint arXiv:1707.01068},
+  year={2017}
+}
+
+@article{chawla2017mechanism,
+  title={Mechanism Redesign},
+  author={Chawla, Shuchi and Hartline, Jason D and Nekipelov, Denis},
+  journal={arXiv preprint arXiv:1708.04699},
+  year={2017}
+}
+
+@article{lerer2018learning,
+  title={Learning social conventions in markov games},
+  author={Lerer, Adam and Peysakhovich, Alexander},
+  journal={Conference on Artificial Intelligence, Ethics, and Society},
+  year={2019}
+}
+
+@inproceedings{sedhain2015autorec,
+  title={Autorec: Autoencoders meet collaborative filtering},
+  author={Sedhain, Suvash and Menon, Aditya Krishna and Sanner, Scott and Xie, Lexing},
+  booktitle={Proceedings of the 24th International Conference on World Wide Web},
+  pages={111--112},
+  year={2015},
+  organization={ACM}
+}
+
+ @article{kantorovich1960mathematical,
+  title={Mathematical methods of organizing and planning production},
+  author={Kantorovich, Leonid Vitaliyevich},
+  journal={Management science},
+  volume={6},
+  number={4},
+  pages={366--422},
+  year={1960},
+  publisher={Informs}
+}
+
+@article{paszke2017automatic,
+  title={Automatic differentiation in pytorch},
+  author={Paszke, Adam and Gross, Sam and Chintala, Soumith and Chanan, Gregory and Yang, Edward and DeVito, Zachary and Lin, Zeming and Desmaison, Alban and Antiga, Luca and Lerer, Adam},
+  year={2017}
+}
+
+@inproceedings{feng2018deep,
+  title={Deep Learning for Revenue-Optimal Auctions with Budgets},
+  author={Feng, Zhe and Narasimhan, Harikrishna and Parkes, David C},
+  booktitle={Proceedings of the 17th International Conference on Autonomous Agents and Multiagent Systems},
+  pages={354--362},
+  year={2018},
+  organization={International Foundation for Autonomous Agents and Multiagent Systems}
+}
+
+@inproceedings{golowich2018deep,
+  title={Deep Learning for Multi-Facility Location Mechanism Design.},
+  author={Golowich, Noah and Narasimhan, Harikrishna and Parkes, David C},
+  booktitle={IJCAI},
+  pages={261--267},
+  year={2018}
+}
+
+@book{budish2016bringing,
+  title={Bringing Real Market Participants' Real Preferences into the Lab: An Experiment that Changed the Course Allocation Mechanism at Wharton},
+  author={Budish, Eric and Kessler, Judd B and others},
+  year={2016},
+  publisher={National Bureau of Economic Research}
+}
+
+@article{porter2003combinatorial,
+  title={Combinatorial auction design},
+  author={Porter, David and Rassenti, Stephen and Roopnarine, Anil and Smith, Vernon},
+  journal={Proceedings of the National Academy of Sciences},
+  volume={100},
+  number={19},
+  pages={11153--11157},
+  year={2003},
+  publisher={National Acad Sciences}
+}
+
+@article{goldman2015spliddit,
+  title={Spliddit: Unleashing fair division algorithms},
+  author={Goldman, Jonathan and Procaccia, Ariel D},
+  journal={ACM SIGecom Exchanges},
+  volume={13},
+  number={2},
+  pages={41--46},
+  year={2015},
+  publisher={ACM}
+}
+
+@inproceedings{peysakhovich2017learning,
+  title={Learning context-dependent preferences from raw data},
+  author={Peysakhovich, Alexander and Ugander, Johan},
+  booktitle={Proceedings of the 12th workshop on the Economics of Networks, Systems and Computation},
+  pages={8},
+  year={2017},
+  organization={ACM}
+}
+
+@manual{spliddit,
+ 	note = {\url{www.spliddit.org}}
+}
+@techreport{kantorovich1975mathematics,
+  title={Mathematics in economics: achievements, difficulties, perspectives},
+  author={Kantorovich, Leonid},
+  year={1975},
+  institution={Nobel Prize Committee}
+}
+
+@article{friedler2016possibility,
+  title={On the (im) possibility of fairness},
+  author={Friedler, Sorelle A and Scheidegger, Carlos and Venkatasubramanian, Suresh},
+  journal={arXiv preprint arXiv:1609.07236},
+  year={2016}
+}
+
+@article{ruiz2017shopper,
+  title={SHOPPER: A Probabilistic Model of Consumer Choice with Substitutes and Complements},
+  author={Ruiz, Francisco JR and Athey, Susan and Blei, David M},
+  journal={arXiv preprint arXiv:1711.03560},
+  year={2017}
+}
+
+@article{roth2002economist,
+  title={The economist as engineer: Game theory, experimentation, and computation as tools for design economics},
+  author={Roth, Alvin E},
+  journal={Econometrica},
+  volume={70},
+  number={4},
+  pages={1341--1378},
+  year={2002},
+  publisher={Wiley Online Library}
+}
+
+@inproceedings{kusner2017counterfactual,
+  title={Counterfactual fairness},
+  author={Kusner, Matt J and Loftus, Joshua and Russell, Chris and Silva, Ricardo},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={4066--4076},
+  year={2017}
+}
+
+@article{azevedo2018strategy,
+  title={Strategy-proofness in the large},
+  author={Azevedo, Eduardo M and Budish, Eric},
+  journal={The Review of Economic Studies},
+  volume={86},
+  number={1},
+  pages={81--116},
+  year={2018},
+  publisher={Oxford University Press}
+}
+
+@book{klemperer2018auctions,
+  title={Auctions: theory and practice},
+  author={Klemperer, Paul},
+  year={2018},
+  publisher={Princeton University Press}
+}
+
+@article{moravvcik2017deepstack,
+  title={Deepstack: Expert-level artificial intelligence in heads-up no-limit poker},
+  author={Morav{\v{c}}{\'\i}k, Matej and Schmid, Martin and Burch, Neil and Lis{\`y}, Viliam and Morrill, Dustin and Bard, Nolan and Davis, Trevor and Waugh, Kevin and Johanson, Michael and Bowling, Michael},
+  journal={Science},
+  volume={356},
+  number={6337},
+  pages={508--513},
+  year={2017},
+  publisher={American Association for the Advancement of Science}
+}
+
+@article{JDH17,
+  title={Billion-scale similarity search with GPUs},
+  author={Johnson, Jeff and Douze, Matthijs and J{\'e}gou, Herv{\'e}},
+  journal={arXiv preprint arXiv:1702.08734},
+  year={2017}
+}
+
+@inproceedings{fortet1953convergence,
+  title={Convergence de la r{\'e}partition empirique vers la r{\'e}partition th{\'e}orique},
+  author={Fortet, Robert and Mourier, Edith},
+  booktitle={Annales scientifiques de l'{\'E}cole Normale Sup{\'e}rieure},
+  volume={70},
+  number={3},
+  pages={267--285},
+  year={1953}
+}
+
+@article{chen2013truth,
+  title={Truth, justice, and cake cutting},
+  author={Chen, Yiling and Lai, John K and Parkes, David C and Procaccia, Ariel D},
+  journal={Games and Economic Behavior},
+  volume={77},
+  number={1},
+  pages={284--297},
+  year={2013},
+  publisher={Elsevier}
+}
+
+@book{brams1996fair,
+  title={Fair Division: From cake-cutting to dispute resolution},
+  author={Brams, Steven J and Taylor, Alan D},
+  year={1996},
+  publisher={Cambridge University Press}
+}
+
+@article{lopez2016revisiting,
+  title={Revisiting classifier two-sample tests},
+  author={Lopez-Paz, David and Oquab, Maxime},
+  journal={arXiv preprint arXiv:1610.06545},
+  year={2016}
+}
+
+@inproceedings{gretton2009fast,
+  title={A fast, consistent kernel two-sample test},
+  author={Gretton, Arthur and Fukumizu, Kenji and Harchaoui, Zaid and Sriperumbudur, Bharath K},
+  booktitle={Advances in neural information processing systems},
+  pages={673--681},
+  year={2009}
+}
+
+@article{brown2018deep,
+  title={Deep Counterfactual Regret Minimization},
+  author={Brown, Noam and Lerer, Adam and Gross, Sam and Sandholm, Tuomas},
+  journal={arXiv preprint arXiv:1811.00164},
+  year={2018}
+}
+
+@article{gretton2012kernel,
+  title={A kernel two-sample test},
+  author={Gretton, Arthur and Borgwardt, Karsten M and Rasch, Malte J and Sch{\"o}lkopf, Bernhard and Smola, Alexander},
+  journal={Journal of Machine Learning Research},
+  volume={13},
+  number={Mar},
+  pages={723--773},
+  year={2012}
+}
+
+@inproceedings{conitzer2018multiplicative,
+  title={Multiplicative Pacing Equilibria in Auction Markets},
+  author={Conitzer, Vincent and Kroer, Christian and Sodomka, Eric and Stier-Moses, Nicol{\'a}s E},
+  booktitle={International Conference on Web and Internet Economics},
+  year={2018}
+}
+
+@article{varian1974equity,
+  title={Equity, envy, and efficiency},
+  author={Varian, Hal R},
+  journal={Journal of Economic Theory},
+  volume={9},
+  number={1},
+  pages={63--91},
+  year={1974},
+  publisher={Elsevier}
+}
+
+@article{budish2013designing,
+  title={Designing random allocation mechanisms: Theory and applications},
+  author={Budish, Eric and Che, Yeon-Koo and Kojima, Fuhito and Milgrom, Paul},
+  journal={American Economic Review},
+  volume={103},
+  number={2},
+  pages={585--623},
+  year={2013}
+}
+
+@article{budish2011combinatorial,
+  title={The combinatorial assignment problem: Approximate competitive equilibrium from equal incomes},
+  author={Budish, Eric},
+  journal={Journal of Political Economy},
+  volume={119},
+  number={6},
+  pages={1061--1103},
+  year={2011},
+  publisher={University of Chicago Press Chicago, IL}
+}
+
+@book{nisan2007algorithmic,
+  title={Algorithmic game theory},
+  author={Nisan, Noam and Roughgarden, Tim and Tardos, Eva and Vazirani, Vijay V},
+  year={2007},
+  publisher={Cambridge University Press}
+}
+
+@article{hayek1945use,
+  title={The use of knowledge in society},
+  author={Hayek, Friedrich August},
+  journal={The American economic review},
+  volume={35},
+  number={4},
+  pages={519--530},
+  year={1945},
+  publisher={JSTOR}
+}
+
+@inproceedings{conitzer2019pacing,
+  title={Pacing Equilibrium in First-Price Auction Markets},
+  author={Conitzer, Vincent and Kroer, Christian and Panigrahi, Debmalya and Schrijvers, Okke and Sodomka, Eric and Stier-Moses, Nicolas E and Wilkens, Chris},
+  booktitle={Proceedings of the 2019 ACM Conference on Economics and Computation},
+  year={2019},
+  organization={ACM}
+}
+
+@inproceedings{caragiannis2016unreasonable,
+  title={The unreasonable fairness of maximum {Nash} welfare},
+  author={Caragiannis, Ioannis and Kurokawa, David and Moulin, Herv{\'e} and Procaccia, Ariel D and Shah, Nisarg and Wang, Junxing},
+  booktitle={Proceedings of the 2016 ACM Conference on Economics and Computation},
+  pages={305--322},
+  year={2016},
+  organization={ACM}
+}
+
+@article{barocas2016big,
+  title={Big data's disparate impact},
+  author={Barocas, Solon and Selbst, Andrew D},
+  journal={Calif. L. Rev.},
+  volume={104},
+  pages={671},
+  year={2016},
+  publisher={HeinOnline}
+}
+
+@inproceedings{calders2009building,
+  title={Building classifiers with independency constraints},
+  author={Calders, Toon and Kamiran, Faisal and Pechenizkiy, Mykola},
+  booktitle={2009 IEEE International Conference on Data Mining Workshops},
+  pages={13--18},
+  year={2009},
+  organization={IEEE}
+}
+
+@inproceedings{zemel2013learning,
+  title={Learning fair representations},
+  author={Zemel, Rich and Wu, Yu and Swersky, Kevin and Pitassi, Toni and Dwork, Cynthia},
+  booktitle={International Conference on Machine Learning},
+  pages={325--333},
+  year={2013}
+}
+@inproceedings{dwork2012fairness,
+  title={Fairness through awareness},
+  author={Dwork, Cynthia and Hardt, Moritz and Pitassi, Toniann and Reingold, Omer and Zemel, Richard},
+  booktitle={Proceedings of the 3rd innovations in theoretical computer science conference},
+  pages={214--226},
+  year={2012},
+  organization={ACM}
+}
+
+@inproceedings{feldman2015certifying,
+  title={Certifying and removing disparate impact},
+  author={Feldman, Michael and Friedler, Sorelle A and Moeller, John and Scheidegger, Carlos and Venkatasubramanian, Suresh},
+  booktitle={Proceedings of the 21th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  pages={259--268},
+  year={2015},
+  organization={ACM}
+}
+
+@inproceedings{cole2017convex,
+  title={Convex program duality, fisher markets, and {Nash} social welfare},
+  author={Cole, Richard and Devanur, Nikhil R and Gkatzelis, Vasilis and Jain, Kamal and Mai, Tung and Vazirani, Vijay V and Yazdanbod, Sadra},
+  booktitle={18th ACM Conference on Economics and Computation, EC 2017},
+  year={2017},
+  organization={Association for Computing Machinery, Inc}
+}
+
+@article{eisenberg1959consensus,
+  title={Consensus of subjective probabilities: The pari-mutuel method},
+  author={Eisenberg, Edmund and Gale, David},
+  journal={The Annals of Mathematical Statistics},
+  volume={30},
+  number={1},
+  pages={165--168},
+  year={1959},
+  publisher={JSTOR}
+}
+
+@article{kleinberg2016inherent,
+  title={Inherent trade-offs in the fair determination of risk scores},
+  author={Kleinberg, Jon and Mullainathan, Sendhil and Raghavan, Manish},
+  journal={arXiv preprint arXiv:1609.05807},
+  year={2016}
+}
+
+@article{louizos2015variational,
+  title={The variational fair autoencoder},
+  author={Louizos, Christos and Swersky, Kevin and Li, Yujia and Welling, Max and Zemel, Richard},
+  journal={arXiv preprint arXiv:1511.00830},
+  year={2015}
+}
+
+@inproceedings{lu2015value,
+  title={Value-Directed Compression of Large-Scale Assignment Problems},
+  author={Lu, Tyler and Boutilier, Craig},
+  booktitle={Twenty-Ninth AAAI Conference on Artificial Intelligence},
+  year={2015}
+}
+
+@inproceedings{yao2017beyond,
+  title={Beyond parity: Fairness objectives for collaborative filtering},
+  author={Yao, Sirui and Huang, Bert},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={2921--2930},
+  year={2017}
+}
+
+@article{nisan2001algorithmic,
+  title={Algorithmic mechanism design},
+  author={Nisan, Noam and Ronen, Amir},
+  journal={Games and Economic behavior},
+  volume={35},
+  number={1-2},
+  pages={166--196},
+  year={2001},
+  publisher={Elsevier}
+}
+
+@inproceedings{bolukbasi2016man,
+  title={Man is to computer programmer as woman is to homemaker? debiasing word embeddings},
+  author={Bolukbasi, Tolga and Chang, Kai-Wei and Zou, James Y and Saligrama, Venkatesh and Kalai, Adam T},
+  booktitle={Advances in neural information processing systems},
+  pages={4349--4357},
+  year={2016}
+}
+
+@inproceedings{corbett2017algorithmic,
+  title={Algorithmic decision making and the cost of fairness},
+  author={Corbett-Davies, Sam and Pierson, Emma and Feller, Avi and Goel, Sharad and Huq, Aziz},
+  booktitle={Proceedings of the 23rd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining},
+  pages={797--806},
+  year={2017},
+  organization={ACM}
+}
+
+@inproceedings{sandholm2015abstraction,
+  title={Abstraction for Solving Large Incomplete-Information Games},
+  author={Sandholm, Tuomas},
+  booktitle={Twenty-Ninth AAAI Conference on Artificial Intelligence},
+  year={2015}
+}
+
+@inproceedings{kroer2018unified,
+  title={A Unified Framework for Extensive-Form Game Abstraction with Bounds},
+  author={Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={612--623},
+  year={2018}
+}
+
+@inproceedings{kroer2016imperfect,
+  title={Imperfect-recall abstractions with bounds in games},
+  author={Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Proceedings of the 2016 ACM Conference on Economics and Computation},
+  pages={459--476},
+  year={2016},
+  organization={ACM}
+}
+
+@article{berk2018fairness,
+  title={Fairness in criminal justice risk assessments: The state of the art},
+  author={Berk, Richard and Heidari, Hoda and Jabbari, Shahin and Kearns, Michael and Roth, Aaron},
+  journal={Sociological Methods \& Research},
+  pages={0049124118782533},
+  year={2018},
+  publisher={Sage Publications Sage CA: Los Angeles, CA}
+}
+
+@inproceedings{kroer2014extensive,
+  title={Extensive-form game abstraction with bounds},
+  author={Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Proceedings of the fifteenth ACM conference on Economics and computation},
+  pages={621--638},
+  year={2014},
+  organization={ACM}
+}
+
+@inproceedings{lanctot2012no,
+  title={No-regret learning in extensive-form games with imperfect recall},
+  author={Lanctot, Marc and Gibson, Richard and Burch, Neil and Zinkevich, Martin and Bowling, Michael},
+  booktitle={Proceedings of the 29th International Conference on Machine Learning},
+  pages={1035--1042},
+  year={2012},
+  organization={Omnipress}
+}
+
+@inproceedings{brown2015hierarchical,
+  title={Hierarchical abstraction, distributed equilibrium computation, and post-processing, with application to a champion no-limit {Texas} hold'em agent},
+  author={Brown, Noam and Ganzfried, Sam and Sandholm, Tuomas},
+  booktitle={Proceedings of the 2015 International Conference on Autonomous Agents and Multiagent Systems},
+  pages={7--15},
+  year={2015},
+  organization={International Foundation for Autonomous Agents and Multiagent Systems}
+}
+
+@article{brown2018superhuman,
+  title={Superhuman {AI} for heads-up no-limit poker: {Libratus} beats top professionals},
+  author={Brown, Noam and Sandholm, Tuomas},
+  journal={Science},
+  volume={359},
+  number={6374},
+  pages={418--424},
+  year={2018},
+  publisher={American Association for the Advancement of Science}
+}
+
+@inproceedings{gilpin2007potential,
+  title={Potential-aware automated abstraction of sequential games, and holistic equilibrium analysis of {Texas} Hold'em poker},
+  author={Gilpin, Andrew and Sandholm, Tuomas and S{\o}rensen, Troels Bjerre},
+  booktitle={Proceedings of the 22nd national conference on Artificial intelligence-Volume 1},
+  pages={50--57},
+  year={2007},
+  organization={AAAI Press}
+}
+
+@inproceedings{ganzfried2014potential,
+  title={Potential-aware imperfect-recall abstraction with earth mover's distance in imperfect-information games},
+  author={Ganzfried, Sam and Sandholm, Tuomas},
+  booktitle={Proceedings of the Twenty-Eighth AAAI Conference on Artificial Intelligence},
+  pages={682--690},
+  year={2014},
+  organization={AAAI Press}
+}
+
+@inproceedings{waugh2009practical,
+  title={A Practical Use of Imperfect Recall.},
+  author={Waugh, Kevin and Zinkevich, Martin and Johanson, Michael and Kan, Morgan and Schnizlein, David and Bowling, Michael H},
+  year={2009},
+  booktitle={SARA},
+}
+
+@inproceedings{walsh2010automated,
+  title={Automated channel abstraction for advertising auctions},
+  author={Walsh, William E and Boutilier, Craig and Sandholm, Tuomas and Shields, Rob and Nemhauser, George and Parkes, David C},
+  booktitle={Proceedings of the Twenty-Fourth AAAI Conference on Artificial Intelligence},
+  pages={887--894},
+  year={2010},
+  organization={AAAI Press}
+}
+
+@inproceedings{peng2016scalable,
+  title={Scalable segment abstraction method for advertising campaign admission and inventory allocation optimization},
+  author={Peng, Fei and Sandholm, Tuomas},
+  booktitle={Proceedings of the Twenty-Fifth International Joint Conference on Artificial Intelligence},
+  pages={655--661},
+  year={2016},
+  organization={AAAI Press}
+}
+
+@article{negishi1960welfare,
+  title={Welfare economics and existence of an equilibrium for a competitive economy},
+  author={Negishi, Takashi},
+  journal={Metroeconomica},
+  volume={12},
+  number={2-3},
+  pages={92--97},
+  year={1960},
+  publisher={Wiley Online Library}
+}
+
+@book{bertsimas1997introduction,
+  title={Introduction to linear optimization},
+  author={Bertsimas, Dimitris and Tsitsiklis, John N},
+  volume={6},
+  year={1997},
+  publisher={Athena scientific Belmont, MA}
+}
+
+@book{boyd2004convex,
+  title={Convex optimization},
+  author={Boyd, Stephen P and Vandenberghe, Lieven},
+  year={2004},
+  publisher={Cambridge university press}
+}
+
+@article{cvxpy,
+  author  = {Steven Diamond and Stephen Boyd},
+  title   = {{CVXPY}: A {P}ython-Embedded Modeling Language for Convex Optimization},
+  journal = {Journal of Machine Learning Research},
+  year    = {2016},
+  volume  = {17},
+  number  = {83},
+  pages   = {1--5},
+}
+
+@article{cvxpy_rewriting,
+  author  = {Akshay Agrawal, Robin Verschueren, Steven Diamond and Stephen Boyd},
+  title   = {A Rewriting System for Convex Optimization Problems},
+  journal = {Journal of Control and Decision},
+  year    = {2018},
+  volume  = {5},
+  number  = {1},
+  pages   = {42--60},
+}
+
+@inproceedings{domahidi2013ecos, 
+   author={Domahidi, A. and Chu, E. and Boyd, S.}, 
+   booktitle={European Control Conference (ECC)}, 
+   title={{ECOS}: {A}n {SOCP} solver for embedded systems}, 
+   year={2013}, pages={3071-3076}
+}
+
+@article{andersen2013cvxopt,
+  title={CVXOPT: A Python package for convex optimization},
+  author={Andersen, M and Dahl, Joachim and Vandenberghe, Lieven},
+  journal={abel.ee.ucla.edu/cvxopt},
+  year={2013}
+}
+
+@article{donoghue2016conic,
+    author       = {B. O'Donoghue and E. Chu and N. Parikh and S. Boyd},
+    title        = {Conic Optimization via Operator Splitting and Homogeneous Self-Dual Embedding},
+    journal      = {Journal of Optimization Theory and Applications},
+    month        = {June},
+    year         = {2016},
+    volume       = {169},
+    number       = {3},
+    pages        = {1042-1068},
+    url          = {http://stanford.edu/~boyd/papers/scs.html},
+}
+
+@article{nesterov2018computation,
+  title={Computation of Fisher--Gale Equilibrium by Auction},
+  author={Nesterov, Yurii and Shikhman, Vladimir},
+  journal={Journal of the Operations Research Society of China},
+  volume={6},
+  number={3},
+  pages={349--389},
+  year={2018},
+  publisher={Springer}
+}
+
+@article{chambolle2011first,
+  title={A first-order primal-dual algorithm for convex problems with applications to imaging},
+  author={Chambolle, Antonin and Pock, Thomas},
+  journal={Journal of mathematical imaging and vision},
+  volume={40},
+  number={1},
+  pages={120--145},
+  year={2011},
+  publisher={Springer}
+}
+
+@article{chambolle2016ergodic,
+  title={On the ergodic convergence rates of a first-order primal--dual algorithm},
+  author={Chambolle, Antonin and Pock, Thomas},
+  journal={Mathematical Programming},
+  volume={159},
+  number={1-2},
+  pages={253--287},
+  year={2016},
+  publisher={Springer}
+}
+
+@article{cole2018approximating,
+  title={Approximating the {Nash} Social Welfare with Indivisible Items},
+  author={Cole, Richard and Gkatzelis, Vasilis},
+  journal={SIAM Journal on Computing},
+  volume={47},
+  number={3},
+  pages={1211--1236},
+  year={2018},
+  publisher={SIAM}
+}
+
+@inproceedings{ChaudhuryGMM22,
+  author       = {Bhaskar Ray Chaudhury and
+                  Jugal Garg and
+                  Peter McGlaughlin and
+                  Ruta Mehta},
+  title        = {Competitive Equilibrium with Chores: Combinatorial Algorithm and Hardness},
+  booktitle    = {{EC}},
+  pages        = {1106--1107},
+  publisher    = {{ACM}},
+  year         = {2022}
+}
+
+@article{BogomolnaiaMSY17,
+  author    = {Anna Bogomolnaia and
+               Herv{\'{e}} Moulin and
+               Fedor Sandomirskiy and
+               Elena Yanovskaia},
+  title     = {Competitive Division of a Mixed Manna},
+  journal   = {Econometrica},
+  volume    = {85},
+  number    = {6},
+  pages     = {1847--1871},
+  year      = {2017}
+}
+
+@article{DevanurGV13,
+  author       = {Nikhil R. Devanur and
+                  Jugal Garg and
+                  L{\'{a}}szl{\'{o}} A. V{\'{e}}gh},
+  title        = {A Rational Convex Program for Linear Arrow-Debreu Markets},
+  journal      = {CoRR},
+  volume       = {abs/1307.8037},
+  year         = {2013}
+}
+
+@InProceedings{DuanGM16,
+  author = 	 {Ran Duan and Jugal Garg and Kurt Mehlhorn},
+  title = 	 {An Improved Combinatorial Polynomial Algorithm for the Linear {A}rrow-{D}ebreu Market},
+  booktitle =    PROC # {27th } # SODA,
+  pages =        {90--106},
+  year = 	 2016
+}
+
+@inproceedings{ChaudhuryM18,
+	author    = {Bhaskar Ray Chaudhury and
+	Kurt Mehlhorn},
+	title     = {Combinatorial Algorithms for General Linear Arrow-Debreu Markets},
+	booktitle = {{FSTTCS}},
+	series    = {LIPIcs},
+	volume    = {122},
+	pages     = {26:1--26:16},
+	publisher = {Schloss Dagstuhl - Leibniz-Zentrum f{\"{u}}r Informatik},
+	year      = {2018}
+}
+
+@article{Vazirani12,
+  author       = {Vijay V. Vazirani},
+  title        = {The notion of a rational convex program, and an algorithm for the
+                  arrow-debreu Nash bargaining game},
+  journal      = {J. {ACM}},
+  volume       = {59},
+  number       = {2},
+  pages        = {7:1--7:36},
+  year         = {2012}
+}
+
+@article{Ye08,
+  author    = {Yinyu Ye},
+  title     = {A path to the {A}rrow-{D}ebreu competitive market equilibrium},
+  journal   = MP,
+  volume    = 111,
+  number    = {1-2},
+  pages     = {315--348},
+  year      = 2008,
+}
+
+@inproceedings{birnbaum2011distributed,
+  title={Distributed algorithms via gradient descent for fisher markets},
+  author={Birnbaum, Benjamin and Devanur, Nikhil R and Xiao, Lin},
+  booktitle={Proceedings of the 12th ACM conference on Electronic commerce},
+  pages={127--136},
+  year={2011},
+  organization={ACM}
+}
+
+@article{shmyrev2009algorithm,
+  title={An algorithm for finding equilibrium in the linear exchange model with fixed budgets},
+  author={Shmyrev, Vadim I},
+  journal={Journal of Applied and Industrial Mathematics},
+  volume={3},
+  number={4},
+  pages={505},
+  year={2009},
+  publisher={Springer}
+}
+
+@inproceedings{devanur2002market,
+  title={Market equilibrium via a primal-dual-type algorithm},
+  author={Devanur, Nikhil R and Papadimitriou, Christos H and Saberi, Amin and Vazirani, Vijay V},
+  booktitle={Foundations of Computer Science, 2002. Proceedings. The 43rd Annual IEEE Symposium on},
+  pages={389--395},
+  year={2002},
+  organization={IEEE}
+}
+
+@article{DuanM15,
+	author    = {Ran Duan and
+	Kurt Mehlhorn},
+	title     = {A combinatorial polynomial algorithm for the linear Arrow-Debreu market},
+	journal   = {Inf. Comput.},
+	volume    = {243},
+	pages     = {112--132},
+	year      = {2015}
+}
+
+@InProceedings{Orlin10,
+  author       = {James Orlin},
+  title        = {Improved algorithms for computing {F}isher's market clearing prices},
+  booktitle    = PROC # {42nd } # STOC,
+  pages        = {291--300},
+  year         = 2010   
+}
+
+@article{devanur2008market,
+  title={Market equilibrium via a primal--dual algorithm for a convex program},
+  author={Devanur, Nikhil R and Papadimitriou, Christos H and Saberi, Amin and Vazirani, Vijay V},
+  journal={Journal of the ACM (JACM)},
+  volume={55},
+  number={5},
+  pages={1--18},
+  year={2008},
+  publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{garg2018markets,
+  title={Markets for Public Decision-making},
+  author={Garg, Nikhil and Goel, Ashish and Plaut, Benjamin},
+  booktitle={International Conference on Web and Internet Economics},
+  year={2018}
+}
+
+@article{goldberg2001eigentaste,
+  title={Eigentaste: A constant time collaborative filtering algorithm},
+  author={Goldberg, Ken and Roeder, Theresa and Gupta, Dhruv and Perkins, Chris},
+  journal={information retrieval},
+  volume={4},
+  number={2},
+  pages={133--151},
+  year={2001},
+  publisher={Springer}
+}
+
+@article{harper2016movielens,
+  title={The movielens datasets: History and context},
+  author={Harper, F Maxwell and Konstan, Joseph A},
+  journal={Acm transactions on interactive intelligent systems (tiis)},
+  volume={5},
+  number={4},
+  pages={19},
+  year={2016},
+  publisher={ACM}
+}
+
+@inproceedings{balkanski2014simultaneous,
+  title={Simultaneous Cake Cutting.},
+  author={Balkanski, Eric and Br{\^a}nzei, Simina and Kurokawa, David and Procaccia, Ariel D},
+  booktitle={AAAI},
+  pages={566--572},
+  year={2014}
+}
+
+@inproceedings{aziz2016discrete,
+  title={A discrete and bounded envy-free cake cutting protocol for any number of agents},
+  author={Aziz, Haris and Mackenzie, Simon},
+  booktitle={Foundations of Computer Science (FOCS), 2016 IEEE 57th Annual Symposium on},
+  pages={416--427},
+  year={2016},
+  organization={IEEE}
+}
+
+@article{edmonds2011cake,
+  title={Cake cutting really is not a piece of cake},
+  author={Edmonds, Jeff and Pruhs, Kirk},
+  journal={ACM Transactions on Algorithms (TALG)},
+  volume={7},
+  number={4},
+  pages={51},
+  year={2011},
+  publisher={ACM}
+}
+
+@article{jackson1997approximately,
+  title={Approximately competitive equilibria in large finite economies},
+  author={Jackson, Matthew O and Manelli, Alejandro M},
+  journal={Journal of Economic Theory},
+  volume={77},
+  number={2},
+  pages={354--376},
+  year={1997},
+  publisher={Elsevier}
+}
+
+@article{roberts1976incentives,
+  title={The incentives for price-taking behavior in large exchange economies},
+  author={Roberts, Donald John and Postlewaite, Andrew},
+  journal={Econometrica: Journal of the Econometric Society},
+  pages={115--127},
+  year={1976},
+  publisher={JSTOR}
+}
+
+@article{steele1986efron,
+  title={An Efron-Stein inequality for nonsymmetric statistics},
+  author={Steele, J Michael and others},
+  journal={The Annals of Statistics},
+  volume={14},
+  number={2},
+  pages={753--758},
+  year={1986},
+  publisher={Institute of Mathematical Statistics}
+}
+
+@inproceedings{peysakhovich2019robust,
+ author = {Alex Peysakhovich and Christian Kroer and Adam Lerer},
+ title = {Robust Multi-agent Counterfactual Prediction},
+ booktitle={Advances in Neural Information Processing Systems},
+ url = {https://arxiv.org/abs/1904.02235},
+ year = {2019}
+}
+
+@inproceedings{archibald2009analysis,
+  title={Analysis of a winning computational billiards player},
+  author={Archibald, Christopher and Altman, Alon and Shoham, Yoav},
+  booktitle={Twenty-First International Joint Conference on Artificial Intelligence},
+  year={2009}
+}
+
+@inproceedings{lisy2016counterfactual,
+  title={Counterfactual regret minimization in sequential security games},
+  author={Lisy, Viliam and Davis, Trevor and Bowling, Michael},
+  booktitle={Thirtieth AAAI Conference on Artificial Intelligence},
+  year={2016}
+}
+
+@inproceedings{munoz2013introducing,
+  title={Introducing alarms in adversarial patrolling games},
+  author={Munoz de Cote, Enrique and Stranders, Ruben and Basilico, Nicola and Gatti, Nicola and Jennings, Nick},
+  booktitle={Proceedings of the 2013 international conference on Autonomous agents and multi-agent systems},
+  pages={1275--1276},
+  year={2013},
+  organization={International Foundation for Autonomous Agents and Multiagent Systems}
+}
+
+@inproceedings{chen2012tractable,
+  title={Tractable objectives for robust policy optimization},
+  author={Chen, Katherine and Bowling, Michael},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={2069--2077},
+  year={2012}
+}
+
+@inproceedings{debruhl2014power,
+  title={Power napping with loud neighbors: optimal energy-constrained jamming and anti-jamming},
+  author={DeBruhl, Bruce and Kroer, Christian and Datta, Anupam and Sandholm, Tuomas and Tague, Patrick},
+  booktitle={Proceedings of the 2014 ACM conference on Security and privacy in wireless \& mobile networks},
+  pages={117--128},
+  year={2014},
+  organization={ACM}
+}
+
+@article{sandholm2010state,
+  title={The state of solving large incomplete-information games, and application to poker},
+  author={Sandholm, Tuomas},
+  journal={AI Magazine},
+  volume={31},
+  number={4},
+  pages={13--32},
+  year={2010}
+}
+
+@article{gilpin2007lossless,
+  title={Lossless abstraction of imperfect information games},
+  author={Gilpin, Andrew and Sandholm, Tuomas},
+  journal={Journal of the ACM (JACM)},
+  volume={54},
+  number={5},
+  pages={25},
+  year={2007},
+  publisher={ACM}
+}
+
+@inproceedings{jiang2011polynomial,
+  title={Polynomial-time computation of exact correlated equilibrium in compact games},
+  author={Jiang, Albert Xin and Leyton-Brown, Kevin},
+  booktitle={Proceedings of the 12th ACM conference on Electronic commerce},
+  pages={119--126},
+  year={2011},
+  organization={ACM}
+}
+
+@inproceedings{lipton2003playing,
+  title={Playing large games using simple strategies},
+  author={Lipton, Richard J and Markakis, Evangelos and Mehta, Aranyak},
+  booktitle={Proceedings of the 4th ACM conference on Electronic commerce},
+  pages={36--41},
+  year={2003},
+  organization={ACM}
+}
+
+@article{littman2005polynomial,
+  title={A polynomial-time {Nash} equilibrium algorithm for repeated games},
+  author={Littman, Michael L and Stone, Peter},
+  journal={Decision Support Systems},
+  volume={39},
+  number={1},
+  pages={55--66},
+  year={2005},
+  publisher={Elsevier}
+}
+
+@inproceedings{zinkevich2007regret,
+  title={Regret minimization in games with incomplete information},
+  author={Zinkevich, Martin and Johanson, Michael and Bowling, Michael and Piccione, Carmelo},
+  booktitle={Advances in neural information processing systems},
+  pages={1729--1736},
+  year={2007}
+}
+
+@article{koller1996efficient,
+  title={Efficient computation of equilibria for extensive two-person games},
+  author={Koller, Daphne and Megiddo, Nimrod and {von} Stengel, Bernhard},
+  journal={Games and economic behavior},
+  volume={14},
+  number={2},
+  pages={247--259},
+  year={1996},
+  publisher={Elsevier}
+}
+
+@article{daskalakis2015near,
+  title={Near-optimal no-regret algorithms for zero-sum games},
+  author={Daskalakis, Constantinos and Deckelbaum, Alan and Kim, Anthony},
+  journal={Games and Economic Behavior},
+  volume={92},
+  pages={327--348},
+  year={2015},
+  publisher={Elsevier}
+}
+
+@article{stengel1996efficient,
+  title={Efficient computation of behavior strategies},
+  author={{von} Stengel, Bernhard},
+  journal={Games and Economic Behavior},
+  volume={14},
+  number={2},
+  pages={220--246},
+  year={1996},
+  publisher={Elsevier}
+}
+
+@article{brown2019superhuman,
+  title={Superhuman {AI} for multiplayer poker},
+  author={Brown, Noam and Sandholm, Tuomas},
+  journal={Science},
+  volume={365},
+  number={6456},
+  pages={885--890},
+  year={2019},
+  publisher={American Association for the Advancement of Science}
+}
+
+@article{bowling2015heads,
+  title={Heads-up limit hold’em poker is solved},
+  author={Bowling, Michael and Burch, Neil and Johanson, Michael and Tammelin, Oskari},
+  journal={Science},
+  volume={347},
+  number={6218},
+  pages={145--149},
+  year={2015},
+  publisher={American Association for the Advancement of Science}
+}
+
+@inproceedings{fang2015security,
+  title={When security games go green: Designing defender strategies to prevent poaching and illegal fishing},
+  author={Fang, Fei and Stone, Peter and Tambe, Milind},
+  booktitle={Twenty-Fourth International Joint Conference on Artificial Intelligence},
+  year={2015}
+}
+
+@article{fang2017paws,
+  title={PAWS—A Deployed Game-Theoretic Application to Combat Poaching},
+  author={Fang, Fei and Nguyen, Thanh H and Pickles, Rob and Lam, Wai Y and Clements, Gopalasamy R and An, Bo and Singh, Amandeep and Schwedock, Brian C and Tambe, Milin and Lemieux, Andrew},
+  journal={AI Magazine},
+  volume={38},
+  number={1},
+  pages={23--36},
+  year={2017}
+}
+
+@inproceedings{ganzfried2017learning,
+  title={Learning Human-Understandable Strategies},
+  author={Ganzfried, Sam and Yusuf, Farzana},
+  booktitle={Workshops at the Thirty-First AAAI Conference on Artificial Intelligence},
+  year={2017}
+}
+
+@article{ganzfried2019most,
+  title={Most Important Fundamental Rule of Poker Strategy},
+  author={Ganzfried, Sam and Chiswick, Max},
+  journal={arXiv preprint arXiv:1906.09895},
+  year={2019}
+}
+
+@phdthesis{kroer2018thesis,
+  title={Large-Scale Sequential Imperfect-Information Game Solving: Theoretical Foundations and Practical Algorithms with Guarantees},
+  author={Kroer, Christian},
+  year={2018},
+  school={Carnegie Mellon University}
+}
+
+@inproceedings{kroer2015faster,
+  title={Faster first-order methods for extensive-form game solving},
+  author={Kroer, Christian and Waugh, Kevin and Kilin{\c{c}}-Karzan, Fatma and Sandholm, Tuomas},
+  booktitle={Proceedings of the Sixteenth ACM Conference on Economics and Computation},
+  pages={817--834},
+  year={2015},
+  organization={ACM}
+}
+
+@inproceedings{kroer2017theoretical,
+  title={Theoretical and Practical Advances on Smoothing for Extensive-Form Games},
+  author={Kroer, Christian and Waugh, Kevin and Kilinc-Karzan, Fatma and Sandholm, Tuomas},
+  booktitle={Proceedings of the 2017 ACM Conference on Economics and Computation},
+  pages={693--693},
+  year={2017},
+  organization={ACM}
+}
+
+@article{kroer2020faster,
+  title={Faster algorithms for extensive-form game solving via improved smoothing functions},
+  author={Kroer, Christian and Waugh, Kevin and K{\i}l{\i}n{\c{c}}-Karzan, Fatma and Sandholm, Tuomas},
+  journal={Mathematical Programming},
+  pages={1--33},
+  year=2020,
+  publisher={Springer}
+}
+
+@inproceedings{kroer2018solving,
+  title={Solving large sequential games with the excessive gap technique},
+  author={Kroer, Christian and Farina, Gabriele and Sandholm, Tuomas},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={864--874},
+  year={2018}
+}
+
+@inproceedings{tammelin2015solving,
+  title={Solving heads-up limit {Texas} Hold'em},
+  author={Tammelin, Oskari and Burch, Neil and Johanson, Michael and Bowling, Michael},
+  booktitle={Twenty-Fourth International Joint Conference on Artificial Intelligence},
+  year={2015}
+}
+
+@inproceedings{brown2019solving,
+  title={Solving imperfect-information games via discounted regret minimization},
+  author={Brown, Noam and Sandholm, Tuomas},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={33},
+  pages={1829--1836},
+  year={2019}
+}
+
+@inproceedings{farina2017regret,
+  title={Regret minimization in behaviorally-constrained zero-sum games},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Proceedings of the 34th International Conference on Machine Learning-Volume 70},
+  pages={1107--1116},
+  year={2017},
+  organization={JMLR. org}
+}
+
+@inproceedings{farina2019regret,
+  title={Regret Circuits: Composability of Regret Minimizers},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={International Conference on Machine Learning},
+  pages={1863--1872},
+  year={2019}
+}
+
+@inproceedings{farina2019online,
+  title={Online convex optimization for sequential decision processes and extensive-form games},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={33},
+  pages={1917--1925},
+  year={2019}
+}
+
+@inproceedings{farina2019optimistic,
+  title={Optimistic Regret Minimization for Extensive-Form Games via Dilated Distance-Generating Functions},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={5222--5232},
+  year={2019}
+}
+
+@inproceedings{farina2019stable,
+  title={Stable-Predictive Optimistic Counterfactual Regret Minimization},
+  author={Farina, Gabriele and Kroer, Christian and Brown, Noam and Sandholm, Tuomas},
+  booktitle={International Conference on Machine Learning},
+  year={2019}
+}
+
+
+@inproceedings{murray2020robust,
+  title={Robust Market Equilibria with Uncertain Preferences},
+  author={Murray, Riley and Kroer, Christian and Peysakhovich, Alex and Shah, Parikshit},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2020}
+}
+
+@article{kroer2019first,
+  title={First-Order Methods with Increasing Iterate Averaging for Solving Saddle-Point Problems},
+  author={Kroer, Christian},
+  journal={arXiv preprint arXiv:1903.10646},
+  year={2019}
+}
+
+@inproceedings{gao2021increasing,
+  title={Increasing Iterate Averaging for Solving Saddle-Point Problems},
+  author={Gao, Yuan and Kroer, Christian and Goldfarb, Donald},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2021}
+}
+
+@article{gao2020first,
+  title={First-order methods for large-scale market equilibrium computation},
+  author={Gao, Yuan and Kroer, Christian},
+  journal={Advances in Neural Information Processing Systems},
+  volume={33},
+  year={2020}
+}
+
+@inproceedings{gao2021infinite,
+  title={Infinite-Dimensional Fisher Markets: Equilibrium, Duality and Optimization},
+  author={Gao, Yuan and Kroer, Christian},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2021}
+}
+
+@misc{gao2021infinite_arxiv,
+      title={Infinite-Dimensional Fisher Markets and Tractable Fair Division}, 
+      author={Yuan Gao and Christian Kroer},
+      year={2021},
+      eprint={2010.03025},
+      archivePrefix={arXiv},
+      primaryClass={cs.GT}
+}
+
+@article{gao2022infinite,
+      title={Infinite-Dimensional Fisher Markets and Tractable Fair Division}, 
+      author={Yuan Gao and Christian Kroer},
+      journal={Operations Research (forthcoming)},
+      year={2022}
+}
+
+@book{roughgarden2016twenty,
+  title={Twenty lectures on algorithmic game theory},
+  author={Roughgarden, Tim},
+  year={2016},
+  publisher={Cambridge University Press}
+}
+
+@article{hoda2010smoothing,
+  title={Smoothing techniques for computing {Nash} equilibria of sequential games},
+  author={Hoda, Samid and Gilpin, Andrew and Pena, Javier and Sandholm, Tuomas},
+  journal={Mathematics of Operations Research},
+  volume={35},
+  number={2},
+  pages={494--512},
+  year={2010},
+  publisher={INFORMS}
+}
+
+@book{tambe2011security,
+  title={Security and game theory: algorithms, deployed systems, lessons learned},
+  author={Tambe, Milind},
+  year={2011},
+  publisher={Cambridge university press}
+}
+
+@inproceedings{xu2016mysteries,
+  title={The mysteries of security games: Equilibrium computation becomes combinatorial algorithm design},
+  author={Xu, Haifeng},
+  booktitle={Proceedings of the 2016 ACM Conference on Economics and Computation},
+  pages={497--514},
+  year={2016},
+  organization={ACM}
+}
+
+@article{budish2016course,
+  title={Course match: A large-scale implementation of approximate competitive equilibrium from equal incomes for combinatorial allocation},
+  author={Budish, Eric and Cachon, G{\'e}rard P and Kessler, Judd B and Othman, Abraham},
+  journal={Operations Research},
+  volume={65},
+  number={2},
+  pages={314--336},
+  year={2016},
+  publisher={INFORMS}
+}
+
+@article{daskalakis2009complexity,
+  title={The complexity of computing a {Nash} equilibrium},
+  author={Daskalakis, Constantinos and Goldberg, Paul W and Papadimitriou, Christos H},
+  journal={SIAM Journal on Computing},
+  volume={39},
+  number={1},
+  pages={195--259},
+  year={2009},
+  publisher={SIAM}
+}
+
+@article{gilboa1989nash,
+  title={Nash and correlated equilibria: Some complexity considerations},
+  author={Gilboa, Itzhak and Zemel, Eitan},
+  journal={Games and Economic Behavior},
+  volume={1},
+  number={1},
+  pages={80--93},
+  year={1989},
+  publisher={Elsevier}
+}
+
+@article{conitzer2008new,
+  title={New complexity results about {Nash} equilibria},
+  author={Conitzer, Vincent and Sandholm, Tuomas},
+  journal={Games and Economic Behavior},
+  volume={63},
+  number={2},
+  pages={621--641},
+  year={2008},
+  publisher={Elsevier}
+}
+
+@article{sion1958general,
+  title={On general minimax theorems.},
+  author={Sion, Maurice and others},
+  journal={Pacific Journal of mathematics},
+  volume={8},
+  number={1},
+  pages={171--176},
+  year={1958},
+  publisher={Pacific Journal of Mathematics}
+}
+
+@article{hazan2016introduction,
+  title={Introduction to online convex optimization},
+  author={Hazan, Elad and others},
+  journal={Foundations and Trends{\textregistered} in Optimization},
+  volume={2},
+  number={3-4},
+  pages={157--325},
+  year={2016},
+  publisher={Now Publishers, Inc.}
+}
+
+@article{beck2003mirror,
+  title={Mirror descent and nonlinear projected subgradient methods for convex optimization},
+  author={Beck, Amir and Teboulle, Marc},
+  journal={Operations Research Letters},
+  volume={31},
+  number={3},
+  pages={167--175},
+  year={2003},
+  publisher={Elsevier}
+}
+
+@article{nemirovsky1983problem,
+  title={Problem complexity and method efficiency in optimization.},
+  author={Nemirovsky, Arkadi and Yudin, David Borisovich},
+  year={1983}
+}
+
+@article{orabona2019modern,
+  title={A Modern Introduction to Online Learning},
+  author={Orabona, Francesco},
+  journal={arXiv preprint arXiv:1912.13213},
+  year={2019}
+}
+
+@book{beck2017first,
+  title={First-order methods in optimization},
+  author={Beck, Amir},
+  volume={25},
+  year={2017},
+  publisher={SIAM}
+}
+
+@article{nesterov2009primal,
+  title={Primal-dual subgradient methods for convex problems},
+  author={Nesterov, Yurii},
+  journal={Mathematical programming},
+  volume={120},
+  number={1},
+  pages={221--259},
+  year={2009},
+  publisher={Springer}
+}
+
+@article{bubeck2015convex,
+  title={Convex optimization: Algorithms and complexity},
+  author={Bubeck, S{\'e}bastien and others},
+  journal={Foundations and Trends{\textregistered} in Machine Learning},
+  volume={8},
+  number={3-4},
+  pages={231--357},
+  year={2015},
+  publisher={Now Publishers, Inc.}
+}
+
+@article{blackwell1956analog,
+  title={An analog of the minimax theorem for vector payoffs.},
+  author={Blackwell, David},
+  journal={Pacific Journal of Mathematics},
+  volume={6},
+  number={1},
+  pages={1--8},
+  year={1956},
+  publisher={Pacific Journal of Mathematics}
+}
+
+@article{tammelin2014solving,
+  title={Solving large imperfect information games using {CFR+}},
+  author={Tammelin, Oskari},
+  journal={arXiv preprint arXiv:1407.5042},
+  year={2014}
+}
+
+@article{hart2000simple,
+  title={A simple adaptive procedure leading to correlated equilibrium},
+  author={Hart, Sergiu and Mas-Colell, Andreu},
+  journal={Econometrica},
+  volume={68},
+  number={5},
+  pages={1127--1150},
+  year={2000},
+  publisher={Wiley Online Library}
+}
+
+@article{kroer2020ieor8100,
+  title={IEOR8100: Economics, AI, and Optimization Lecture 1: Introduction and Examples},
+  author={Kroer, Christian},
+  year={2020}
+}
+
+@misc{johari2007,
+  author        = {Ramesh Johari},
+  title         = {{MS\&E 336:} Dynamics and Learning in Games},
+  year          = {2007},
+  publisher={Stanford University}
+}
+
+@book{young2004strategic,
+  title={Strategic learning and its limits},
+  author={Young, H Peyton},
+  year={2004},
+  publisher={OUP Oxford}
+}
+
+@article{burch2019revisiting,
+  title={Revisiting cfr+ and alternating updates},
+  author={Burch, Neil and Moravcik, Matej and Schmid, Martin},
+  journal={Journal of Artificial Intelligence Research},
+  volume={64},
+  pages={429--443},
+  year={2019}
+}
+
+@inproceedings{lanctot2009monte,
+  title={Monte {Carlo} sampling for regret minimization in extensive games},
+  author={Lanctot, Marc and Waugh, Kevin and Zinkevich, Martin and Bowling, Michael},
+  booktitle={Advances in neural information processing systems},
+  pages={1078--1086},
+  year={2009}
+}
+
+@article{romanovskii1962reduction,
+  title={REDUCTION OF A GAME WITH FULL MEMORY TO A MATRIX GAME},
+  author={Romanovskii, IV},
+  journal={Doklady Akademii Nauk SSSR},
+  volume={144},
+  number={1},
+  pages={62--+},
+  year={1962},
+  publisher={MEZHDUNARODNAYA KNIGA 39 DIMITROVA UL., MOSCOW, 113095, RUSSIA}
+}
+
+@inproceedings{farina2020stochastic,
+  title={Stochastic Regret Minimization in Extensive-Form Games},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={International Conference on Machine Learning},
+  year={2020},
+  organization={PMLR}
+}
+
+@book{von1934marktform,
+  title={Marktform und gleichgewicht},
+  author={von Stackelberg, Heinrich},
+  year={1934},
+  publisher={J. springer}
+}
+
+@article{von2010leadership,
+  title={Leadership games with convex strategy sets},
+  author={von Stengel, Bernhard and Zamir, Shmuel},
+  journal={Games and Economic Behavior},
+  volume={69},
+  number={2},
+  pages={446--457},
+  year={2010},
+  publisher={Elsevier}
+}
+
+@inproceedings{conitzer2006computing,
+  title={Computing the optimal strategy to commit to},
+  author={Conitzer, Vincent and Sandholm, Tuomas},
+  booktitle={Proceedings of the 7th ACM conference on Electronic commerce},
+  pages={82--90},
+  year={2006}
+}
+
+@inproceedings{brown2016one,
+  title={One size does not fit all: A game-theoretic approach for dynamically and effectively screening for threats},
+  author={Brown, Matthew and Sinha, Arunesh and Schlenker, Aaron and Tambe, Milind},
+  booktitle={Thirtieth AAAI Conference on Artificial Intelligence},
+  year={2016}
+}
+
+@inproceedings{ganzfried2015endgame,
+  title={Endgame Solving in Large Imperfect-Information Games},
+  author={Ganzfried, Sam and Sandholm, Tuomas},
+  booktitle={Proceedings of the 2015 International Conference on Autonomous Agents and Multiagent Systems},
+  pages={37--45},
+  year={2015}
+}
+
+@inproceedings{burch2014solving,
+  title={Solving imperfect information games using decomposition},
+  author={Burch, Neil and Johanson, Michael and Bowling, Michael},
+  booktitle={Twenty-Eighth AAAI Conference on Artificial Intelligence},
+  year={2014}
+}
+
+@inproceedings{moravcik2016refining,
+  title={Refining subgames in large imperfect information games},
+  author={Moravcik, Matej and Schmid, Martin and Ha, Karel and Hladik, Milan and Gaukrodger, Stephen J},
+  booktitle={Thirtieth AAAI Conference on Artificial Intelligence},
+  year={2016}
+}
+
+@inproceedings{paruchuri2008playing,
+  title={Playing games for security: An efficient exact algorithm for solving Bayesian Stackelberg games},
+  author={Paruchuri, Praveen and Pearce, Jonathan P and Marecki, Janusz and Tambe, Milind and Ordonez, Fernando and Kraus, Sarit},
+  booktitle={Proceedings of the 7th international joint conference on Autonomous agents and multiagent systems-Volume 2},
+  pages={895--902},
+  year={2008},
+  organization={International Foundation for Autonomous Agents and Multiagent Systems}
+}
+
+@inproceedings{pita2008deployed,
+  title={Deployed ARMOR protection: the application of a game theoretic model for security at the Los Angeles International Airport.},
+  author={Pita, James and Jain, Manish and Marecki, Janusz and Ord{\'o}{\~n}ez, Fernando and Portway, Christopher and Tambe, Milind and Western, Craig and Paruchuri, Praveen and Kraus, Sarit},
+  year={2008}
+}
+
+@inproceedings{sinha2018stackelberg,
+  title={Stackelberg security games: Looking beyond a decade of success},
+  author={Sinha, Arunesh and Fang, Fei and An, Bo and Kiekintveld, Christopher and Tambe, Milind},
+  year={2018},
+  organization={IJCAI}
+}
+
+@inproceedings{brown2017safe,
+  title={Safe and nested subgame solving for imperfect-information games},
+  author={Brown, Noam and Sandholm, Tuomas},
+  booktitle={Advances in neural information processing systems},
+  pages={689--699},
+  year={2017}
+}
+
+@inproceedings{brown2018depth,
+  title={Depth-limited solving for imperfect-information games},
+  author={Brown, Noam and Sandholm, Tuomas and Amos, Brandon},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={7663--7674},
+  year={2018}
+}
+
+@inproceedings{kiekintveld2009computing,
+  title={Computing optimal randomized resource allocations for massive security games},
+  author={Kiekintveld, Christopher and Jain, Manish and Tsai, Jason and Pita, James and Ord{\'o}{\~n}ez, Fernando and Tambe, Milind},
+  booktitle={Proceedings of The 8th International Conference on Autonomous Agents and Multiagent Systems-Volume 1},
+  pages={689--696},
+  year={2009}
+}
+
+@inproceedings{korzhyk2010complexity,
+  title={Complexity of computing optimal stackelberg strategies in security resource allocation games},
+  author={Korzhyk, Dmytro and Conitzer, Vincent and Parr, Ronald},
+  booktitle={Twenty-Fourth AAAI Conference on Artificial Intelligence},
+  year={2010}
+}
+
+@article{kroer2019scalable,
+  title={Scalable Fair Division for'At Most One'Preferences},
+  author={Kroer, Christian and Peysakhovich, Alexander},
+  journal={arXiv preprint arXiv:1909.10925},
+  year={2019}
+}
+
+@inproceedings{borgs2005multi,
+  title={Multi-unit auctions with budget-constrained bidders},
+  author={Borgs, Christian and Chayes, Jennifer and Immorlica, Nicole and Mahdian, Mohammad and Saberi, Amin},
+  booktitle={Proceedings of the 6th ACM conference on Electronic commerce},
+  pages={44--51},
+  year={2005}
+}
+
+@inproceedings{borgs2007dynamics,
+  title={Dynamics of bid optimization in online advertisement auctions},
+  author={Borgs, Christian and Chayes, Jennifer and Immorlica, Nicole and Jain, Kamal and Etesami, Omid and Mahdian, Mohammad},
+  booktitle={Proceedings of the 16th international conference on World Wide Web},
+  pages={531--540},
+  year={2007}
+}
+
+@article{eisenberg1961aggregation,
+  title={Aggregation of utility functions},
+  author={Eisenberg, Edmund},
+  journal={Management Science},
+  volume={7},
+  number={4},
+  pages={337--350},
+  year={1961},
+  publisher={INFORMS}
+}
+
+@article{mosek2010mosek,
+  title={The MOSEK optimization software},
+  author={Mosek, APS},
+  journal={Online at http://www. mosek. com},
+  volume={54},
+  number={2-1},
+  pages={5},
+  year={2010}
+}
+
+@article{cheung2019tatonnement,
+  title={Tatonnement beyond gross substitutes? Gradient descent to the rescue},
+  author={Cheung, Yun Kuen and Cole, Richard and Devanur, Nikhil R},
+  journal={Games and Economic Behavior},
+  year={2019},
+  publisher={Elsevier}
+}
+
+@article{bei2019ascending,
+  title={Ascending-price algorithms for unknown markets},
+  author={Bei, Xiaohui and Garg, Jugal and Hoefer, Martin},
+  journal={ACM Transactions on Algorithms (TALG)},
+  volume={15},
+  number={3},
+  pages={1--33},
+  year={2019},
+  publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{cole2008fast,
+  title={Fast-converging tatonnement algorithms for one-time and ongoing market problems},
+  author={Cole, Richard and Fleischer, Lisa},
+  booktitle={Proceedings of the fortieth annual ACM symposium on Theory of computing},
+  pages={315--324},
+  year={2008}
+}
+
+@inproceedings{ghodsi2011dominant,
+  title={Dominant Resource Fairness: Fair Allocation of Multiple Resource Types.},
+  author={Ghodsi, Ali and Zaharia, Matei and Hindman, Benjamin and Konwinski, Andy and Shenker, Scott and Stoica, Ion},
+  booktitle={Nsdi},
+  volume={11},
+  number={2011},
+  pages={24--24},
+  year={2011}
+}
+
+@article{parkes2015beyond,
+  title={Beyond dominant resource fairness: Extensions, limitations, and indivisibilities},
+  author={Parkes, David C and Procaccia, Ariel D and Shah, Nisarg},
+  journal={ACM Transactions on Economics and Computation (TEAC)},
+  volume={3},
+  number={1},
+  pages={1--22},
+  year={2015},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{kash2014no,
+  title={No agent left behind: Dynamic fair division of multiple resources},
+  author={Kash, Ian and Procaccia, Ariel D and Shah, Nisarg},
+  journal={Journal of Artificial Intelligence Research},
+  volume={51},
+  pages={579--603},
+  year={2014}
+}
+
+@article{edelman2007strategic,
+  title={Strategic bidder behavior in sponsored search auctions},
+  author={Edelman, Benjamin and Ostrovsky, Michael},
+  journal={Decision support systems},
+  volume={43},
+  number={1},
+  pages={192--198},
+  year={2007},
+  publisher={Elsevier}
+}
+
+@book{krishna2009auction,
+  title={Auction theory},
+  author={Krishna, Vijay},
+  year={2009},
+  publisher={Academic press}
+}
+
+@article{edelman2007internet,
+  title={Internet advertising and the generalized second-price auction: Selling billions of dollars worth of keywords},
+  author={Edelman, Benjamin and Ostrovsky, Michael and Schwarz, Michael},
+  journal={American economic review},
+  volume={97},
+  number={1},
+  pages={242--259},
+  year={2007}
+}
+
+@article{vickrey1961counterspeculation,
+  title={Counterspeculation, auctions, and competitive sealed tenders},
+  author={Vickrey, William},
+  journal={The Journal of finance},
+  volume={16},
+  number={1},
+  pages={8--37},
+  year={1961},
+  publisher={Wiley Online Library}
+}
+
+@article{balseiro2019learning,
+  title={Learning in repeated auctions with budgets: Regret minimization and equilibrium},
+  author={Balseiro, Santiago R and Gur, Yonatan},
+  journal={Management Science},
+  volume={65},
+  number={9},
+  pages={3952--3968},
+  year={2019},
+  publisher={INFORMS}
+}
+
+@inproceedings{balseiro2017budget,
+  title={Budget management strategies in repeated auctions},
+  author={Balseiro, Santiago and Kim, Anthony and Mahdian, Mohammad and Mirrokni, Vahab},
+  booktitle={Proceedings of the 26th International Conference on World Wide Web},
+  pages={15--23},
+  year={2017}
+}
+
+@article{balseiro2015repeated,
+  title={Repeated auctions with budgets in ad exchanges: Approximations and design},
+  author={Balseiro, Santiago R and Besbes, Omar and Weintraub, Gabriel Y},
+  journal={Management Science},
+  volume={61},
+  number={4},
+  pages={864--884},
+  year={2015},
+  publisher={INFORMS}
+}
+
+@article{glicksberg1952further,
+  title={A further generalization of the Kakutani fixed point theorem, with application to Nash equilibrium points},
+  author={Glicksberg, Irving L},
+  journal={Proceedings of the American Mathematical Society},
+  volume={3},
+  number={1},
+  pages={170--174},
+  year={1952},
+  publisher={JSTOR}
+}
+
+@article{fan1952fixed,
+  title={Fixed-point and minimax theorems in locally convex topological linear spaces},
+  author={Fan, Ky},
+  journal={Proceedings of the National Academy of Sciences of the United States of America},
+  volume={38},
+  number={2},
+  pages={121},
+  year={1952},
+  publisher={National Academy of Sciences}
+}
+
+@article{debreu1952social,
+  title={A social equilibrium existence theorem},
+  author={Debreu, Gerard},
+  journal={Proceedings of the National Academy of Sciences},
+  volume={38},
+  number={10},
+  pages={886--893},
+  year={1952},
+  publisher={National Acad Sciences}
+}
+
+@inproceedings{chen2007note,
+  title={A note on equilibrium pricing as convex optimization},
+  author={Chen, Lihua and Ye, Yinyu and Zhang, Jiawei},
+  booktitle={International Workshop on Web and Internet Economics},
+  pages={7--16},
+  year={2007},
+  organization={Springer}
+}
+
+@article{bertsekas2003convex,
+  title={Convex analysis and optimization. 2003},
+  author={Bertsekas, Dimitri P and Nedic, A and Ozdaglar, A},
+  journal={Athena Scientific},
+  year={2003}
+}
+
+@article{talluri1998analysis,
+  title={An analysis of bid-price controls for network revenue management},
+  author={Talluri, Kalyan and Van Ryzin, Garrett},
+  journal={Management science},
+  volume={44},
+  number={11-part-1},
+  pages={1577--1593},
+  year={1998},
+  publisher={INFORMS}
+}
+
+@inproceedings{flajolet2017real,
+  title={Real-time bidding with side information},
+  author={Flajolet, Arthur and Jaillet, Patrick},
+  booktitle={Proceedings of the 31st International Conference on Neural Information Processing Systems},
+  pages={5168--5178},
+  year={2017},
+  organization={Curran Associates Inc.}
+}
+
+@inproceedings{mcmahan2013ad,
+  title={Ad click prediction: a view from the trenches},
+  author={McMahan, H Brendan and Holt, Gary and Sculley, David and Young, Michael and Ebner, Dietmar and Grady, Julian and Nie, Lan and Phillips, Todd and Davydov, Eugene and Golovin, Daniel and others},
+  booktitle={Proceedings of the 19th ACM SIGKDD international conference on Knowledge discovery and data mining},
+  pages={1222--1230},
+  year={2013}
+}
+
+@inproceedings{li2010contextual,
+  title={A contextual-bandit approach to personalized news article recommendation},
+  author={Li, Lihong and Chu, Wei and Langford, John and Schapire, Robert E},
+  booktitle={Proceedings of the 19th international conference on World wide web},
+  pages={661--670},
+  year={2010}
+}
+
+@article{udell2019big,
+  title={Why are big data matrices approximately low rank?},
+  author={Udell, Madeleine and Townsend, Alex},
+  journal={SIAM Journal on Mathematics of Data Science},
+  volume={1},
+  number={1},
+  pages={144--160},
+  year={2019},
+  publisher={SIAM}
+}
+
+@article{daskalakis2017strong,
+  title={Strong Duality for a Multiple-Good Monopolist},
+  author={Daskalakis, Constantinos and Deckelbaum, Alan and Tzamos, Christos},
+  journal={Econometrica},
+  volume={85},
+  number={3},
+  pages={735--767},
+  year={2017},
+  publisher={Wiley Online Library}
+}
+
+@article{kroer2020limited,
+  title={Limited lookahead in imperfect-information games},
+  author={Kroer, Christian and Sandholm, Tuomas},
+  journal={Artificial Intelligence},
+  pages={103218},
+  year={2020},
+  publisher={Elsevier}
+}
+
+
+@inproceedings{grand2021first,
+  title={First-Order Methods for {Wasserstein} Distributionally Robust {MDP}},
+  author={Grand-Cl{\'e}ment, Julien and Kroer, Christian},
+  booktitle = {International Conference on Machine Learning},
+  year={2021}
+}
+
+@inproceedings{grand2021scalable,
+  title={Scalable First-Order Methods for Robust MDPs},
+  author={Grand-Cl{\'e}ment, Julien and Kroer, Christian},
+  booktitle = {The Thirty-Fifth {AAAI} Conference on Artificial Intelligence},
+  year={2021}
+}
+
+@inproceedings{davis2020low,
+  title={Low-Variance and Zero-Variance Baselines for Extensive-Form Games},
+  author={Davis, Trevor and Schmid, Martin and Bowling, Michael},
+  booktitle={International Conference on Machine Learning},
+  pages={2392--2401},
+  year={2020},
+  organization={PMLR}
+}
+
+@inproceedings{schmid2019variance,
+  title={Variance reduction in {Monte Carlo} counterfactual regret minimization (VR-MCCFR) for extensive form games using baselines},
+  author={Schmid, Martin and Burch, Neil and Lanctot, Marc and Moravcik, Matej and Kadlec, Rudolf and Bowling, Michael},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={33},
+  pages={2157--2164},
+  year={2019}
+}
+
+@article{allen2017katyusha,
+  title={Katyusha: The first direct acceleration of stochastic gradient methods},
+  author={Allen-Zhu, Zeyuan},
+  journal={The Journal of Machine Learning Research},
+  volume={18},
+  number={1},
+  pages={8194--8244},
+  year={2017},
+  publisher={JMLR. org}
+}
+
+@article{schmidt2017minimizing,
+  title={Minimizing finite sums with the stochastic average gradient},
+  author={Schmidt, Mark and Le Roux, Nicolas and Bach, Francis},
+  journal={Mathematical Programming},
+  volume={162},
+  number={1-2},
+  pages={83--112},
+  year={2017},
+  publisher={Springer}
+}
+
+@article{johnson2013accelerating,
+  title={Accelerating stochastic gradient descent using predictive variance reduction},
+  author={Johnson, Rie and Zhang, Tong},
+  journal={Advances in neural information processing systems},
+  volume={26},
+  pages={315--323},
+  year={2013}
+}
+
+@article{defazio2014saga,
+  title={SAGA: A fast incremental gradient method with support for non-strongly convex composite objectives},
+  author={Defazio, Aaron and Bach, Francis and Lacoste-Julien, Simon},
+  journal={Advances in neural information processing systems},
+  volume={27},
+  pages={1646--1654},
+  year={2014}
+}
+
+@inproceedings{farina2021faster,
+  title={Faster Game Solving via Predictive Blackwell Approachability: Connecting Regret Matching and Mirror Descent},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  year={2021},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  organization={AAAI}
+}
+
+@article{nesterov2005excessive,
+  title={Excessive gap technique in nonsmooth convex minimization},
+  author={Nesterov, Yu},
+  journal={SIAM Journal on Optimization},
+  volume={16},
+  number={1},
+  pages={235--249},
+  year={2005},
+  publisher={SIAM}
+}
+
+@article{juditsky2011solving,
+  title={Solving variational inequalities with stochastic mirror-prox algorithm},
+  author={Juditsky, Anatoli and Nemirovski, Arkadi and Tauvel, Claire},
+  journal={Stochastic Systems},
+  volume={1},
+  number={1},
+  pages={17--58},
+  year={2011},
+  publisher={INFORMS}
+}
+
+@article{nemirovski2004prox,
+  title={Prox-method with rate of convergence O (1/t) for variational inequalities with Lipschitz continuous monotone operators and smooth convex-concave saddle point problems},
+  author={Nemirovski, Arkadi},
+  journal={SIAM Journal on Optimization},
+  volume={15},
+  number={1},
+  pages={229--251},
+  year={2004},
+  publisher={SIAM}
+}
+
+@misc{ganzfried2020parallel,
+      title={Parallel Algorithm for Approximating Nash Equilibrium in Multiplayer Stochastic Games with Application to Naval Strategic Planning}, 
+      author={Sam Ganzfried and Conner Laughlin and Charles Morefield},
+      year={2020},
+      eprint={1910.00193},
+      archivePrefix={arXiv},
+      primaryClass={cs.GT}
+}
+
+@inproceedings{farina2018ex,
+  title={Ex ante coordination and collusion in zero-sum multi-player extensive-form games},
+  author={Farina, Gabriele and Celli, Andrea and Gatti, Nicola and Sandholm, Tuomas},
+  booktitle={Conference on Neural Information Processing Systems (NIPS)},
+  year={2018}
+}
+
+@article{palaniappan2016stochastic,
+  title={Stochastic Variance Reduction Methods for Saddle-Point Problems},
+  author={Palaniappan, Balamurugan and Bach, Francis},
+  journal={Advances in Neural Information Processing Systems},
+  volume={29},
+  pages={1416--1424},
+  year={2016}
+}
+
+@article{hamedani2020stochastic,
+  title={A Stochastic Variance-reduced Accelerated Primal-dual Method for Finite-sum Saddle-point Problems},
+  author={Hamedani, Erfan Yazdandoost and Jalilzadeh, Afrooz},
+  journal={arXiv preprint arXiv:2012.13456},
+  year={2020}
+}
+
+@inproceedings{chavdarova2019reducing,
+  author    = {Tatjana Chavdarova and
+               Gauthier Gidel and
+               Fran{\c{c}}ois Fleuret and
+               Simon Lacoste{-}Julien},
+  editor    = {Hanna M. Wallach and
+               Hugo Larochelle and
+               Alina Beygelzimer and
+               Florence d'Alch{\'{e}}{-}Buc and
+               Emily B. Fox and
+               Roman Garnett},
+  title     = {Reducing Noise in {GAN} Training with Variance Reduced Extragradient},
+  booktitle = {Advances in Neural Information Processing Systems, NeurIPS 2019, },
+  pages     = {391--401},
+  year      = {2019},
+  url       = {https://proceedings.neurips.cc/paper/2019/hash/58a2fc6ed39fd083f55d4182bf88826d-Abstract.html},
+}
+
+@article{iusem2017extragradient,
+  title={Extragradient method with variance reduction for stochastic variational inequalities},
+  author={Iusem, Alfredo N and Jofr{\'e}, Alejandro and Oliveira, Roberto Imbuzeiro and Thompson, Philip},
+  journal={SIAM Journal on Optimization},
+  volume={27},
+  number={2},
+  pages={686--724},
+  year={2017},
+  publisher={SIAM}
+}
+
+@article{hamedani2020stochastic,
+  title={A Stochastic Variance-reduced Accelerated Primal-dual Method for Finite-sum Saddle-point Problems},
+  author={Hamedani, Erfan Yazdandoost and Jalilzadeh, Afrooz},
+  journal={arXiv preprint arXiv:2012.13456},
+  year={2020}
+}
+
+@article{carmon2019variance,
+  title={Variance Reduction for Matrix Games},
+  author={Carmon, Yair and Jin, Yujia and Sidford, Aaron and Tian, Kevin},
+  journal={Advances in neural information processing systems},
+  year={2019}
+}
+
+@article{aziz2020hylland,
+  title={The Hylland-Zeckhauser Rule Under Bi-Valued Utilities},
+  author={Aziz, Haris},
+  journal={arXiv preprint arXiv:2006.15747},
+  year={2020}
+}
+
+@article{he2018pseudo,
+  title={A pseudo-market approach to allocation with priorities},
+  author={He, Yinghua and Miralles, Antonio and Pycia, Marek and Yan, Jianye},
+  journal={American Economic Journal: Microeconomics},
+  volume={10},
+  number={3},
+  pages={272--314},
+  year={2018}
+}
+
+@article{le2017competitive,
+  title={Competitive equilibrium in the random assignment problem},
+  author={Le, Phuong},
+  journal={International Journal of Economic Theory},
+  volume={13},
+  number={4},
+  pages={369--385},
+  year={2017},
+  publisher={Wiley Online Library}
+}
+
+@article{athanassoglou2011house,
+  title={House allocation with fractional endowments},
+  author={Athanassoglou, Stergios and Sethuraman, Jay},
+  journal={International Journal of Game Theory},
+  volume={40},
+  number={3},
+  pages={481--513},
+  year={2011},
+  publisher={Springer}
+}
+
+@article{hylland1979efficient,
+  title={The efficient allocation of individuals to positions},
+  author={Hylland, Aanund and Zeckhauser, Richard},
+  journal={Journal of Political economy},
+  volume={87},
+  number={2},
+  pages={293--314},
+  year={1979},
+  publisher={The University of Chicago Press}
+}
+
+@article{vazirani2020computational,
+  title={Computational Complexity of the Hylland-Zeckhauser Scheme for One-Sided Matching Markets},
+  author={Vazirani, Vijay V and Yannakakis, Mihalis},
+  journal={arXiv preprint arXiv:2004.01348},
+  year={2020}
+}
+
+@article{miralles2020foundations,
+  title={Foundations of pseudomarkets: Walrasian equilibria for discrete resources},
+  author={Miralles, Antonio and Pycia, Marek},
+  year={2020},
+  publisher={CEPR Discussion Paper No. DP15161}
+}
+
+@article{reny2017assignment,
+  title={Assignment problems},
+  author={Reny, Philip J},
+  journal={Journal of Political Economy},
+  volume={125},
+  number={6},
+  pages={1903--1914},
+  year={2017},
+  publisher={University of Chicago Press Chicago, IL}
+}
+
+@article{bichler2018assigning,
+  title={Assigning course schedules: About preference elicitation, fairness, and truthfulness},
+  author={Bichler, Martin and Merting, S{\"o}ren and Uzunoglu, Aykut},
+  journal={arXiv preprint arXiv:1812.02630},
+  year={2018}
+}
+
+@article{nguyen2016assignment,
+  title={Assignment problems with complementarities},
+  author={Nguyen, Th{\`a}nh and Peivandi, Ahmad and Vohra, Rakesh},
+  journal={Journal of Economic Theory},
+  volume={165},
+  pages={209--241},
+  year={2016},
+  publisher={Elsevier}
+}
+
+@techreport{nguyen2020improvement,
+  title={Improvement Properties in Preferences and Equilibria with Indivisibilities},
+  author={Nguyen, Th{\`a}nh and Vohra, Rakesh},
+  year={2020},
+  institution={Working Paper}
+}
+
+@article{garg2020arrow,
+  title={An Arrow-Debreu Extension of the Hylland-Zeckhauser Scheme: Equilibrium Existence and Algorithms},
+  author={Garg, Jugal and Tr{\"o}bst, Thorben and Vazirani, Vijay V},
+  journal={arXiv preprint arXiv:2009.10320},
+  year={2020}
+}
+
+@article{sethuraman2010mechanism,
+  title={Mechanism design for house allocation problems: a short introduction},
+  author={Sethuraman, Jay},
+  journal={OPTIMA: Mathematical Programming Society Newsletter},
+  pages={2--8},
+  year={2010}
+}
+
+@article{klemperer2010product,
+  title={The product-mix auction: A new auction design for differentiated goods},
+  author={Klemperer, Paul},
+  journal={Journal of the European Economic Association},
+  volume={8},
+  number={2-3},
+  pages={526--536},
+  year={2010},
+  publisher={Oxford University Press}
+}
+
+@article{ArrowD54,
+  author    = {Kenneth Arrow and Gerard Debreu},
+  title     = {Existence of an Equilibrium for a Competitive Economy},
+  journal   = Eco,
+  year      = 1954,
+  volume    = 22,
+  number    = 3,
+  pages     = {265--290}
+}
+
+@article{bichler2020market,
+  title={Market design for renewable energy auctions: An analysis of alternative auction formats},
+  author={Bichler, Martin and Grimm, Veronika and Kretschmer, Sandra and Sutterer, Paul},
+  journal={Energy Economics},
+  volume={92},
+  pages={104904},
+  year={2020},
+  publisher={Elsevier}
+}
+
+@inproceedings{balseiro2020dual,
+  title={Dual Mirror Descent for Online Allocation Problems},
+  author={Balseiro, Santiago and Lu, Haihao and Mirrokni, Vahab},
+  booktitle={International Conference on Machine Learning},
+  pages={613--628},
+  year={2020},
+  organization={PMLR}
+}
+
+@article{balseiro2022best,
+  title={The best of many worlds: Dual mirror descent for online allocation problems},
+  author={Balseiro, Santiago R and Lu, Haihao and Mirrokni, Vahab},
+  journal={Operations Research},
+  year={2022},
+  publisher={INFORMS}
+}
+
+@article{balseiro2020regularized,
+  title={Regularized Online Allocation Problems: Fairness and Beyond},
+  author={Balseiro, Santiago and Lu, Haihao and Mirrokni, Vahab},
+  journal={arXiv preprint arXiv:2007.00514},
+  year={2020}
+}
+
+@article{balseiro2020dynamic,
+  title={Dynamic pricing of relocating resources in large networks},
+  author={Balseiro, Santiago R and Brown, David B and Chen, Chen},
+  journal={Management Science},
+  year={2020},
+  publisher={INFORMS}
+}
+
+@article{balseiro2018static,
+  title={Static routing in stochastic scheduling: Performance guarantees and asymptotic optimality},
+  author={Balseiro, Santiago R and Brown, David B and Chen, Chen},
+  journal={Operations Research},
+  volume={66},
+  number={6},
+  pages={1641--1660},
+  year={2018},
+  publisher={INFORMS}
+}
+
+@article{baldwin2019understanding,
+  title={Understanding preferences:“demand types”, and the existence of equilibrium with indivisibilities},
+  author={Baldwin, Elizabeth and Klemperer, Paul},
+  journal={Econometrica},
+  volume={87},
+  number={3},
+  pages={867--932},
+  year={2019},
+  publisher={Wiley Online Library}
+}
+
+@article{bichler2020walrasian,
+  title={Walrasian equilibria from an optimization perspective: A guide to the literature},
+  author={Bichler, Martin and Fichtl, Maximilian and Schwarz, Gregor},
+  journal={Naval Research Logistics (NRL)},
+  year={2020},
+  publisher={Wiley Online Library}
+}
+
+@article{carmon2020coordinate,
+  title={Coordinate methods for matrix games},
+  author={Carmon, Yair and Jin, Yujia and Sidford, Aaron and Tian, Kevin},
+  journal={arXiv preprint arXiv:2009.08447},
+  year={2020}
+}
+
+@article{johanson2013measuring,
+  title={Measuring the size of large no-limit poker games},
+  author={Johanson, Michael},
+  journal={arXiv preprint arXiv:1302.7008},
+  year={2013}
+}
+
+@inproceedings{zhu2016stochastic,
+  title={Stochastic parallel block coordinate descent for large-scale saddle point problems},
+  author={Zhu, Zhanxing and Storkey, Amos},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={30},
+  number={1},
+  year={2016}
+}
+
+@inproceedings{syrgkanis2015fast,
+  title={Fast convergence of regularized learning in games},
+  author={Syrgkanis, Vasilis and Agarwal, Alekh and Luo, Haipeng and Schapire, Robert E},
+  booktitle={Proceedings of the 28th International Conference on Neural Information Processing Systems-Volume 2},
+  pages={2989--2997},
+  year={2015}
+}
+
+@inproceedings{rakhlin2013optimization,
+  title={Optimization, learning, and games with predictable sequences},
+  author={Rakhlin, Alexander and Sridharan, Karthik},
+  booktitle={Proceedings of the 26th International Conference on Neural Information Processing Systems-Volume 2},
+  pages={3066--3074},
+  year={2013}
+}
+
+@inproceedings{rakhlin2013online,
+  title={Online learning with predictable sequences},
+  author={Rakhlin, Alexander and Sridharan, Karthik},
+  booktitle={Conference on Learning Theory},
+  pages={993--1019},
+  year={2013},
+  organization={PMLR}
+}
+
+@inproceedings{liu2019towards,
+  title={Towards Better Understanding of Adaptive Gradient Algorithms in Generative Adversarial Nets},
+  author={Liu, Mingrui and Mroueh, Youssef and Ross, Jerret and Zhang, Wei and Cui, Xiaodong and Das, Payel and Yang, Tianbao},
+  booktitle={International Conference on Learning Representations},
+  year={2019}
+}
+
+@article{duchi2011adaptive,
+  title={Adaptive subgradient methods for online learning and stochastic optimization.},
+  author={Duchi, John and Hazan, Elad and Singer, Yoram},
+  journal={Journal of machine learning research},
+  volume={12},
+  number={7},
+  year={2011}
+}
+
+@inproceedings{kingma2015adam,
+  author    = {Diederik P. Kingma and
+               Jimmy Ba},
+  editor    = {Yoshua Bengio and
+               Yann LeCun},
+  title     = {Adam: {A} Method for Stochastic Optimization},
+  booktitle = {International Conference on Learning Representations, {ICLR} 2015},
+  year      = {2015},
+}
+
+@article{chen2009settling,
+  title={Settling the complexity of computing two-player Nash equilibria},
+  author={Chen, Xi and Deng, Xiaotie and Teng, Shang-Hua},
+  journal={Journal of the ACM (JACM)},
+  volume={56},
+  number={3},
+  pages={1--57},
+  year={2009},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{von2008extensive,
+  title={Extensive-form correlated equilibrium: Definition and computational complexity},
+  author={von Stengel, Bernhard and Forges, Fran{\c{c}}oise},
+  journal={Mathematics of Operations Research},
+  volume={33},
+  number={4},
+  pages={1002--1022},
+  year={2008},
+  publisher={INFORMS}
+}
+
+@inproceedings{farina2019efficient,
+  author    = {Gabriele Farina and
+               Chun Kai Ling and
+               Fei Fang and
+               Tuomas Sandholm},
+  title     = {Efficient Regret Minimization Algorithm for Extensive-Form Correlated
+               Equilibrium},
+  booktitle = {Advances in Neural Information Processing Systems, NeurIPS 2019},
+  year      = {2019},
+}
+
+@inproceedings{farina2020coarse,
+  title={Coarse correlation in extensive-form games},
+  author={Farina, Gabriele and Bianchi, Tommaso and Sandholm, Tuomas},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={34},
+  number={02},
+  pages={1934--1941},
+  year={2020}
+}
+
+@inproceedings{basilico2017team,
+  title={Team-maxmin equilibrium: efficiency bounds and algorithms},
+  author={Basilico, Nicola and Celli, Andrea and De Nittis, Giuseppe and Gatti, Nicola},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={31},
+  number={1},
+  year={2017}
+}
+
+@article{von1997team,
+  title={Team-maxmin equilibria},
+  author={von Stengel, Bernhard and Koller, Daphne},
+  journal={Games and Economic Behavior},
+  volume={21},
+  number={1-2},
+  pages={309--321},
+  year={1997},
+  publisher={Elsevier}
+}
+
+@inproceedings{celli2018computational,
+  title={Computational results for extensive-form adversarial team games},
+  author={Celli, Andrea and Gatti, Nicola},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={32},
+  number={1},
+  year={2018}
+}
+
+@article{farina2020faster,
+  title={Faster Algorithms for Optimal Ex-Ante Coordinated Collusive Strategies in Extensive-Form Zero-Sum Games},
+  author={Farina, Gabriele and Celli, Andrea and Gatti, Nicola and Sandholm, Tuomas},
+  journal={arXiv preprint arXiv:2009.10061},
+  year={2020}
+}
+
+@inproceedings{farina2019correlation,
+  author    = {Gabriele Farina and
+               Chun Kai Ling and
+               Fei Fang and
+               Tuomas Sandholm},
+  editor    = {Hanna M. Wallach and
+               Hugo Larochelle and
+               Alina Beygelzimer and
+               Florence d'Alch{\'{e}}{-}Buc and
+               Emily B. Fox and
+               Roman Garnett},
+  title     = {Correlation in Extensive-Form Games: Saddle-Point Formulation and
+               Benchmarks},
+  booktitle = {Advances in Neural Information Processing Systems, NeurIPS 2019},
+  year      = {2019},
+}
+
+@inproceedings{gibson2012generalized,
+  title={Generalized sampling and variance in counterfactual regret minimization},
+  author={Gibson, Richard and Lanctot, Marc and Burch, Neil and Szafron, Duane and Bowling, Michael},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  year={2012}
+}
+
+@article{freund2016new,
+  title={New analysis and results for the Frank--Wolfe method},
+  author={Freund, Robert M and Grigas, Paul},
+  journal={Mathematical Programming},
+  volume={155},
+  number={1-2},
+  pages={199--230},
+  year={2016},
+  publisher={Springer}
+}
+
+@inproceedings{jaggi2013revisiting,
+  title={Revisiting Frank-Wolfe: Projection-free sparse convex optimization},
+  author={Jaggi, Martin},
+  booktitle={International Conference on Machine Learning},
+  pages={427--435},
+  year={2013},
+  organization={PMLR}
+}
+
+@article{frank1956algorithm,
+  title={An algorithm for quadratic programming},
+  author={Frank, Marguerite and Wolfe, Philip},
+  journal={Naval research logistics quarterly},
+  volume={3},
+  number={1-2},
+  pages={95--110},
+  year={1956},
+  publisher={Wiley Subscription Services, Inc., A Wiley Company New York}
+}
+
+@article{levitin1966constrained,
+  title={Constrained minimization methods},
+  author={Levitin, Evgeny S and Polyak, Boris T},
+  journal={USSR Computational mathematics and mathematical physics},
+  volume={6},
+  number={5},
+  pages={1--50},
+  year={1966},
+  publisher={No longer published by Elsevier}
+}
+
+@article{dem1967minimization,
+  title={The minimization of a smooth convex functional on a convex set},
+  author={Dem’yanov, Vladimir Fedorovich and Rubinov, Alexander M},
+  journal={SIAM Journal on Control},
+  volume={5},
+  number={2},
+  pages={280--294},
+  year={1967},
+  publisher={SIAM}
+}
+
+@inproceedings{kroer2016arbitrage,
+  title={Arbitrage-free combinatorial market making via integer programming},
+  author={Kroer, Christian and Dud{\'\i}k, Miroslav and Lahaie, S{\'e}bastien and Balakrishnan, Sivaraman},
+  booktitle={Proceedings of the 2016 ACM Conference on Economics and Computation},
+  pages={161--178},
+  year={2016}
+}
+
+@article{tropp2017practical,
+  title={Practical sketching algorithms for low-rank matrix approximation},
+  author={Tropp, Joel A and Yurtsever, Alp and Udell, Madeleine and Cevher, Volkan},
+  journal={SIAM Journal on Matrix Analysis and Applications},
+  volume={38},
+  number={4},
+  pages={1454--1485},
+  year={2017},
+  publisher={SIAM}
+}
+
+@article{balseiro2021contextual,
+  title={Contextual First-Price Auctions with Budgets},
+  author={Balseiro, Santiago and Kroer, Christian and Kumar, Rachitesh},
+  journal={arXiv preprint arXiv:2102.10476},
+  year={2021}
+}
+
+@article{halko2011finding,
+  title={Finding structure with randomness: Probabilistic algorithms for constructing approximate matrix decompositions},
+  author={Halko, Nathan and Martinsson, Per-Gunnar and Tropp, Joel A},
+  journal={SIAM review},
+  volume={53},
+  number={2},
+  pages={217--288},
+  year={2011},
+  publisher={SIAM}
+}
+
+@article{martinsson2020randomized,
+  title={Randomized numerical linear algebra: Foundations \& algorithms},
+  author={Martinsson, Per-Gunnar and Tropp, Joel},
+  journal={arXiv preprint arXiv:2002.01387},
+  year={2020}
+}
+
+@inproceedings{abernethy2011blackwell,
+  title={Blackwell approachability and no-regret learning are equivalent},
+  author={Abernethy, Jacob and Bartlett, Peter L and Hazan, Elad},
+  booktitle={Proceedings of the 24th Annual Conference on Learning Theory},
+  pages={27--46},
+  year={2011},
+  organization={JMLR Workshop and Conference Proceedings}
+}
+
+@article{namkoong2016stochastic,
+  title={Stochastic Gradient Methods for Distributionally Robust Optimization with f-divergences},
+  author={Namkoong, Hongseok and Duchi, John C},
+  journal={Advances in Neural Information Processing Systems},
+  volume={29},
+  pages={2208--2216},
+  year={2016}
+}
+
+@inproceedings{sinha2018certifying,
+  title={Certifying Some Distributional Robustness with Principled Adversarial Training},
+  author={Sinha, Aman and Namkoong, Hongseok and Duchi, John},
+  booktitle={International Conference on Learning Representations},
+  year={2018}
+}
+
+@article{iyengar2005robust,
+  title={Robust dynamic programming},
+  author={Iyengar, Garud N},
+  journal={Mathematics of Operations Research},
+  volume={30},
+  number={2},
+  pages={257--280},
+  year={2005},
+  publisher={INFORMS}
+}
+
+@article{bertsimas2011theory,
+  title={Theory and applications of robust optimization},
+  author={Bertsimas, Dimitris and Brown, David B and Caramanis, Constantine},
+  journal={SIAM review},
+  volume={53},
+  number={3},
+  pages={464--501},
+  year={2011},
+  publisher={SIAM}
+}
+
+@article{nilim2005robust,
+  title={Robust control of Markov decision processes with uncertain transition matrices},
+  author={Nilim, Arnab and El Ghaoui, Laurent},
+  journal={Operations Research},
+  volume={53},
+  number={5},
+  pages={780--798},
+  year={2005},
+  publisher={INFORMS}
+}
+
+@article{kroer2020ieor8100_note4,
+  title={{IEOR8100}: Economics, {AI}, and Optimization Lecture Note 4: {Blackwell} Approachability and Regret Matching},
+  author={Kroer, Christian},
+  year={2020}
+}
+
+@article{kroer2020ieor8100_note5,
+  title={{IEOR8100}: Economics, {AI}, and Optimization Lecture Note 5: Computing {Nash} Equilibrium via Regret Minimization},
+  author={Kroer, Christian},
+  year={2020}
+}
+
+@article{bertsimas2019probabilistic,
+  title={Probabilistic guarantees in robust optimization},
+  author={Bertsimas, Dimitris and Den Hertog, Dick and Pauphilet, Jean},
+  year={2019}
+}
+
+@article{ben2000robust,
+  title={Robust solutions of linear programming problems contaminated with uncertain data},
+  author={Ben-Tal, Aharon and Nemirovski, Arkadi},
+  journal={Mathematical programming},
+  volume={88},
+  number={3},
+  pages={411--424},
+  year={2000},
+  publisher={Springer}
+}
+
+@article{kurakin2016adversarial,
+  title={Adversarial machine learning at scale},
+  author={Kurakin, Alexey and Goodfellow, Ian and Bengio, Samy},
+  journal={arXiv preprint arXiv:1611.01236},
+  year={2016}
+}
+
+@article{vorobeychik2018adversarial,
+  title={Adversarial machine learning},
+  author={Vorobeychik, Yevgeniy and Kantarcioglu, Murat},
+  journal={Synthesis Lectures on Artificial Intelligence and Machine Learning},
+  volume={12},
+  number={3},
+  pages={1--169},
+  year={2018},
+  publisher={Morgan \&amp; Claypool Publishers}
+}
+
+@inproceedings{papernot2018sok,
+  title={Sok: Security and privacy in machine learning},
+  author={Papernot, Nicolas and McDaniel, Patrick and Sinha, Arunesh and Wellman, Michael P},
+  booktitle={2018 IEEE European Symposium on Security and Privacy (EuroS\&amp;P)},
+  pages={399--414},
+  year={2018},
+  organization={IEEE}
+}
+
+@inproceedings{shafahi2018poison,
+  title={Poison frogs! targeted clean-label poisoning attacks on neural networks},
+  author={Shafahi, Ali and Huang, W Ronny and Najibi, Mahyar and Suciu, Octavian and Studer, Christoph and Dumitras, Tudor and Goldstein, Tom},
+  booktitle={Proceedings of the 32nd International Conference on Neural Information Processing Systems},
+  pages={6106--6116},
+  year={2018}
+}
+
+@inproceedings{jin2020efficiently,
+  title={Efficiently Solving MDPs with Stochastic Mirror Descent},
+  author={Jin, Yujia and Sidford, Aaron},
+  booktitle={International Conference on Machine Learning},
+  pages={4890--4900},
+  year={2020},
+  organization={PMLR}
+}
+
+@article{ouyang2019lower,
+  title={Lower complexity bounds of first-order methods for convex-concave bilinear saddle-point problems},
+  author={Ouyang, Yuyuan and Xu, Yangyang},
+  journal={Mathematical Programming},
+  pages={1--35},
+  year={2019},
+  publisher={Springer}
+}
+
+@inproceedings{hsieh2019convergence,
+  title={On the Convergence of Single-Call Stochastic Extra-Gradient Methods},
+  author={Hsieh, Yu-Guan and Iutzeler, Franck and Malick, J{\'e}r{\^o}me and Mertikopoulos, Panayotis},
+  booktitle={Advances in Neural Information Processing Systems},
+  year={2019}
+}
+
+@inproceedings{chiang2012online,
+  title={Online optimization with gradual variations},
+  author={Chiang, Chao-Kai and Yang, Tianbao and Lee, Chia-Jung and Mahdavi, Mehrdad and Lu, Chi-Jen and Jin, Rong and Zhu, Shenghuo},
+  booktitle={Conference on Learning Theory},
+  pages={6--1},
+  year={2012},
+  organization={JMLR Workshop and Conference Proceedings}
+}
+
+@inproceedings{gidel2018variational,
+  title={A Variational Inequality Perspective on Generative Adversarial Networks},
+  author={Gidel, Gauthier and Berard, Hugo and Vignoud, Ga{\"e}tan and Vincent, Pascal and Lacoste-Julien, Simon},
+  booktitle={International Conference on Learning Representations},
+  year={2018}
+}
+
+@article{popov1980modification,
+  title={A modification of the Arrow-Hurwicz method for search of saddle points},
+  author={Popov, Leonid Denisovich},
+  journal={Mathematical notes of the Academy of Sciences of the USSR},
+  volume={28},
+  number={5},
+  pages={845--848},
+  year={1980},
+  publisher={Springer}
+}
+
+@article{hoffman1952approximate,
+  title={On Approximate Solutions of Systems of Linear Inequalities},
+  author={Hoffman, Alan J},
+  journal={Journal of Research of the National Bureau of Standards},
+  volume={49},
+  number={4},
+  year={1952}
+}
+
+@article{gilpin2012first,
+  title={First-order algorithm with $\mathcal{O}(\mathrm{ln} (1/\epsilon))$ convergence for $\epsilon$-equilibrium in two-person zero-sum games},
+  author={Gilpin, Andrew and Pena, Javier and Sandholm, Tuomas},
+  journal={Mathematical programming},
+  volume={133},
+  number={1},
+  pages={279--298},
+  year={2012},
+  publisher={Springer}
+}
+
+@article{tseng1995linear,
+  title={On linear convergence of iterative methods for the variational inequality problem},
+  author={Tseng, Paul},
+  journal={Journal of Computational and Applied Mathematics},
+  volume={60},
+  number={1-2},
+  pages={237--252},
+  year={1995},
+  publisher={Elsevier}
+}
+
+@inproceedings{mcelfresh2020matching,
+  title={Matching Algorithms for Blood Donation},
+  author={McElfresh, Duncan C and Kroer, Christian and Pupyrev, Sergey and Sodomka, Eric and Sankararaman, Karthik Abinav and Chauvin, Zack and Dexter, Neil and Dickerson, John P},
+  booktitle={Proceedings of the 21st ACM Conference on Economics and Computation},
+  pages={463--464},
+  year={2020}
+}
+
+@article{ganzfried2020computing,
+  title={Computing Nash Equilibria in Multiplayer DAG-Structured Stochastic Games with Persistent Imperfect Information},
+  author={Ganzfried, Sam},
+  journal={arXiv preprint arXiv:2010.13860},
+  year={2020}
+}
+
+@article{an2013deployed,
+  title={A deployed quantal response-based patrol planning system for the US Coast Guard},
+  author={An, Bo and Ord{\'o}{\~n}ez, Fernando and Tambe, Milind and Shieh, Eric and Yang, Rong and Baldwin, Craig and DiRenzo III, Joseph and Moretti, Kathryn and Maule, Ben and Meyer, Garrett},
+  journal={Interfaces},
+  volume={43},
+  number={5},
+  pages={400--420},
+  year={2013},
+  publisher={INFORMS}
+}
+
+@inproceedings{durkota2015optimal,
+  title={Optimal network security hardening using attack graph games},
+  author={Durkota, Karel and Lisy, Viliam and Bo{\v{s}}ansky, Branislav and Kiekintveld, Christopher},
+  booktitle={Proceedings of the 24th International Conference on Artificial Intelligence},
+  pages={526--532},
+  year={2015}
+}
+
+@inproceedings{schlenker2018deceiving,
+  title={Deceiving cyber adversaries: A game theoretic approach},
+  author={Schlenker, Aaron and Thakoor, Omkar and Xu, Haifeng and Tambe, Milind and Vayanos, Phebe and Fang, Fei and Tran-Thanh, Long and Vorobeychik, Yevgeniy},
+  booktitle={International Conference on Autonomous Agents and Multiagent Systems},
+  year={2018}
+}
+
+@article{pawlick2019game,
+  title={A game-theoretic taxonomy and survey of defensive deception for cybersecurity and privacy},
+  author={Pawlick, Jeffrey and Colbert, Edward and Zhu, Quanyan},
+  journal={ACM Computing Surveys (CSUR)},
+  volume={52},
+  number={4},
+  pages={1--28},
+  year={2019},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{malitsky2019golden,
+  title={Golden ratio algorithms for variational inequalities},
+  author={Malitsky, Yura},
+  journal={Mathematical Programming},
+  pages={1--28},
+  year={2019},
+  publisher={Springer}
+}
+
+@article{hieu2019golden,
+  title={Golden ratio algorithms with new stepsize rules for variational inequalities},
+  author={Hieu, Dang Van and Cho, Yeol Je and Xiao, Yi-Bin},
+  journal={Mathematical Methods in the Applied Sciences},
+  volume={42},
+  number={18},
+  pages={6067--6082},
+  year={2019},
+  publisher={Wiley Online Library}
+}
+
+@article{alacaoglu2021stochastic,
+  title={Stochastic Variance Reduction for Variational Inequality Methods},
+  author={Alacaoglu, Ahmet and Malitsky, Yura},
+  journal={arXiv preprint arXiv:2102.08352},
+  year={2021}
+}
+
+@inproceedings{wei2021last,
+  title={Last-iterate Convergence of Decentralized Optimistic Gradient Descent/Ascent in Infinite-horizon Competitive Markov Games},
+  author={Wei, Chen-Yu and Lee, Chung-Wei and Zhang, Mengxiao and Luo, Haipeng},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2021}
+}
+
+@article{lee2020linear,
+  title={Linear last-iterate convergence for matrix games and stochastic games},
+  author={Lee, Chung-Wei and Luo, Haipeng and Wei, Chen-Yu and Zhang, Mengxiao},
+  journal={arXiv preprint arXiv:2006.09517},
+  year={2020}
+}
+
+@misc{sasahara2021asymptotic,
+      title={Asymptotic Security by Model-based Incident Handlers for Markov Decision Processes}, 
+      author={Hampei Sasahara and Henrik Sandberg},
+      year={2021},
+      eprint={2103.13121},
+      archivePrefix={arXiv},
+      primaryClass={eess.SY}
+}
+
+@inproceedings{kroer2017smoothing,
+  title={Smoothing method for approximate extensive-form perfect equilibrium},
+  author={Kroer, Christian and Farina, Gabriele and Sandholm, Tuomas},
+  booktitle={Proceedings of the 26th International Joint Conference on Artificial Intelligence},
+  pages={295--301},
+  year={2017}
+}
+
+@phdthesis{burch2018time,
+  title={Time and space: Why imperfect information games are hard},
+  author={Burch, Neil},
+  school= {University of Alberta},
+  year={2018},
+}
+
+@article{condat2016fast,
+  title={Fast projection onto the simplex and the $\ell_1$ ball},
+  author={Condat, Laurent},
+  journal={Mathematical Programming},
+  volume={158},
+  number={1},
+  pages={575--585},
+  year={2016},
+  publisher={Springer}
+}
+
+@inproceedings{chen2021complexity,
+  title={The Complexity of Pacing for Second-Price Auctions},
+  author={Chen, Xi and Kroer, Christian and Kumar, Rachitesh},
+  booktitle={Proceedings of the 2021 ACM Conference on Economics and Computation},
+  year={2021}
+}
+
+@article{procaccia2013cake,
+	title={Cake cutting: not just child's play},
+	author={Procaccia, Ariel D},
+	journal={Communications of the ACM},
+	volume={56},
+	number={7},
+	pages={78--87},
+	year={2013},
+	publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{aziz2014cake,
+	title={Cake cutting algorithms for piecewise constant and piecewise uniform valuations},
+	author={Aziz, Haris and Ye, Chun},
+	booktitle={International Conference on Web and Internet Economics},
+	pages={1--14},
+	year={2014},
+	organization={Springer}
+}
+
+@article{lasserre2001global,
+  title={Global optimization with polynomials and the problem of moments},
+  author={Lasserre, Jean B},
+  journal={SIAM Journal on optimization},
+  volume={11},
+  number={3},
+  pages={796--817},
+  year={2001},
+  publisher={SIAM}
+}
+
+@incollection{nesterov2000squared,
+  title={Squared functional systems and optimization problems},
+  author={Nesterov, Yurii},
+  booktitle={High performance optimization},
+  pages={405--440},
+  year={2000},
+  publisher={Springer}
+}
+
+@phdthesis{parrilo2000structured,
+  title={Structured semidefinite programs and semialgebraic geometry methods in robustness and optimization},
+  author={Parrilo, Pablo A},
+  year={2000},
+  school={California Institute of Technology}
+}
+
+@inproceedings{wu2007proportional,
+  title={Proportional response dynamics leads to market equilibrium},
+  author={Wu, Fang and Zhang, Li},
+  booktitle={Proceedings of the thirty-ninth annual ACM symposium on Theory of computing},
+  pages={354--363},
+  year={2007}
+}
+
+@book{ben2001lectures,
+  title={Lectures on modern convex optimization: analysis, algorithms, and engineering applications},
+  author={Ben-Tal, Aharon and Nemirovski, Arkadi},
+  year={2001},
+  publisher={SIAM}
+}
+
+@article{xiao2014proximal,
+  title={A proximal stochastic gradient method with progressive variance reduction},
+  author={Xiao, Lin and Zhang, Tong},
+  journal={SIAM Journal on Optimization},
+  volume={24},
+  number={4},
+  pages={2057--2075},
+  year={2014},
+  publisher={SIAM}
+}
+
+@inproceedings{GV19,
+	author    = {Jugal Garg and
+	L{\'{a}}szl{\'{o}} A. V{\'{e}}gh},
+	title     = {A strongly polynomial algorithm for linear exchange markets},
+	booktitle = {Proc. of the 51st Symposium on Theory of Computing (STOC)},
+	pages     = {54--65},
+	publisher = {{ACM}},
+	year      = {2019}
+}
+
+@inproceedings{allen2016improved,
+  title={Improved SVRG for non-strongly-convex or sum-of-non-convex objectives},
+  author={Allen-Zhu, Zeyuan and Yuan, Yang},
+  booktitle={International conference on machine learning},
+  pages={1080--1089},
+  year={2016},
+  organization={PMLR}
+}
+
+@inproceedings{allouah2023fair,
+  title={Fair Allocation Over Time, with Applications to Content Moderation},
+  author={Allouah, Amine and Kroer, Christian and Zhang, Xuan and Avadhanula, Vashist and Bohanon, Nona and Dania, Anil and Gocmen, Caner and Pupyrev, Sergey and Shah, Parikshit and Stier-Moses, Nicolas and others},
+  booktitle={Proceedings of the 29th ACM SIGKDD Conference on Knowledge Discovery and Data Mining},
+  pages={25--35},
+  year={2023}
+}
+
+@article{gao2021online,
+  title={Online market equilibrium with application to fair division},
+  author={Gao, Yuan and Peysakhovich, Alex and Kroer, Christian},
+  journal={Advances in Neural Information Processing Systems},
+  volume={34},
+  pages={27305--27318},
+  year={2021}
+}
+
+@article{othman2016complexity,
+  title={The complexity of fairness through equilibrium},
+  author={Othman, Abraham and Papadimitriou, Christos and Rubinstein, Aviad},
+  journal={ACM Transactions on Economics and Computation (TEAC)},
+  volume={4},
+  number={4},
+  pages={1--19},
+  year={2016},
+  publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{othman2010finding,
+  title={Finding approximate competitive equilibria: efficient and fair course allocation.},
+  author={Othman, Abraham and Sandholm, Tuomas and Budish, Eric},
+  booktitle={AAMAS},
+  volume={10},
+  pages={873--880},
+  year={2010}
+}
+
+@article{dickerson2019failure,
+  title={Failure-aware kidney exchange},
+  author={Dickerson, John P and Procaccia, Ariel D and Sandholm, Tuomas},
+  journal={Management Science},
+  volume={65},
+  number={4},
+  pages={1768--1791},
+  year={2019},
+  publisher={INFORMS}
+}
+
+@misc{fbredcross,
+  title = {New Facebook Feature Schedules Hundreds of Blood Donations},
+  author = {{Red Cross}},
+  howpublished = {\url{https://www.redcross.org/about-us/news-and-events/news/2019/new-facebook-feature-schedules-hundreds-of-blood-donations.html}},
+  note = {Accessed: 2021-06-28}
+}
+
+@article{sumnig2018role,
+  title={The role of social media for blood donor motivation and recruitment},
+  author={S{\"u}mnig, Ariane and Feig, Martin and Greinacher, Andreas and Thiele, Thomas},
+  journal={Transfusion},
+  volume={58},
+  number={10},
+  pages={2257--2259},
+  year={2018},
+  publisher={Wiley Online Library}
+}
+
+@inproceedings{devanur2009adwords,
+  title={The adwords problem: online keyword matching with budgeted bidders under random permutations},
+  author={Devanur, Nikhil R and Hayes, Thomas P},
+  booktitle={Proceedings of the 10th ACM conference on Electronic commerce},
+  pages={71--78},
+  year={2009}
+}
+
+@inproceedings{mehrotra2018towards,
+  title={Towards a fair marketplace: Counterfactual evaluation of the trade-off between relevance, fairness \&amp; satisfaction in recommendation systems},
+  author={Mehrotra, Rishabh and McInerney, James and Bouchard, Hugues and Lalmas, Mounia and Diaz, Fernando},
+  booktitle={Proceedings of the 27th acm international conference on information and knowledge management},
+  pages={2243--2251},
+  year={2018}
+}
+
+@inproceedings{zhan2021towards,
+  title={Towards Content Provider Aware Recommender Systems: A Simulation Study on the Interplay between User and Provider Utilities},
+  author={Zhan, Ruohan and Christakopoulou, Konstantina and Le, Ya and Ooi, Jayden and Mladenov, Martin and Beutel, Alex and Boutilier, Craig and Chi, Ed and Chen, Minmin},
+  booktitle={Proceedings of the Web Conference 2021},
+  pages={3872--3883},
+  year={2021}
+}
+
+@inproceedings{agarwal2014budget,
+  title={Budget pacing for targeted online advertisements at linkedin},
+  author={Agarwal, Deepak and Ghosh, Souvik and Wei, Kai and You, Siyu},
+  booktitle={Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining},
+  pages={1613--1619},
+  year={2014}
+}
+
+@article{amin2012budget,
+  title={Budget optimization for sponsored search: Censored learning in mdps},
+  author={Amin, Kareem and Kearns, Michael and Key, Peter and Schwaighofer, Anton},
+  journal={arXiv preprint arXiv:1210.4847},
+  year={2012}
+}
+
+@inproceedings{avadhanula2021stochastic,
+  title={Stochastic bandits for multi-platform budget optimization in online advertising},
+  author={Avadhanula, Vashist and Colini Baldeschi, Riccardo and Leonardi, Stefano and Sankararaman, Karthik Abinav and Schrijvers, Okke},
+  booktitle={Proceedings of the Web Conference 2021},
+  pages={2805--2817},
+  year={2021}
+}
+
+@misc{celli2021parity,
+      title={The Parity Ray Regularizer for Pacing in Auction Markets}, 
+      author={Andrea Celli and Riccardo Colini-Baldeschi and Christian Kroer and Eric Sodomka},
+      year={2021},
+      eprint={2106.09503},
+      archivePrefix={arXiv},
+      primaryClass={cs.GT}
+}
+
+@article{che1998standard,
+  title={Standard auctions with financially constrained bidders},
+  author={Che, Yeon-Koo and Gale, Ian},
+  journal={The Review of Economic Studies},
+  volume={65},
+  number={1},
+  pages={1--21},
+  year={1998},
+  publisher={Wiley-Blackwell}
+}
+
+@article{kotowski2020first,
+  title={First-price auctions with budget constraints},
+  author={Kotowski, Maciej H},
+  journal={Theoretical Economics},
+  volume={15},
+  number={1},
+  pages={199--237},
+  year={2020},
+  publisher={Wiley Online Library}
+}
+
+@article{pai2014optimal,
+  title={Optimal auctions with financially constrained buyers},
+  author={Pai, Mallesh M and Vohra, Rakesh},
+  journal={Journal of Economic Theory},
+  volume={150},
+  pages={383--425},
+  year={2014},
+  publisher={Elsevier}
+}
+
+@article{goel2015polyhedral,
+  title={Polyhedral clinching auctions and the adwords polytope},
+  author={Goel, Gagan and Mirrokni, Vahab and Leme, Renato Paes},
+  journal={Journal of the ACM (JACM)},
+  volume={62},
+  number={3},
+  pages={1--27},
+  year={2015},
+  publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{yin2020dominant,
+  title={Dominant Resource Fairness with Meta-Types},
+  author={Yin, Steven and Wang, Shatian and Zhang, Lingyi and Kroer, Christian},
+  booktitle={Proceedings of the 35th AAAI Conference on Artificial Intelligence (AAAI)},
+  year={2021}
+}
+
+@article{lahaie2007sponsored,
+  title={Sponsored search auctions},
+  author={Lahaie, S{\'e}bastien and Pennock, David M and Saberi, Amin and Vohra, Rakesh V},
+  journal={Algorithmic game theory},
+  volume={1},
+  pages={699--716},
+  year={2007}
+}
+
+@article{goldfarb2011online,
+  title={Online display advertising: Targeting and obtrusiveness},
+  author={Goldfarb, Avi and Tucker, Catherine},
+  journal={Marketing Science},
+  volume={30},
+  number={3},
+  pages={389--404},
+  year={2011},
+  publisher={INFORMS}
+}
+
+@TechReport{ferc_report2020,
+    title = {State of the Markets},
+    year = {2020},
+    month ={sep},
+    author ={{FEDERAL ENERGY REGULATORY COMMISSION}},
+}
+
+@article{roth1999redesign,
+  title={The redesign of the matching market for American physicians: Some engineering aspects of economic design},
+  author={Roth, Alvin E and Peranson, Elliott},
+  journal={American economic review},
+  volume={89},
+  number={4},
+  pages={748--780},
+  year={1999}
+}
+
+@article{abdulkadirouglu2005boston,
+  title={The Boston public school match},
+  author={Abdulkadiro{\u{g}}lu, Atila and Pathak, Parag A and Roth, Alvin E and S{\"o}nmez, Tayfun},
+  journal={American Economic Review},
+  volume={95},
+  number={2},
+  pages={368--371},
+  year={2005}
+}
+
+@article{roth2004kidney,
+  title={Kidney exchange},
+  author={Roth, Alvin E and S{\"o}nmez, Tayfun and {\"U}nver, M Utku},
+  journal={The Quarterly journal of economics},
+  volume={119},
+  number={2},
+  pages={457--488},
+  year={2004},
+  publisher={MIT Press}
+}
+
+@inproceedings{abraham2007clearing,
+  title={Clearing algorithms for barter exchange markets: Enabling nationwide kidney exchanges},
+  author={Abraham, David J and Blum, Avrim and Sandholm, Tuomas},
+  booktitle={Proceedings of the 8th ACM conference on Electronic commerce},
+  pages={295--304},
+  year={2007}
+}
+
+@inproceedings{dickerson2012optimizing,
+  title={Optimizing kidney exchange with transplant chains: Theory and reality},
+  author={Dickerson, John P and Procaccia, Ariel D and Sandholm, Tuomas},
+  booktitle={Proceedings of the 11th International Conference on Autonomous Agents and Multiagent Systems-Volume 2},
+  pages={711--718},
+  year={2012}
+}
+
+@inproceedings{newman2020incentive,
+  title={Incentive Auction Design Alternatives: A Simulation Study},
+  author={Newman, Neil and Leyton-Brown, Kevin and Milgrom, Paul and Segal, Ilya},
+  booktitle={Proceedings of the 21st ACM Conference on Economics and Computation},
+  pages={603--604},
+  year={2020}
+}
+
+@article{leyton2017economics,
+  title={Economics and computer science of a radio spectrum reallocation},
+  author={Leyton-Brown, Kevin and Milgrom, Paul and Segal, Ilya},
+  journal={Proceedings of the National Academy of Sciences},
+  volume={114},
+  number={28},
+  pages={7202--7209},
+  year={2017},
+  publisher={National Acad Sciences}
+}
+
+@article{azizan2020optimal,
+  title={Optimal pricing in markets with nonconvex costs},
+  author={Azizan, Navid and Su, Yu and Dvijotham, Krishnamurthy and Wierman, Adam},
+  journal={Operations Research},
+  volume={68},
+  number={2},
+  pages={480--496},
+  year={2020},
+  publisher={INFORMS}
+}
+
+@article{oneill2005efficient,
+  title={Efficient market-clearing prices in markets with nonconvexities},
+  author={O'Neill, Richard P and Sotkiewicz, Paul M and Hobbs, Benjamin F and Rothkopf, Michael H and Stewart Jr, William R},
+  journal={European journal of operational research},
+  volume={164},
+  number={1},
+  pages={269--285},
+  year={2005},
+  publisher={Elsevier}
+}
+
+@article{gribik2007market,
+  title={Market-clearing electricity prices and energy uplift},
+  author={Gribik, Paul R and Hogan, William W and Pope, Susan L and others},
+  journal={Cambridge, MA},
+  pages={1--46},
+  year={2007}
+}
+
+@inproceedings{aleksandrov2015online,
+  title={Online fair division: Analysing a food bank problem},
+  author={Aleksandrov, Martin Damyanov and Aziz, Haris and Gaspers, Serge and Walsh, Toby},
+  booktitle={Twenty-Fourth International Joint Conference on Artificial Intelligence},
+  year={2015}
+}
+
+@article{prendergast2017food,
+  title={How food banks use markets to feed the poor},
+  author={Prendergast, Canice},
+  journal={Journal of Economic Perspectives},
+  volume={31},
+  number={4},
+  pages={145--62},
+  year={2017}
+}
+
+@article{zhang2011proportional,
+  title={Proportional response dynamics in the Fisher market},
+  author={Zhang, Li},
+  journal={Theoretical Computer Science},
+  volume={412},
+  number={24},
+  pages={2691--2698},
+  year={2011},
+  publisher={Elsevier}
+}
+
+@inproceedings{cheung2018dynamics,
+  title={Dynamics of distributed updating in Fisher markets},
+  author={Cheung, Yun Kuen and Cole, Richard and Tao, Yixin},
+  booktitle={Proceedings of the 2018 ACM Conference on Economics and Computation},
+  pages={351--368},
+  year={2018}
+}
+
+@article{cole2019balancing,
+  title={Balancing the Robustness and Convergence of Tatonnement},
+  author={Cole, Richard and Tao, Yixin},
+  journal={arXiv preprint arXiv:1908.00844},
+  year={2019}
+}
+
+@article{jain2007polynomial,
+  title={A polynomial time algorithm for computing an Arrow--Debreu market equilibrium for linear utilities},
+  author={Jain, Kamal},
+  journal={SIAM Journal on Computing},
+  volume={37},
+  number={1},
+  pages={303--318},
+  year={2007},
+  publisher={SIAM}
+}
+
+@inproceedings{karimi2016linear,
+  title={Linear convergence of gradient and proximal-gradient methods under the polyak-{\l}ojasiewicz condition},
+  author={Karimi, Hamed and Nutini, Julie and Schmidt, Mark},
+  booktitle={Joint European Conference on Machine Learning and Knowledge Discovery in Databases},
+  pages={795--811},
+  year={2016},
+  organization={Springer}
+}
+
+@article{brockman2016openai,
+  title={{OpenAI} gym},
+  author={Brockman, Greg and Cheung, Vicki and Pettersson, Ludwig and Schneider, Jonas and Schulman, John and Tang, Jie and Zaremba, Wojciech},
+  journal={arXiv preprint arXiv:1606.01540},
+  year={2016}
+}
+
+@inproceedings{balyo2017sat,
+  title={SAT competition 2016: Recent developments},
+  author={Balyo, Tom{\'a}s and Heule, Marijn and Jarvisalo, Matti},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={31},
+  number={1},
+  year={2017}
+}
+
+@inproceedings{leyton2000towards,
+  title={Towards a universal test suite for combinatorial auction algorithms},
+  author={Leyton-Brown, Kevin and Pearson, Mark and Shoham, Yoav},
+  booktitle={Proceedings of the 2nd ACM conference on Electronic commerce},
+  pages={66--76},
+  year={2000}
+}
+
+@inproceedings{deng2009imagenet,
+  title={Imagenet: A large-scale hierarchical image database},
+  author={Deng, Jia and Dong, Wei and Socher, Richard and Li, Li-Jia and Li, Kai and Fei-Fei, Li},
+  booktitle={2009 IEEE conference on computer vision and pattern recognition},
+  pages={248--255},
+  year={2009},
+  organization={Ieee}
+}
+
+@inproceedings{liao2014ipinyou,
+  title={iPinYou global rtb bidding algorithm competition dataset},
+  author={Liao, Hairen and Peng, Lingxiao and Liu, Zhenchuan and Shen, Xuehua},
+  booktitle={Proceedings of the Eighth International Workshop on Data Mining for Online Advertising},
+  pages={1--6},
+  year={2014}
+}
+
+@incollection{diemert2017attribution,
+  title={Attribution modeling increases efficiency of bidding in display advertising},
+  author={Diemert, Eustache and Meynet, Julien and Galland, Pierre and Lefortier, Damien},
+  booktitle={Proceedings of the ADKDD'17},
+  pages={1--6},
+  year={2017}
+}
+
+@article{budish2012multi,
+  title={The multi-unit assignment problem: Theory and evidence from course allocation at Harvard},
+  author={Budish, Eric and Cantillon, Estelle},
+  journal={American Economic Review},
+  volume={102},
+  number={5},
+  pages={2237--71},
+  year={2012}
+}
+
+@article{azar2016allocate,
+  title={How to Allocate Goods in an Online Market?},
+  author={Azar, Yossi and Buchbinder, Niv and Jain, Kamal},
+  journal={Algorithmica},
+  volume={74},
+  number={2},
+  pages={589--601},
+  year={2016},
+  publisher={Springer}
+}
+
+@inproceedings{cheung2019tracing,
+  title={Tracing Equilibrium in Dynamic Markets via Distributed Adaptation},
+  author={Cheung, Yun Kuen and Hoefer, Martin and Nakhe, Paresh},
+  booktitle={Proceedings of the 18th International Conference on Autonomous Agents and MultiAgent Systems},
+  pages={1225--1233},
+  year={2019}
+}
+
+@misc{facebookguide,
+  title = {Your Guide to Facebook Bid Strategy},
+  howpublished = {\url{https://www.facebook.com/gms_hub/share/biddingstrategyguide_final.pdf}},
+  note = {Accessed: 2021-06-30}
+}
+
+@inproceedings{karande2013optimizing,
+  title={Optimizing budget constrained spend in search advertising},
+  author={Karande, Chinmay and Mehta, Aranyak and Srikant, Ramakrishnan},
+  booktitle={Proceedings of the sixth ACM international conference on Web search and data mining},
+  pages={697--706},
+  year={2013}
+}
+
+@article{atef2020optimization,
+  title={Optimization-based Mechanisms for the Course Allocation Problem},
+  author={Atef Yekta, Hoda and Day, Robert},
+  journal={INFORMS Journal on Computing},
+  volume={32},
+  number={3},
+  pages={641--660},
+  year={2020},
+  publisher={INFORMS}
+}
+
+@inproceedings{holstein2019improving,
+  title={Improving fairness in machine learning systems: What do industry practitioners need?},
+  author={Holstein, Kenneth and Wortman Vaughan, Jennifer and Daum{\'e} III, Hal and Dudik, Miro and Wallach, Hanna},
+  booktitle={Proceedings of the 2019 CHI conference on human factors in computing systems},
+  pages={1--16},
+  year={2019}
+}
+
+@book{shoham2008multiagent,
+  title={Multiagent systems: Algorithmic, game-theoretic, and logical foundations},
+  author={Shoham, Yoav and Leyton-Brown, Kevin},
+  year={2008},
+  publisher={Cambridge University Press}
+}
+
+@misc{cnbc_market_size_2020,
+  title = {Digital ad spend grew 12\% in 2020 despite hit from pandemic},
+  howpublished = {\url{https://www.cnbc.com/2021/04/07/digital-ad-spend-grew-12percent-in-2020-despite-hit-from-pandemic.html}},
+  note = {Accessed: 2021-07-20}
+}
+
+@misc{dickerson_class,
+  title = {Applied Mechanism Design for Social Good},
+  howpublished = {\url{https://marketdesign.github.io/}},
+  note = {Accessed: 2021-07-20}
+}
+
+@misc{econ_ai_opt,
+  title = {Economics, AI, and Optimization},
+  howpublished = {\url{http://www.columbia.edu/~ck2945/courses/s20_8100/}},
+  note = {Accessed: 2021-07-20}
+}
+
+@article{grand2021conic,
+  title={Conic Blackwell Algorithm: Parameter-Free Convex-Concave Saddle-Point Solving},
+  author={Grand-Cl{\'e}ment, Julien and Kroer, Christian},
+  journal={arXiv preprint arXiv:2105.13203},
+  year={2021}
+}
+
+@inproceedings{farina2021better,
+  title={Better Regularization for Sequential Decision Spaces: Fast Convergence Rates for Nash, Correlated, and Team Equilibria},
+  author={Farina, Gabriele and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Proceedings of the 2021 ACM Conference on Economics and Computation},
+  year={2021}
+}
+
+@article{bertsimas2016power,
+  title={On the power of randomization in network interdiction},
+  author={Bertsimas, Dimitris and Nasrabadi, Ebrahim and Orlin, James B},
+  journal={Operations Research Letters},
+  volume={44},
+  number={1},
+  pages={114--120},
+  year={2016},
+  publisher={Elsevier}
+}
+
+@article{holzmann2021shortest,
+  title={The Shortest Path Interdiction Problem with Randomized Interdiction Strategies: Complexity and Algorithms},
+  author={Holzmann, Tim and Smith, J Cole},
+  journal={Operations Research},
+  volume={69},
+  number={1},
+  pages={82--99},
+  year={2021},
+  publisher={INFORMS}
+}
+
+@inproceedings{guo2017playing,
+  title={Playing repeated network interdiction games with semi-bandit feedback},
+  author={Guo, Qingyu and An, Bo and Tran-Thanh, Long},
+  booktitle={Proceedings of the 26th International Joint Conference on Artificial Intelligence},
+  pages={3682--3690},
+  year={2017}
+}
+
+@inproceedings{nicholas2016optimal_b,
+  title={Optimal channel assignment for military MANET using integer optimization and constraint programming},
+  author={Nicholas, Paul J and Hoffman, Karla L},
+  booktitle={MILCOM 2016-2016 IEEE Military Communications Conference},
+  pages={1114--1120},
+  year={2016},
+  organization={IEEE}
+}
+
+@article{nicholas2016optimal,
+  title={Optimal allocation of electromagnetic spectrum to support tactical wideband communications},
+  author={Nicholas, Paul J},
+  journal={Military Operations Research},
+  volume={21},
+  number={1},
+  pages={21--39},
+  year={2016},
+  publisher={JSTOR}
+}
+
+@techreport{nicholas2015designing,
+  title={Designing interference-robust wireless mesh networks using a defender-attacker-defender model},
+  author={Nicholas, Paul J and Alderson, David L},
+  year={2015},
+  institution={NAVAL POSTGRADUATE SCHOOL MONTEREY CA DEPT OF OPERATIONS RESEARCH}
+}
+
+@InProceedings{lee2021last,
+  author = "Chung-Wei Lee and Christian Kroer and Haipeng Luo",
+  title = "Last-iterate Convergence in Extensive-Form Games",
+  booktitle = {Advances in Neural Information Processing Systems, NeurIPS 2019},
+  year = "2021",
+}
+
+@article{takimoto2003path,
+  title={Path kernels and multiplicative updates},
+  author={Takimoto, Eiji and Warmuth, Manfred K},
+  journal={The Journal of Machine Learning Research},
+  volume={4},
+  pages={773--818},
+  year={2003},
+  publisher={JMLR. org}
+}
+
+@article{clarke1971multipart,
+  title={Multipart pricing of public goods},
+  author={Clarke, Edward H},
+  journal={Public choice},
+  pages={17--33},
+  year={1971},
+  publisher={JSTOR}
+}
+
+@article{groves1973incentives,
+  title={Incentives in teams},
+  author={Groves, Theodore},
+  journal={Econometrica: Journal of the Econometric Society},
+  pages={617--631},
+  year={1973},
+  publisher={JSTOR}
+}
+
+@article{kjeldsen2001john,
+  title={John von Neumann's conception of the minimax theorem: a journey through different mathematical contexts},
+  author={Kjeldsen, Tinne Hoff},
+  journal={Archive for history of exact sciences},
+  volume={56},
+  number={1},
+  pages={39--68},
+  year={2001},
+  publisher={JSTOR}
+}
+
+@article{kurokawa2018fair,
+  title={Fair enough: Guaranteeing approximate maximin shares},
+  author={Kurokawa, David and Procaccia, Ariel D and Wang, Junxing},
+  journal={Journal of the ACM (JACM)},
+  volume={65},
+  number={2},
+  pages={1--27},
+  year={2018},
+  publisher={ACM New York, NY, USA}
+}
+
+@inproceedings{ghodsi2018fair,
+  title={Fair allocation of indivisible goods: Improvements and generalizations},
+  author={Ghodsi, Mohammad and HajiAghayi, MohammadTaghi and Seddighin, Masoud and Seddighin, Saeed and Yami, Hadi},
+  booktitle={Proceedings of the 2018 ACM Conference on Economics and Computation},
+  pages={539--556},
+  year={2018}
+}
+
+@article{caragiannis2019unreasonable,
+  title={The unreasonable fairness of maximum Nash welfare},
+  author={Caragiannis, Ioannis and Kurokawa, David and Moulin, Herv{\'e} and Procaccia, Ariel D and Shah, Nisarg and Wang, Junxing},
+  journal={ACM Transactions on Economics and Computation (TEAC)},
+  volume={7},
+  number={3},
+  pages={1--32},
+  year={2019},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{lee2017apx,
+  title={APX-hardness of maximizing Nash social welfare with indivisible items},
+  author={Lee, Euiwoong},
+  journal={Information Processing Letters},
+  volume={122},
+  pages={17--20},
+  year={2017},
+  publisher={Elsevier}
+}
+
+@inproceedings{barman2018finding,
+  title={Finding fair and efficient allocations},
+  author={Barman, Siddharth and Krishnamurthy, Sanath Kumar and Vaish, Rohit},
+  booktitle={Proceedings of the 2018 ACM Conference on Economics and Computation},
+  pages={557--574},
+  year={2018}
+}
+
+@article{cieliebak2008complexity,
+  title={On the Complexity of Variations of Equal Sum Subsets.},
+  author={Cieliebak, Mark and Eidenbenz, Stephan J and Pagourtzis, Aris and Schlude, Konrad},
+  journal={Nord. J. Comput.},
+  volume={14},
+  number={3},
+  pages={151--172},
+  year={2008}
+}
+
+@article{varian2007position,
+  title={Position auctions},
+  author={Varian, Hal R},
+  journal={international Journal of industrial Organization},
+  volume={25},
+  number={6},
+  pages={1163--1178},
+  year={2007},
+  publisher={Elsevier}
+}
+
+@article{varian2014vcg,
+  title={The VCG auction in theory and practice},
+  author={Varian, Hal R and Harris, Christopher},
+  journal={American Economic Review},
+  volume={104},
+  number={5},
+  pages={442--45},
+  year={2014}
+}
+
+@book{taylor2015convex,
+  title={Convex optimization of power systems},
+  author={Taylor, Joshua Adam},
+  year={2015},
+  publisher={Cambridge University Press}
+}
+
+@book{sweeney2013california,
+  title={The California electricity crisis},
+  author={Sweeney, James L},
+  year={2013},
+  publisher={Hoover Press}
+}
+
+@book{kirschen2018fundamentals,
+  title={Fundamentals of power system economics},
+  author={Kirschen, Daniel S and Strbac, Goran},
+  year={2018},
+  publisher={John Wiley \& Sons}
+}
+
+@article{ali2019discrimination,
+  title={Discrimination through optimization: How Facebook's Ad delivery can lead to biased outcomes},
+  author={Ali, Muhammad and Sapiezynski, Piotr and Bogen, Miranda and Korolova, Aleksandra and Mislove, Alan and Rieke, Aaron},
+  journal={Proceedings of the ACM on Human-Computer Interaction},
+  volume={3},
+  number={CSCW},
+  pages={1--30},
+  year={2019},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{housingdiscrimination,
+  title={Facebook Lets Advertisers Exclude Users by Race},
+  author={Angwin, Julia and  Parris Jr., Terry},
+  journal={ProPublica},
+  year={2016},
+  url={https://www.propublica.org/article/facebook-lets-advertisers-exclude-users-by-race}
+}
+
+@article{agediscrimination,
+  title={Dozens of Companies Are Using Facebook to Exclude Older Workers From Job Ads},
+  author={Angwin, Julia and  Scheiber, Noam and Tobin, Ariana},
+  journal={ProPublica},
+  year={2016},
+  url={https://www.propublica.org/article/facebook-ads-age-discrimination-targeting}
+}
+
+
+@article{fb_housing_update,
+  title={Doing More to Protect Against Discrimination in Housing, Employment and Credit Advertising},
+  author={Sandberg, Sheryl},
+  journal={Facebook},
+  year={2019},
+  url={https://about.fb.com/news/2019/03/protecting-against-discrimination-in-ads/}
+}
+
+
+@article{aclu_housing_update,
+  title={Facebook Settles Civil Rights Cases by Making Sweeping Changes to Its Online Ad Platform},
+  author={Galen, Sherwin and Bhandari Esha},
+  journal={ACLU},
+  year={2019},
+  url={https://www.aclu.org/blog/womens-rights/womens-rights-workplace/facebook-settles-civil-rights-cases-making-sweeping}
+}
+
+@book{barocas2019fairness,
+  title = {Fairness and Machine Learning},
+  author = {Solon Barocas and Moritz Hardt and Arvind Narayanan},
+  publisher = {fairmlbook.org},
+  note = {\url{http://www.fairmlbook.org}},
+  year = {2019}
+}
+
+@inproceedings{banerjee2022online,
+  title={Online Nash Social Welfare Maximization with Predictions},
+  author={Banerjee, Siddhartha and Gkatzelis, Vasilis and Gorokh, Artur and Jin, Billy},
+  booktitle={Proceedings of the 2022 Annual ACM-SIAM Symposium on Discrete Algorithms (SODA)},
+  pages={1--19},
+  year={2022},
+  organization={SIAM}
+}
+
+@article{panageas2021combinatorial,
+  title={Combinatorial Algorithms for Matching Markets via Nash Bargaining: One-Sided, Two-Sided and Non-Bipartite},
+  author={Panageas, Ioannis and Tr{\"o}bst, Thorben and Vazirani, Vijay V},
+  journal={arXiv preprint arXiv:2106.02024},
+  year={2021}
+}
+
+@inproceedings{hosseini2022nash,
+  title={Nash-Bargaining-Based Models for Matching Markets: One-Sided and Two-Sided; Fisher and Arrow-Debreu},
+  author={Hosseini, Mojtaba and Vazirani, Vijay V},
+  booktitle={13th Innovations in Theoretical Computer Science Conference (ITCS 2022)},
+  year={2022},
+  organization={Schloss Dagstuhl-Leibniz-Zentrum f{\"u}r Informatik}
+}
+
+@article{jalota2022online,
+  title={Online Learning in Fisher Markets with Unknown Agent Preferences},
+  author={Jalota, Devansh and Ye, Yinyu},
+  journal={arXiv preprint arXiv:2205.00825},
+  year={2022}
+}
+
+@article{xiao2010dual,
+  title={Dual Averaging Methods for Regularized Stochastic Learning and Online Optimization},
+  author={Xiao, Lin},
+  journal={Journal of Machine Learning Research},
+  volume={11},
+  pages={2543--2596},
+  year={2010}
+}
+
+@article{kroer2022computing,
+  title={Computing large market equilibria using abstractions},
+  author={Kroer, Christian and Peysakhovich, Alexander and Sodomka, Eric and Stier-Moses, Nicolas E},
+  journal={Operations Research},
+  volume={70},
+  number={1},
+  pages={329--351},
+  year={2022},
+  publisher={INFORMS}
+}
+
+@article{kroer2022market,
+  title={Market equilibrium models in large-scale internet markets},
+  author={Kroer, Christian and Stier-Moses, Nicolas E},
+  journal={Innovative Technology at the Interface of Finance and Operations: Volume II},
+  pages={147},
+  year={2022},
+  publisher={Springer Nature}
+}
+
+@article{esfandiari2018allocation,
+  title={Allocation with traffic spikes: Mixing adversarial and stochastic models},
+  author={Esfandiari, Hossein and Korula, Nitish and Mirrokni, Vahab},
+  journal={ACM Transactions on Economics and Computation (TEAC)},
+  volume={6},
+  number={3-4},
+  pages={1--23},
+  year={2018},
+  publisher={ACM New York, NY, USA}
+}
+
+@InProceedings{anagnostides2022uncoupled,
+  title={Uncoupled Learning Dynamics with ${O}(\log T) $ Swap Regret in Multiplayer Games},
+  author={Anagnostides, Ioannis and Farina, Gabriele and Kroer, Christian and Lee, Chung-Wei and Luo, Haipeng and Sandholm, Tuomas},
+  booktitle={Advances in Neural Information Processing Systems},
+  year={2022}
+}
+
+@InProceedings{farina2022near,
+  title={Near-Optimal No-Regret Learning for General Convex Games},
+  author={Farina, Gabriele and Anagnostides, Ioannis  and Lee, Chung-Wei and Luo, Haipeng and Kroer, Christian and Sandholm, Tuomas},
+  booktitle={Advances in Neural Information Processing Systems},
+  year={2022}
+}
+
+@inproceedings{branzei2021proportional,
+  title={Proportional dynamics in exchange economies},
+  author={Br{\^a}nzei, Simina and Devanur, Nikhil and Rabani, Yuval},
+  booktitle={Proceedings of the 22nd ACM Conference on Economics and Computation},
+  pages={180--201},
+  year={2021}
+}
+
+@book{hiriart2004fundamentals,
+  title={Fundamentals of convex analysis},
+  author={Hiriart-Urruty, Jean-Baptiste and Lemar{\'e}chal, Claude},
+  year={2004},
+  publisher={Springer Science \& Business Media}
+}
+
+@InProceedings{castiglioni2022online,
+  author = "Matteo Castiglioni and Andrea Celli and Christian Kroer ",
+  title = "Online Learning with Knapsacks: the Best of Both Worlds",
+  booktitle={International conference on machine learning},
+  year = "2022",
+  date = "2022-07-22",
+  url = "https://arxiv.org/abs/2202.13710",
+}
+
+@InProceedings{farina2022kernelized,
+  author = "Gabriele Farina and Chung-Wei Lee and Haipeng Luo and Christian Kroer ",
+  title = "Kernelized Multiplicative Weights for 0/1-Polyhedral Games: Bridging the Gap Between Learning in Extensive-Form and Normal-Form Games",
+  booktitle={International conference on machine learning},
+  year = "2022",
+  date = "2022-07-22",
+  url = "https://arxiv.org/abs/2202.00237",
+}
+
+@article{balseiro2022online,
+  title={Online Resource Allocation under Horizon Uncertainty},
+  author={Balseiro, Santiago and Kroer, Christian and Kumar, Rachitesh},
+  journal={arXiv e-prints},
+  pages={arXiv--2206},
+  year={2022}
+}
+
+@article{ahani2021placement,
+  title={Placement optimization in refugee resettlement},
+  author={Ahani, Narges and Andersson, Tommy and Martinello, Alessandro and Teytelboym, Alexander and Trapp, Andrew C},
+  journal={Operations Research},
+  volume={69},
+  number={5},
+  pages={1468--1486},
+  year={2021},
+  publisher={INFORMS}
+}
+
+@inproceedings{ahani2021dynamic,
+  title={Dynamic Placement in Refugee Resettlement},
+  author={Ahani, Narges and G{\"o}lz, Paul and Procaccia, Ariel D and Teytelboym, Alexander and Trapp, Andrew C},
+  booktitle={22nd ACM Conference on Economics and Computation Proceedings.},
+  year={2021}
+}
+
+@techreport{delacretaz2019matching,
+  title={Matching mechanisms for refugee resettlement},
+  author={Delacr{\'e}taz, David and Kominers, Scott Duke and Teytelboym, Alexander},
+  year={2019}
+}
+
+@book{shapiro2021lectures,
+  title     = {Lectures on stochastic programming: modeling and theory},
+  author    = {Shapiro, Alexander and Dentcheva, Darinka and Ruszczynski, Andrzej},
+  year      = {2021},
+  publisher = {SIAM}
+}
+@article{shapiro2003monte,
+  title={Monte Carlo sampling methods},
+  author={Shapiro, Alexander},
+  journal={Handbooks in operations research and management science},
+  volume={10},
+  pages={353--425},
+  year={2003},
+  publisher={Elsevier}
+}
+
+@article{duchi2021learning,
+  title={Learning models with uniform performance via distributionally robust optimization},
+  author={Duchi, John C and Namkoong, Hongseok},
+  journal={The Annals of Statistics},
+  volume={49},
+  number={3},
+  pages={1378--1406},
+  year={2021},
+  publisher={Institute of Mathematical Statistics}
+}
+
+@inproceedings{tang2020reinforcement,
+  title={Reinforcement learning for integer programming: Learning to cut},
+  author={Tang, Yunhao and Agrawal, Shipra and Faenza, Yuri},
+  booktitle={International conference on machine learning},
+  pages={9367--9376},
+  year={2020},
+  organization={PMLR}
+}
+
+@article{iyengar2011approximating,
+  title={Approximating semidefinite packing programs},
+  author={Iyengar, Garud and Phillips, David J and Stein, Clifford},
+  journal={SIAM Journal on Optimization},
+  volume={21},
+  number={1},
+  pages={231--268},
+  year={2011},
+  publisher={SIAM}
+}
+
+@book{luenberger1997optimization,
+  title={Optimization by vector space methods},
+  author={Luenberger, David G},
+  year={1997},
+  publisher={John Wiley \& Sons}
+}
+
+@article{sinclair2020sequential,
+  title={Sequential fair allocation of limited resources under stochastic demands},
+  author={Sinclair, Sean R and Jain, Gauri and Banerjee, Siddhartha and Yu, Christina Lee},
+  journal={arXiv preprint arXiv:2011.14382},
+  year={2020}
+}
+
+@article{chen2009market,
+  title={Market equilibria with hybrid linear-Leontief utilities},
+  author={Chen, Xi and Huang, Li-Sha and Teng, Shang-Hua},
+  journal={Theoretical Computer Science},
+  volume={410},
+  number={17},
+  pages={1573--1580},
+  year={2009},
+  publisher={Elsevier}
+}
+
+@article{avigdor2014convergence,
+  title={Convergence of T$\backslash$\^{} atonnement in Fisher Markets},
+  author={Avigdor-Elgrabli, Noa and Rabani, Yuval and Yadgar, Gala},
+  journal={arXiv preprint arXiv:1401.6637},
+  year={2014}
+}
+
+@article{peysakhovich2022parity,
+  title={Parity in Markets--Methods, Costs, and Consequences},
+  author={Peysakhovich, Alexander and Kroer, Christian and Usunier, Nicolas},
+  journal={arXiv preprint arXiv:2210.02586},
+  year={2022}
+}
+
+@article{ziegler1982solving,
+  title={Solving certain singly constrained convex optimization problems in production planning},
+  author={Ziegler, Hans},
+  journal={Operations Research Letters},
+  volume={1},
+  number={6},
+  pages={246--252},
+  year={1982},
+  publisher={Elsevier}
+}
+
+@article{bretthauer2006production,
+  title={Production and inventory management under multiple resource constraints},
+  author={Bretthauer, Kurt M and Shetty, Bala and Syam, Siddhartha and Vokurka, Robert J},
+  journal={Mathematical and Computer Modelling},
+  volume={44},
+  number={1-2},
+  pages={85--95},
+  year={2006},
+  publisher={Elsevier}
+}
+
+@article{nedic2009approximate,
+  title={Approximate primal solutions and rate analysis for dual subgradient methods},
+  author={Nedi{\'c}, Angelia and Ozdaglar, Asuman},
+  journal={SIAM Journal on Optimization},
+  volume={19},
+  number={4},
+  pages={1757--1780},
+  year={2009},
+  publisher={SIAM}
+}
+
+@article{goktas2023tatonnement,
+  title={T\^atonnement in Homothetic Fisher Markets},
+  author={Goktas, Denizalp and Zhao, Jiayi and Greenwald, Amy},
+  journal={arXiv preprint arXiv:2306.04890},
+  year={2023}
+}
+
+@misc{sandholm2006optimal,
+  title={Optimal winner determination algorithms},
+  author={Sandholm, Tuomas},
+  journal={Combinatorial auctions},
+  volume={337368},
+  year={2006},
+  publisher={MIT Press Cambridge}
+}
+
+@article{conitzer2022pacing,
+  title={Pacing equilibrium in first price auction markets},
+  author={Conitzer, Vincent and Kroer, Christian and Panigrahi, Debmalya and Schrijvers, Okke and Stier-Moses, Nicolas E and Sodomka, Eric and Wilkens, Christopher A},
+  journal={Management Science},
+  volume={68},
+  number={12},
+  pages={8515--8535},
+  year={2022},
+  publisher={INFORMS}
+}
+
+@article{conitzer2022multiplicative,
+  title={Multiplicative pacing equilibria in auction markets},
+  author={Conitzer, Vincent and Kroer, Christian and Sodomka, Eric and Stier-Moses, Nicolas E},
+  journal={Operations Research},
+  volume={70},
+  number={2},
+  pages={963--989},
+  year={2022},
+  publisher={INFORMS}
+}
+
+@article{borrero2017fractional,
+  title={Fractional 0--1 programming: applications and algorithms},
+  author={Borrero, Juan S and Gillen, Colin and Prokopyev, Oleg A},
+  journal={Journal of Global Optimization},
+  volume={69},
+  pages={255--282},
+  year={2017},
+  publisher={Springer}
+}
+
+@inproceedings{viappiani2013robust,
+  title={Robust optimization of recommendation sets with the maximin utility criterion},
+  author={Viappiani, Paolo and Kroer, Christian},
+  booktitle={Algorithmic Decision Theory: Third International Conference, ADT 2013, Bruxelles, Belgium, November 12-14, 2013, Proceedings 3},
+  pages={411--424},
+  year={2013},
+  organization={Springer}
+}
+
+@inproceedings{boutilier2010simultaneous,
+  title={Simultaneous elicitation of preference features and utility},
+  author={Boutilier, Craig and Regan, Kevin and Viappiani, Paolo},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={24},
+  number={1},
+  pages={1160--1167},
+  year={2010}
+}
+
+@article{viappiani2020equivalence,
+  title={On the equivalence of optimal recommendation sets and myopically optimal query sets},
+  author={Viappiani, Paolo and Boutilier, Craig},
+  journal={Artificial Intelligence},
+  volume={286},
+  pages={103328},
+  year={2020},
+  publisher={Elsevier}
+}
+
+@book{milgrom2017discovering,
+  title={Discovering prices: auction design in markets with complex constraints},
+  author={Milgrom, Paul},
+  year={2017},
+  publisher={Columbia University Press}
+}
+
+@book{bichler2017handbook,
+  title={Handbook of spectrum auction design},
+  author={Bichler, Martin and Goeree, Jacob K},
+  year={2017},
+  publisher={Cambridge University Press}
+}
+
+@article{sandholm2002algorithm,
+  title={Algorithm for optimal winner determination in combinatorial auctions},
+  author={Sandholm, Tuomas},
+  journal={Artificial intelligence},
+  volume={135},
+  number={1-2},
+  pages={1--54},
+  year={2002},
+  publisher={Elsevier}
+}
+
+@article{von1928theorie,
+  title={Zur theorie der gesellschaftsspiele},
+  author={von Neumann, John},
+  journal={Mathematische annalen},
+  volume={100},
+  number={1},
+  pages={295--320},
+  year={1928},
+  publisher={Springer}
+}
+
+@article{von1959theory,
+  title={On the theory of games of strategy},
+  author={von Neumann, John},
+  journal={Contributions to the Theory of Games},
+  volume={4},
+  pages={13--42},
+  year={1959},
+  publisher={Princeton University Press Princeton, NJ}
+}
+
+@article{jalota2023fisher,
+  title={Fisher markets with linear constraints: Equilibrium properties and efficient distributed algorithms},
+  author={Jalota, Devansh and Pavone, Marco and Qi, Qi and Ye, Yinyu},
+  journal={Games and Economic Behavior},
+  volume={141},
+  pages={223--260},
+  year={2023},
+  publisher={Elsevier}
+}
+
+@inproceedings{peysakhovich2023implementing,
+  title={Implementing Fairness Constraints in Markets Using Taxes and Subsidies},
+  author={Peysakhovich, Alexander and Kroer, Christian and Usunier, Nicolas},
+  booktitle={Proceedings of the 2023 ACM Conference on Fairness, Accountability, and Transparency},
+  pages={916--930},
+  year={2023}
+}
+
+@article{udell2016generalized,
+  title={Generalized low rank models},
+  author={Udell, Madeleine and Horn, Corinne and Zadeh, Reza and Boyd, Stephen and others},
+  journal={Foundations and Trends{\textregistered} in Machine Learning},
+  volume={9},
+  number={1},
+  pages={1--118},
+  year={2016},
+  publisher={Now Publishers, Inc.}
+}
+
+@inproceedings{levin2008bittorrent,
+  title={Bittorrent is an auction: analyzing and improving bittorrent's incentives},
+  author={Levin, Dave and LaCurts, Katrina and Spring, Neil and Bhattacharjee, Bobby},
+  booktitle={Proceedings of the ACM SIGCOMM 2008 conference on Data communication},
+  pages={243--254},
+  year={2008}
+}
+
+@article{chi2019nonconvex,
+  title={Nonconvex optimization meets low-rank matrix factorization: An overview},
+  author={Chi, Yuejie and Lu, Yue M and Chen, Yuxin},
+  journal={IEEE Transactions on Signal Processing},
+  volume={67},
+  number={20},
+  pages={5239--5269},
+  year={2019},
+  publisher={IEEE}
+}
+
+@article{candes2012exact,
+  title={Exact matrix completion via convex optimization},
+  author={Candes, Emmanuel and Recht, Benjamin},
+  journal={Communications of the ACM},
+  volume={55},
+  number={6},
+  pages={111--119},
+  year={2012},
+  publisher={ACM New York, NY, USA}
+}
+
+@article{candes2009exact,
+  title={Exact Matrix Completion via Convex Optimization},
+  author={Cand{\`e}s, Emmanuel J and Recht, Benjamin},
+  journal={Found Comput Math},
+  volume={9},
+  pages={717--772},
+  year={2009}
+}
+
+@article{farina2023regret,
+  title={Regret Matching+:(In) Stability and Fast Convergence in Games},
+  author={Farina, Gabriele and Grand-Cl{\'e}ment, Julien and Kroer, Christian and Lee, Chung-Wei and Luo, Haipeng},
+  journal={arXiv preprint arXiv:2305.14709},
+  year={2023}
+}
+
+@inproceedings{flaspohler2021online,
+  title={Online learning with optimism and delay},
+  author={Flaspohler, Genevieve E and Orabona, Francesco and Cohen, Judah and Mouatadid, Soukayna and Oprescu, Miruna and Orenstein, Paulo and Mackey, Lester},
+  booktitle={International Conference on Machine Learning},
+  pages={3363--3373},
+  year={2021},
+  organization={PMLR}
+}
+
+@article{liao2022nonstationary,
+  title={Nonstationary dual averaging and online fair allocation},
+  author={Liao, Luofeng and Gao, Yuan and Kroer, Christian},
+  journal={Advances in Neural Information Processing Systems},
+  volume={35},
+  pages={37159--37172},
+  year={2022}
+}
+
+@inproceedings{GargM20,
+  author       = {Jugal Garg and
+                  Peter McGlaughlin},
+  title        = {Computing Competitive Equilibria with Mixed Manna},
+  booktitle    = {{AAMAS}},
+  pages        = {420--428},
+  publisher    = {International Foundation for Autonomous Agents and Multiagent Systems},
+  year         = {2020}
+}
+
+@article{BS23,
+title={Algorithms for Competitive Division of Chores},
+author={Brânzei, Simina and Sandomirskiy, Fedor},
+journal={Mathematics of Operations Research},
+volume={49},
+issue={1},
+pages={398-429},
+year={2023}
+}
+
+@article{charkhgard2018linear,
+  title={A linear programming based algorithm to solve a class of optimization problems with a multi-linear objective function and affine constraints},
+  author={Charkhgard, Hadi and Savelsbergh, Martin and Talebian, Masoud},
+  journal={Computers \& Operations Research},
+  volume={89},
+  pages={17--30},
+  year={2018},
+  publisher={Elsevier}
+}
+
+@inproceedings{boodaghians2022polynomial,
+  title={Polynomial Time Algorithms to Find an Approximate Competitive Equilibrium for Chores},
+  author={Boodaghians, Shant and Chaudhury, Bhaskar Ray and Mehta, Ruta},
+  booktitle={Proceedings of the 2022 Annual ACM-SIAM Symposium on Discrete Algorithms (SODA)},
+  pages={2285--2302},
+  year={2022},
+  organization={SIAM}
+}
+
+@inproceedings{mattei2013preflib,
+  title={Preflib: A library for preferences http://www. preflib. org},
+  author={Mattei, Nicholas and Walsh, Toby},
+  booktitle={Algorithmic Decision Theory: Third International Conference, ADT 2013, Bruxelles, Belgium, November 12-14, 2013, Proceedings 3},
+  pages={259--270},
+  year={2013},
+  organization={Springer}
+}
+
+@inproceedings{van2020deterministic,
+  title={A deterministic linear program solver in current matrix multiplication time},
+  author={van den Brand, Jan},
+  booktitle={Proceedings of the Fourteenth Annual ACM-SIAM Symposium on Discrete Algorithms},
+  pages={259--278},
+  year={2020},
+  organization={SIAM}
+}
+
+@article{benade2023fair,
+  title={Fair and Efficient Online Allocations},
+  author={Benad{\`e}, Gerdus and Kazachkov, Aleksandr M and Procaccia, Ariel D and Psomas, Alexandros and Zeng, David},
+  journal={Operations Research},
+  year={2023},
+  publisher={INFORMS}
+}
