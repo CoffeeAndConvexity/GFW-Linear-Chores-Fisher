@@ -7,7 +7,7 @@ from scipy.spatial import ConvexHull
 import gurobipy as gp
 
 N, M = 2, 8
-np.random.seed(0)
+np.random.seed(6)
 D = np.random.uniform(size=(N, M))
 B = np.array([1, 1])
          
@@ -141,12 +141,22 @@ idx_sort_1 = np.argsort(vertices_considered["beta_1"])
 vertices_considered["beta_1"] = np.array(vertices_considered["beta_1"])[idx_sort_1]
 vertices_considered["beta_2"] = np.array(vertices_considered["beta_2"])[idx_sort_1]
 
+fig, ax = plt.subplots(1, figsize=(30, 24))
+
 plt.plot(vertices_considered["beta_1"], vertices_considered["beta_2"], c='green', marker='o', linestyle='-')
-plt.xlim(0.9 * min_v_beta_1, 1.1 * max_v_beta_1)
-plt.ylim(0, 1.1 * max_v_beta_2)
+plt.xlim(0.5 * min_v_beta_1, 1.1 * max_v_beta_1)
+plt.ylim(0.5 * min_v_beta_2, 1.1 * max_v_beta_2)
 
-print(beta_1_in_algorithm, beta_2_in_algorithm)
-plt.scatter(beta_1_in_algorithm, beta_2_in_algorithm, c='blue', marker='H', s=100, zorder=10)
+plt.plot(beta_1_in_algorithm, beta_2_in_algorithm, c='blue', marker='H', zorder=10)
+for i in range(len(beta_1_in_algorithm) - 1):
+    segment_length = np.sqrt((beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]) ** 2 + (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]) ** 2)
+    plt.arrow(beta_1_in_algorithm[i], beta_2_in_algorithm[i], 0.7 * (beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]), 0.7 * (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]), shape='full', lw=0, length_includes_head=True, head_length=min(0.4 * segment_length, 0.2), head_width=min(.3 * segment_length, 0.15), overhang=0.5, color='blue')
 
+ax.spines[['right', 'top']].set_visible(False)
+plt.arrow(0.5 * min_v_beta_1, 0.5 * min_v_beta_2, (1.1 * max_v_beta_1 - 0.5 * min_v_beta_1), 0, shape='full', lw=0, length_includes_head=True, head_length=0.1, head_width=0.05, overhang=0.3, color='black')
+plt.arrow(0.5 * min_v_beta_1, 0.5 * min_v_beta_2, 0, (1.1 * max_v_beta_2 - 0.5 * min_v_beta_2), shape='full', lw=0, length_includes_head=True, head_length=0.05, head_width=0.2, overhang=0.3, color='black')
 
-plt.show()
+plt.xlabel(r"$\beta_1$")
+plt.ylabel(r"$\beta_2$")
+
+plt.savefig("./an-instance-feasible-region-boundary-and-algorithm.png")
