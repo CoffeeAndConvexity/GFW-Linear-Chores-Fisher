@@ -3,7 +3,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
 import numpy as np
 from scipy.spatial import ConvexHull
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.patches import FancyArrowPatch
 from mpl_toolkits.mplot3d import proj3d
 import cvxpy as cp
@@ -32,7 +31,7 @@ for s in hull_simplices:
         tri.set_color('#013220')  # darkgreen
     else:
         tri.set_color('green')
-    tri.set_alpha(0.5)
+    tri.set_alpha(0.3)
     tri.set_edgecolor('none')
     ax.add_collection3d(tri)
     
@@ -122,7 +121,8 @@ ax.set_zlim([0, 3.2])
 ax.set_ybound([0, 3])
 ax.set_xbound([0, 1.5])
 ax.set_zbound([0, 3])
-ax.set_aspect('equal', adjustable='box')
+ax.set_box_aspect([1.5, 3, 3])
+# ax.set_aspect('auto', adjustable='box')
 
 plt.draw()
 plt.show()

@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+plt.rcParams['text.usetex'] = True
 
 from pypoman import compute_polytope_vertices
 from scipy.spatial import ConvexHull
@@ -35,8 +38,11 @@ def feasible_point(M, N, D, B, random=False, random_seed=2024):  ###
         p_0 = p_0 / sum(p_0) * sum(B)
         beta_0 = np.amax(p_0 / D, axis=1) + np.random.uniform(size=N)
     else:
-        p_0 = (sum(B) / M) * np.ones(shape=M)
-        beta_0 = np.amax(p_0 / D, axis=1)
+        # p_0 = (sum(B) / M) * np.ones(shape=M)
+        # beta_0 = np.amax(p_0 / D, axis=1)
+        # M = 1, N = 2
+        beta_0 = np.array([2.8, 0.6])
+        p_0 = np.amax(beta_0.reshape(-1, 1) * D, axis=0)
 
     return p_0, beta_0
 
@@ -44,9 +50,9 @@ def LMO(c, A, b, C=None, d=None, return_dual=False):
     m = gp.Model()
     N = len(c)
 
-    M = A.shape[1] - len(c)
+    M = A.shape[1] - N
     p = m.addMVar(M)
-    beta = m.addMVar(len(c))
+    beta = m.addMVar(N)
 
     m.setObjective(c @ beta)
     m.addConstr(A[:, :M] @ p + A[:, M:] @ beta <= b)
@@ -129,6 +135,9 @@ for vertex in vertices:
     if np.amax(vertex[-2:]) < 99 and np.amax(vertex[:M]) < sum(B) - 0.01 and np.amin(vertex[:M]) > 0.01:
         vertices_considered["beta_1"].append(vertex[-2])
         vertices_considered["beta_2"].append(vertex[-1])
+
+
+
 min_v_beta_1, max_v_beta_1 = min(vertices_considered["beta_1"]), max(vertices_considered["beta_1"])
 min_v_beta_2, max_v_beta_2 = min(vertices_considered["beta_2"]), max(vertices_considered["beta_2"])
 vertices_considered["beta_1"].insert(0, min_v_beta_1)
@@ -141,22 +150,69 @@ idx_sort_1 = np.argsort(vertices_considered["beta_1"])
 vertices_considered["beta_1"] = np.array(vertices_considered["beta_1"])[idx_sort_1]
 vertices_considered["beta_2"] = np.array(vertices_considered["beta_2"])[idx_sort_1]
 
-fig, ax = plt.subplots(1, figsize=(30, 24))
+fig, ax = plt.subplots(1, figsize=(20, 12))
 
-plt.plot(vertices_considered["beta_1"], vertices_considered["beta_2"], c='green', marker='o', linestyle='-')
-plt.xlim(0.5 * min_v_beta_1, 1.1 * max_v_beta_1)
-plt.ylim(0.5 * min_v_beta_2, 1.1 * max_v_beta_2)
 
-plt.plot(beta_1_in_algorithm, beta_2_in_algorithm, c='blue', marker='H', zorder=10)
+# Plot the polytope
+# Plot the feasible region and fill it
+# ------------------------------------------------
+plt.plot(vertices_considered["beta_1"], vertices_considered["beta_2"], lw=3, linestyle='-', c='green', marker='o', markersize=10)
+plt.fill_between(vertices_considered["beta_1"], vertices_considered["beta_2"], 3, color='green', alpha=0.3)
+
+
+
+# Plot the path of the algorithm
+# ------------------------------------------------
+plt.plot(beta_1_in_algorithm, beta_2_in_algorithm, lw=3, c='blue', marker='^', markersize=16, markerfacecolor='orange', markeredgewidth=3, zorder=10)
 for i in range(len(beta_1_in_algorithm) - 1):
     segment_length = np.sqrt((beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]) ** 2 + (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]) ** 2)
-    plt.arrow(beta_1_in_algorithm[i], beta_2_in_algorithm[i], 0.7 * (beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]), 0.7 * (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]), shape='full', lw=0, length_includes_head=True, head_length=min(0.4 * segment_length, 0.2), head_width=min(.3 * segment_length, 0.15), overhang=0.5, color='blue')
+    plt.arrow(beta_1_in_algorithm[i], beta_2_in_algorithm[i], 0.6 * (beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]), 0.6 * (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]), shape='full', lw=3, length_includes_head=True, head_length=0.06, head_width=0.03, overhang=0.3, color='blue', capstyle='round')
 
-ax.spines[['right', 'top']].set_visible(False)
-plt.arrow(0.5 * min_v_beta_1, 0.5 * min_v_beta_2, (1.1 * max_v_beta_1 - 0.5 * min_v_beta_1), 0, shape='full', lw=0, length_includes_head=True, head_length=0.1, head_width=0.05, overhang=0.3, color='black')
-plt.arrow(0.5 * min_v_beta_1, 0.5 * min_v_beta_2, 0, (1.1 * max_v_beta_2 - 0.5 * min_v_beta_2), shape='full', lw=0, length_includes_head=True, head_length=0.05, head_width=0.2, overhang=0.3, color='black')
+# Plot the descent direction and tangent plane
 
-plt.xlabel(r"$\beta_1$")
-plt.ylabel(r"$\beta_2$")
+# ax = plt.gca()
+def draw_descent_direction(beta_1, beta_2, with_point=False, color=['blue', 'orange']):
+    plt.arrow(beta_1, beta_2, 0.1 * (- 1 / beta_1), 0.1 * (- 1 / beta_2), shape='full', lw=3, length_includes_head=False, head_length=0.06, head_width=0.03, overhang=0.3, color=color[0], capstyle='round')
+    # arrow = mpatches.FancyArrowPatch((beta_1, beta_2), (beta_1 + 0.2 * (- 1 / beta_1), beta_2 + 0.2 * (- 1 / beta_2)), mutation_scale=100, arrowstyle=']->', color=color[0])
+    # ax.add_patch(arrow)
 
-plt.savefig("./an-instance-feasible-region-boundary-and-algorithm.png")
+    if with_point:
+        plt.scatter(beta_1, beta_2, marker='o', color=color[1], zorder=10)
+
+def draw_tangent_plane(beta_1, beta_2, color='blue'): 
+    l = 0.1
+    plt.plot([beta_1 - l * beta_1, beta_1 + l * beta_1], [beta_2 + l * beta_2, beta_2 - l * beta_2], lw=1, ls='--', c=color, zorder=6)
+
+for i in range(len(beta_1_in_algorithm)):
+    print(np.log(beta_1_in_algorithm[i]) + np.log(beta_2_in_algorithm[i]))
+    draw_descent_direction(beta_1_in_algorithm[i], beta_2_in_algorithm[i], with_point=False, color=['blue', 'orange'])
+    draw_tangent_plane(beta_1_in_algorithm[i], beta_2_in_algorithm[i], color='blue')
+
+
+
+             
+
+plt.axis('scaled')
+
+plt.xlabel(r"$\beta_1$", fontsize=28)
+plt.ylabel(r"$\beta_2$", fontsize=28)
+
+ax = plt.gca()
+# ax.spines[:].set_visible(False)
+ax.spines['left'].set_position('zero')
+ax.spines['right'].set_visible(False)
+ax.spines['bottom'].set_position('zero')
+ax.spines['top'].set_visible(False)
+plt.arrow(-0.1, 0, 3.2, 0, shape='full', lw=3, length_includes_head=False, head_length=0.1, head_width=0.05, overhang=0.3, color='black')
+plt.arrow(0, -0.1, 0, 1.5, shape='full', lw=3, length_includes_head=False, head_length=0.1, head_width=0.05, overhang=0.3, color='black')
+
+# eq1 = (r"\begin{eqnarray*} & p_j \leq d_{1j} \beta_1 \;\forall\, j \in [1, \ldots, 8] \\ & p_j \leq d_{2j} \beta_2 \;\forall\, j \in [1, \ldots, 8] \\ & \sum_j p_j = 2 \\ & p, \beta \geq 0 \end{eqnarray*}")
+# ax.text(1, 0.9, eq1, color='k', fontsize=18, horizontalalignment="right", verticalalignment="top")
+
+plt.xticks(fontsize=20)
+plt.yticks(fontsize=20)
+plt.xlim(-0.1, 3.2)
+plt.ylim(-0.1, 1.5)
+plt.tight_layout()
+
+plt.savefig("./GFW.png")
