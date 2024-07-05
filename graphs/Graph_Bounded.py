@@ -13,7 +13,7 @@ B = np.array([[1, 2, 2], [1.5, 2, 2], [1, 3, 2], [1.5, 3, 2]])
 hull = ConvexHull(A)
 hull.simplices
 
-fig = plt.figure()
+fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection="3d")
 
 color = 'green'
@@ -33,7 +33,7 @@ for s in hull_simplices:
         tri.set_color('#013220')  # darkgreen
     else:
         tri.set_color('green')
-    tri.set_alpha(0.5)
+    tri.set_alpha(0.15)
     tri.set_edgecolor('none')
     ax.add_collection3d(tri)
     
@@ -109,14 +109,24 @@ def polytope_dual_A_b_form_with_red_beta_p(N, M, D, B):
 A, b = polytope_dual_A_b_form_with_red_beta_p(2, 1, np.array([[2], [1]]), np.array([1, 1, 1]))
 
 
-
+ax.set_xticks(np.arange(0, 1.51, step=0.5))
+ax.tick_params(axis='x', which='major', labelsize=12)
+ax.tick_params(axis='y', which='major', labelsize=12)
+ax.tick_params(axis='z', which='major', labelsize=12)
 ax.set_ylim([0, 3.2])
 ax.set_xlim([0, 1.7])
 ax.set_zlim([0, 3.2])
 ax.set_ybound([0, 3])
 ax.set_xbound([0, 1.5])
 ax.set_zbound([0, 3])
-ax.set_aspect('equal', adjustable='box')
+ax.set_box_aspect([1.5, 3, 3])
+# ax.set_aspect('equal', adjustable='box')
+
+ax.set_xlabel(r"$\beta_1$", size=18)
+ax.set_ylabel(r"$\beta_2$", size=18)
+ax.set_zlabel(r"$p$", size=18)
 
 plt.draw()
-plt.show()
+plt.tight_layout()
+ax.view_init(elev=10., azim=-50.)
+plt.savefig("./Graph_Bounded.png")
