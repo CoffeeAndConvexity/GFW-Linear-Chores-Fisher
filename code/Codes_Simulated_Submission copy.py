@@ -11,12 +11,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import cvxpy as cp
 import time
+import copy
 
 # Create an environment with your WLS license
 params = {
-"WLSACCESSID": 'bd6082d8-df30-497b-86f3-f189f173114f',
-"WLSSECRET": '33a99b27-d33d-4640-ab8e-6b4db5d020bd',
-"LICENSEID": 2446748,
+    "WLSACCESSID": "57dbe824-ccc4-4f72-a1d7-80262aef9c8b",
+    "WLSSECRET": "d47b906e-8863-45ba-96f9-01b282c6c5f6",
+    "LICENSEID": 2546016
 }
 env = gp.Env(params=params)
 
@@ -110,7 +111,7 @@ def feasible_point(M, N, D, B, random=False, random_seed=2024):  ###
 
     return p_0, beta_0
 
-def LMO(c, A, b, C=None, d=None, return_dual=False):
+def LMO(c, A, b, C=None, d=None, return_dual=False, high_precision=False):
     m = gp.Model(env=env)
     N = len(c)
 
@@ -126,14 +127,22 @@ def LMO(c, A, b, C=None, d=None, return_dual=False):
 
     m.Params.LogToConsole = 0
     # m.Params.Method = 1
+    if high_precision is True:
+        # print("High precision required for solving LP!")
+        m.Params.FeasibilityTol = 1e-9
+        m.Params.OptimalityTol = 1e-9
+        # m.Params.BarConvTol = 0
+        # m.Params.BarCorrectors = 100
     m.optimize()
+    # print("DualResidual:", m.getAttr("DualResidual"))
+    # print("DualSResidual:", m.getAttr("DualSResidual"))
 
     if return_dual:
         return p.X, beta.X, np.array(m.Pi)
     else:
         return p.X, beta.X
 
-def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
+def GFW(N, M, D, B, return_eq=False, high_precision=False):  # Greedy Frank Wolfe
 
     # create the dual polyhedron
     A, b, C, d = polytope_dual(N, M, D, B)
@@ -160,7 +169,7 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
         # main
         LP_start = GFW_start = time.time()
 
-        p, beta, gamma = LMO(B / beta, A, b, C, d, return_dual=True)
+        p, beta, gamma = LMO(B / beta, A, b, C, d, return_dual=True, high_precision=high_precision)
 
         solve_LP_time += time.time() - LP_start
         solve_LP_num += 1
@@ -199,6 +208,13 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
             print("p:\n", np.round(p, 3))
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(B / beta, 3))
+
+    # if solved_a1 is False:
+    #     print("num_LMO_a1:", num_LMO_a1)
+    # if solved_e is False:
+    #     print("num_LMO_e:", num_LMO_e)
+
+
     return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e
 
 
@@ -241,11 +257,19 @@ def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
     elif solver == 'GUROBI':
         m = gp.Model(env=env)
 
+        # Gurobi parameter setting
+        # m.Params.LogToConsole = 0
+        # # m.Params.FeasibilityTol = 1e-9
+        # # m.Params.OptimalityTol = 1e-9
+        # m.Params.BarConvTol = 0
+        # # m.Params.BarCorrectors = 10000
+
+        # low tolerance setting
         m.Params.LogToConsole = 0
-        # m.Params.FeasibilityTol = 1e-9
-        # m.Params.OptimalityTol = 1e-9
+        m.Params.FeasibilityTol = 1e-9
+        m.Params.OptimalityTol = 1e-9
         m.Params.BarConvTol = 0
-        # m.Params.BarCorrectors = 10000
+        m.Params.BarCorrectors = 10000
 
         u = m.addMVar(N)
         x = m.addMVar(A.shape[1] - N)
@@ -441,7 +465,14 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 run, save, and plot
 """
 
-def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, return_eq=False):
+def run_GFW_vs_EPM(N, M, 
+                   random_generating_method='uniform', 
+                   num_seeds=10, 
+                   algos='both',  # other options: 'GFW'
+                   high_precision=False,
+                   num_iter_max_cap=80, 
+                   running_time_max_cap=100, 
+                   return_eq=False):
 
     def average(lst):  # return the average of a list
         num_nonNone = 0
@@ -470,24 +501,20 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         'running-time-a1': None,
         'running-time-e': None,
     }
-    num_QMO_list = [[], []]
-    running_time_EPM_list = [[], []]
-    num_ins_EPM_solved = [0, 0]
-    data_EPM = {
-        'size': f'N*M = {N}*{M}',
-        'num-iter-a1': None,
-        'num-iter-e': None,
-        'solved-a1': None,
-        'solved-e': None,
-        'running-time-a1': None,
-        'running-time-e': None,
-    }
+
+    if algos == 'both':
+        num_QMO_list = [[], []]
+        running_time_EPM_list = [[], []]
+        num_ins_EPM_solved = [0, 0]
+        data_EPM = copy.deepcopy(data_GFW)
 
     print(f"-*-*-*- SIZE: {N}*{M} -*-*-*-")
-    print("PROGRESS: ", end ="")
+    print("PROGRESS: ", end ="", flush=True)
 
     for s in seeds:
         np.random.seed(s)
+
+        # generate disutility matrix
         if random_generating_method == 'randint':
             D = np.random.randint(low=1, high=1001, size=(N, M))
         elif random_generating_method == 'uniform':
@@ -499,29 +526,32 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         elif random_generating_method == 'exponential':
             D = np.random.exponential(size=(N, M))
 
+        # generate budget vector
         B = np.ones(shape=N)
 
         '''
         Run the Greedy Frank Wolfe algorithm
         '''
 
-        res_GFW = GFW(N, M, D, B, return_eq=return_eq)
-        res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, return_eq=return_eq)
+        res_GFW = GFW(N, M, D, B, return_eq=return_eq, high_precision=high_precision)
+        if algos == 'both':
+            res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, return_eq=return_eq)
 
         if s + 1 < num_seeds:
-            print("o", end ="")
+            print("o", end ="", flush=True)
         else:
             print("o")
 
         for i in range(2):
             num_ins_GFW_solved[i] += res_GFW[2 + i]
-            num_ins_EPM_solved[i] += res_EPM[2 + i]
             if res_GFW[2 + i]:
                 num_LMO_list[i].append(res_GFW[i])
                 running_time_GFW_list[i].append(res_GFW[4 + i])
-            if res_EPM[2 + i]:
-                num_QMO_list[i].append(res_EPM[i])
-                running_time_EPM_list[i].append(res_EPM[4 + i])
+            if algos == 'both':
+                num_ins_EPM_solved[i] += res_EPM[2 + i]
+                if res_EPM[2 + i]:
+                    num_QMO_list[i].append(res_EPM[i])
+                    running_time_EPM_list[i].append(res_EPM[4 + i])
 
     data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
     data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
@@ -530,107 +560,114 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
     data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
 
-    data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
-    data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
-    data_EPM['solved-a1'] = num_ins_EPM_solved[0]
-    data_EPM['solved-e'] = num_ins_EPM_solved[1]
-    data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
-    data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+    if algos == 'both':
+        data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
+        data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
+        data_EPM['solved-a1'] = num_ins_EPM_solved[0]
+        data_EPM['solved-e'] = num_ins_EPM_solved[1]
+        data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
+        data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
 
-    # print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+        return data_GFW, data_EPM
+    elif algos == 'GFW':
+        return data_GFW
 
-    return data_GFW, data_EPM
 
-def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num_seeds=10, download_csv=False):
 
-    dict_ = {
+def run_and_save(size_type="N_by_N",  # other options: "fixed_N"
+                 size_list=[2, 50, 100], 
+                 random_generating_method='uniform', 
+                 num_seeds=10, 
+                 algos='both',
+                 high_precision=False):
+
+    # y: GFW, z: EPM
+    dict_res = {
         'x': list(),
-        'i_y1': list(),
-        'i_y2': list(),
-        'i_z1': list(),
-        'i_z2': list(),
-        's_y1': list(),
-        's_y2': list(),
-        's_z1': list(),
-        's_z2': list(),
-        'r_y1': list(),
-        'r_y2': list(),
-        'r_z1': list(),
-        'r_z2': list()
+
+        'i_y1': list(), 'i_y2': list(), 'r_y1': list(), 'r_y2': list(), 's_y1': list(), 's_y2': list(),
+
+        'i_z1': list(), 'i_z2': list(), 'r_z1': list(), 'r_z2': list(), 's_z1': list(), 's_z2': list()
     }
 
     for size in size_list:
-        N = size
-        M = size
-        dict_['x'].append(size)
-        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds)
+        if size_type == "N_by_N":
+            N, M = size, size
+        elif size_type == "fixed_N":
+            N, M = 100, size
 
-        dict_['i_y1'].append(res_GFW['num-iter-a1'])
-        dict_['s_y1'].append(res_GFW['solved-a1'])
-        dict_['r_y1'].append(res_GFW['running-time-a1'])
-        dict_['i_y2'].append(res_GFW['num-iter-e'])
-        dict_['s_y2'].append(res_GFW['solved-e'])
-        dict_['r_y2'].append(res_GFW['running-time-e'])
+        dict_res['x'].append(size)
+        if algos == 'both':
+            res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds)
+        elif algos == 'GFW':
+            res_GFW = run_GFW(N, M, random_generating_method, num_seeds, high_precision=high_precision)
 
-        dict_['i_z1'].append(res_EPM['num-iter-a1'])
-        dict_['s_z1'].append(res_EPM['solved-a1'])
-        dict_['r_z1'].append(res_EPM['running-time-a1'])
-        dict_['i_z2'].append(res_EPM['num-iter-e'])
-        dict_['s_z2'].append(res_EPM['solved-e'])
-        dict_['r_z2'].append(res_EPM['running-time-e'])
+        # Add results of GFW to the dictionary
+        dict_res['i_y1'].append(res_GFW['num-iter-a1'])
+        dict_res['s_y1'].append(res_GFW['solved-a1'])
+        dict_res['r_y1'].append(res_GFW['running-time-a1'])
+        dict_res['i_y2'].append(res_GFW['num-iter-e'])
+        dict_res['s_y2'].append(res_GFW['solved-e'])
+        dict_res['r_y2'].append(res_GFW['running-time-e'])
 
-    df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{random_generating_method}_t.csv')
+        if algos == 'both':
+            # Add results of EPM to the dictionary
+            dict_res['i_z1'].append(res_EPM['num-iter-a1'])
+            dict_res['s_z1'].append(res_EPM['solved-a1'])
+            dict_res['r_z1'].append(res_EPM['running-time-a1'])
+            dict_res['i_z2'].append(res_EPM['num-iter-e'])
+            dict_res['s_z2'].append(res_EPM['solved-e'])
+            dict_res['r_z2'].append(res_EPM['running-time-e'])
 
-    return dict_
+    df = pd.DataFrame.from_dict(dict_res)
+    df.to_csv(f'./numerical_results/{random_generating_method}_low_tolerance.csv')
 
-def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
+    return dict_res
 
-    plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("Running time in seconds", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
 
-    plt.savefig(f"rt_{random_generating_method}_t.png")
+def plot_and_save(data, 
+                  random_generating_method, 
+                  num_seeds=10, 
+                  algos='both'):
 
+    def plot_setting(plt, ylabel):
+        plt.xticks(fontsize=16)
+        plt.yticks(fontsize=16)
+        plt.xlabel("Size of instances", fontsize=20)
+        plt.ylabel(ylabel, fontsize=20)
+        plt.legend(fontsize=16)
+        plt.tight_layout()
 
     plt.figure()
     plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
     plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    if algos == 'both':
+        plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+        plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("# iterations to reach CE", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
+    plot_setting(plt, "# iterations to reach CE")
+    plt.savefig(f"./plots/ni_{random_generating_method}_low_tolerance.png")
 
-    plt.savefig(f"ni_{random_generating_method}_t.png")
+    plt.figure()
+    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    if algos == 'both':
+        plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+        plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+
+    plot_setting(plt, "Running time in seconds")
+    plt.savefig(f"./plots/rt_{random_generating_method}_low_tolerance.png")
 
     plt.figure()
     plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
     plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    if algos == 'both':
+        plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+        plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
-    plt.xticks(fontsize=16)
-    plt.yticks(fontsize=16)
-    plt.xlabel("Size of instances", fontsize=20)
-    plt.ylabel("Ratio of solved instances", fontsize=20)
-    plt.legend(fontsize=16)
-    plt.tight_layout()
-
-    plt.savefig(f"sr_{random_generating_method}_t.png")
+    plot_setting(plt, "Ratio of solved instances")
+    plt.savefig(f"./plots/sr_{random_generating_method}_low_tolerance.png")
 
 
 if __name__ == "__main__": 
@@ -640,5 +677,16 @@ if __name__ == "__main__":
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=10)
-        plot_and_save(data, random_generating_method=rgm, num_seeds=10)
+        data = run_and_save(size_type="N_by_N", size_list=size_list, random_generating_method=rgm, num_seeds=100)
+        plot_and_save(data, random_generating_method=rgm, num_seeds=100)
+
+    # size_list = [100, 300, 500, 750, 1000]
+    # size_list = [100, 300, 500, 750, 1000]
+    # num_seeds = 10
+    # rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
+    # # rgm_list = ['exponential', 'randint', ]
+
+    # for rgm in rgm_list:
+    #     print(f"================== {rgm} ==================")
+    #     data = run(size_list=size_list, random_generating_method=rgm, num_seeds=num_seeds, high_precision=True)
+    #     plot(data, random_generating_method=rgm, num_seeds=num_seeds)

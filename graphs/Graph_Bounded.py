@@ -16,7 +16,7 @@ hull.simplices
 fig = plt.figure(figsize=(8, 8))
 ax = fig.add_subplot(111, projection="3d")
 
-color = 'green'
+lightgray = '#D3D3D3'
 
 hull_simplices = np.array([[3, 1, 0], 
                            [3, 2, 1], 
@@ -30,9 +30,9 @@ for s in hull_simplices:
     tri = Poly3DCollection([A[s]])
 
     if (s == hull_simplices[0]).all() or (s == hull_simplices[2]).all():
-        tri.set_color('#013220')  # darkgreen
+        tri.set_color('gray') 
     else:
-        tri.set_color('green')
+        tri.set_color(lightgray) 
     tri.set_alpha(0.15)
     tri.set_edgecolor('none')
     ax.add_collection3d(tri)
@@ -59,7 +59,7 @@ for v0, v1 in showed_edges:
 
 
 
-ax.scatter(A[0], A[0], A[0], marker='o', color='green')
+# ax.scatter(A[0], A[0], A[0], marker='o', color='green')
 
 class Arrow3D(FancyArrowPatch):
     def __init__(self, xs, ys, zs, *args, **kwargs):
@@ -109,10 +109,14 @@ def polytope_dual_A_b_form_with_red_beta_p(N, M, D, B):
 A, b = polytope_dual_A_b_form_with_red_beta_p(2, 1, np.array([[2], [1]]), np.array([1, 1, 1]))
 
 
-ax.set_xticks(np.arange(0, 1.51, step=0.5))
-ax.tick_params(axis='x', which='major', labelsize=12)
-ax.tick_params(axis='y', which='major', labelsize=12)
-ax.tick_params(axis='z', which='major', labelsize=12)
+ax.set_xticks(np.arange(0, 1.5, step=0.5))
+ax.set_yticks(np.arange(0, 3, step=0.5))
+ax.xaxis.line.set_color("gray")
+ax.yaxis.line.set_color("gray")
+ax.zaxis.line.set_color("gray")
+ax.tick_params(axis='x', which='major', labelsize=23, pad=-5, color="gray")
+ax.tick_params(axis='y', which='major', labelsize=23, pad=-5, color="gray")
+ax.tick_params(axis='z', which='major', labelsize=23, pad=-5, color="gray")
 ax.set_ylim([0, 3.2])
 ax.set_xlim([0, 1.7])
 ax.set_zlim([0, 3.2])
@@ -122,11 +126,11 @@ ax.set_zbound([0, 3])
 ax.set_box_aspect([1.5, 3, 3])
 # ax.set_aspect('equal', adjustable='box')
 
-ax.set_xlabel(r"$\beta_1$", size=18)
-ax.set_ylabel(r"$\beta_2$", size=18)
-ax.set_zlabel(r"$p$", size=18)
+ax.set_xlabel(r"$\beta_1$", size=25, weight='bold')
+ax.set_ylabel(r"$\beta_2$", size=25, weight='bold')
+ax.set_zlabel(r"$p$", size=25, weight='bold')
 
 plt.draw()
 plt.tight_layout()
 ax.view_init(elev=10., azim=-50.)
-plt.savefig("./Graph_Bounded.png")
+plt.savefig("./Graph_Bounded.png", bbox_inches='tight')
