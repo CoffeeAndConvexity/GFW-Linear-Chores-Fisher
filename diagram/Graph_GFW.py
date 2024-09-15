@@ -13,6 +13,8 @@ N, M = 2, 8
 np.random.seed(6)
 D = np.random.uniform(size=(N, M))
 B = np.array([1, 1])
+
+print(D)
          
 
 
@@ -215,4 +217,6 @@ plt.xlim(-0.1, 3.2)
 plt.ylim(-0.1, 1.5)
 plt.tight_layout()
 
-plt.savefig("./GFW.png")
+import os
+current_directory = os.getcwd()
+plt.savefig(f"{current_directory}/GFW.png")

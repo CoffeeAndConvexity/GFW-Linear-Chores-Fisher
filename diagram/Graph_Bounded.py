@@ -128,7 +128,9 @@ ax.set_box_aspect([1.5, 3, 3])
 
 ax.set_xlabel(r"$\beta_1$", size=25, weight='bold')
 ax.set_ylabel(r"$\beta_2$", size=25, weight='bold')
-ax.set_zlabel(r"$p$", size=25, weight='bold')
+
+ax.zaxis.set_rotate_label(False)
+ax.set_zlabel(r"$p_1$", size=25, weight='bold')
 
 plt.draw()
 plt.tight_layout()
