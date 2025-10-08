@@ -4,6 +4,7 @@ Chores CEEI Experiments
 """
 
 import numpy as np
+np.seterr(divide='ignore')
 from scipy.stats import truncnorm
 from sklearn.cluster import KMeans
 import gurobipy as gp
@@ -115,28 +116,50 @@ def feasible_point(M, N, D, B, random=False, random_seed=2024):  ###
     return p_0, beta_0
 
 # Linear Minimization Oracle (LMO)
-def LMO(c, A, b, C=None, d=None, return_dual=False): 
+def LMO(c, A, b, C=None, d=None, 
+        warm_start_primal=None,
+        model_prev_iter=None, 
+        return_dual=False, 
+        return_model=False): 
 
-    m = gp.Model(env=env)
-    N = len(c)
+    if model_prev_iter is not None:
+        m = model_prev_iter
+        m.setObjective(c @ m.getVars()[-len(c):])
+    else: 
+        m = gp.Model(env=env)
+        N = len(c)
 
-    M = A.shape[1] - len(c)
-    p = m.addMVar(M)
-    beta = m.addMVar(len(c))
+        M = A.shape[1] - len(c)
+        p = m.addMVar(M)
+        beta = m.addMVar(len(c))
 
-    m.setObjective(c @ beta)
-    m.addConstr(A[:, :M] @ p + A[:, M:] @ beta <= b)
-    if C is not None and d is not None:
-        m.addConstr(C[:, :M] @ p + C[:, M:] @ beta == d)
+        m.setObjective(c @ beta)
+        m.addConstr(A[:, :M] @ p + A[:, M:] @ beta <= b)
+        if C is not None and d is not None:
+            m.addConstr(C[:, :M] @ p + C[:, M:] @ beta == d)
+    
+    if warm_start_primal is not None:
+        m_vars = m.getVars()
+        for i in range(len(m_vars)):
+            m_vars[i].Start = warm_start_primal[i]
 
     m.Params.LogToConsole = 0
     # m.Params.Method = 1
+    m.update()
     m.optimize()
 
-    if return_dual:
-        return p.X, beta.X, np.array(m.Pi)
+    # return the optimal value and solution
+    p, beta = m.getVars()[:A.shape[1] - len(c)], m.getVars()[-len(c):]
+    p_value, beta_value = np.array([p[i].X for i in range(len(p))]), np.array([beta[i].X for i in range(len(beta))])
+    
+    if return_dual and return_model:
+        return p_value, beta_value, np.array(m.Pi), m
+    elif return_dual:
+        return p_value, beta_value, np.array(m.Pi)
+    elif return_model:
+        return p_value, beta_value, m
     else:
-        return p.X, beta.X
+        return p_value, beta_value
 
 
 '''
@@ -167,12 +190,18 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80):
     p, beta = feasible_point(M, N, D, B)
     beta_ = beta  # 'beta_' keeps the last beta values
 
+    m = None  # the model from the last iteration, used for warm start
+
     for k in range(MAX_NUM_ITER):
 
         # main
         LP_start = GFW_start = time.time()
 
-        p, beta, gamma = LMO(B / beta, A, b, C, d, return_dual=True)
+        p, beta, gamma, m = LMO(B / beta, A, b, C, d,
+                                warm_start_primal=np.concatenate([p, beta]), 
+                                model_prev_iter=m, 
+                                return_dual=True, 
+                                return_model=True)
 
         solve_LP_time += time.time() - LP_start
         solve_LP_num += 1
@@ -235,8 +264,16 @@ def poly_ext_primal(N, M, D, B):
 
     return A, b, C, d
 
-def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
-    if solver == 'OSQP':
+def QMO(ux0, N, 
+        A, b,
+        A_, b_,  
+        C=None, d=None, 
+        solver='OSQP', 
+        warm_start_primal=None,
+        model_prev_iter=None, 
+        return_model=False):
+
+    if solver == 'OSQP':  # Warm start has not been implemented for OSQP
         ux = cp.Variable(len(ux0), nonneg=True)
         obj = cp.Minimize(sum((ux[:N] - ux0[:N]) ** 2))
         constraints = [A @ ux <= b, ]
@@ -252,27 +289,47 @@ def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
         return ux.value, prob.value
 
     elif solver == 'GUROBI':
-        m = gp.Model(env=env)
 
+        if model_prev_iter is not None:
+            m = model_prev_iter
+            m.setObjective((m.getVars()[:N] - ux0[:N]) @ (m.getVars()[:N] - ux0[:N]))
+            # update the constraints on u, by constraint index
+            for idx, con in enumerate(m.getConstrs()[N:2*N]): 
+                con.RHS = b_[idx]
+        else:
+            m = gp.Model(env=env)
+
+            u = m.addMVar(N)
+            x = m.addMVar(A.shape[1] - N)
+            u0 = ux0[:N]
+            m.setObjective((u - u0) @ (u - u0))  # need to update u0 in each iteration
+            m.addConstr(A[:, :N] @ u + A[:, N:] @ x <= b)
+            m.addConstr(A_[:, :N] @ u + A_[:, N:] @ x <= b_)  # need to update RHS in each iteration
+            if C is not None and d is not None:
+                m.addConstr(C[:, :N] @ u + C[:, N:] @ x == d)
+        
+        if warm_start_primal is not None:
+            m_vars = m.getVars()
+            for i in range(len(m_vars)):
+                m_vars[i].PStart = warm_start_primal[i]
+
+        m.update()
         m.Params.LogToConsole = 0
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
         m.Params.BarConvTol = 0
         # m.Params.BarCorrectors = 10000
-
-        u = m.addMVar(N)
-        x = m.addMVar(A.shape[1] - N)
-        u0 = ux0[:N]
-        m.setObjective((u - u0) @ (u - u0))
-        m.addConstr(A[:, :N] @ u + A[:, N:] @ x <= b)
-        if C is not None and d is not None:
-            m.addConstr(C[:, :N] @ u + C[:, N:] @ x == d)
-
         m.optimize()
 
         obj = m.getObjective()
 
-        return np.concatenate([u.X, x.X]), obj.getValue()
+        u_, x = m.getVars()[:N], m.getVars()[N:]
+        u__value, x_value = np.array([u_[i].X for i in range(len(u_))]), np.array([x[i].X for i in range(len(x))])
+
+        if return_model:
+            return np.concatenate([u__value, x_value]), obj.getValue(), m
+        else:
+            return np.concatenate([u__value, x_value]), obj.getValue()
 
 def find_X(N, M, u, A, b, C=None, d=None):
     m = gp.Model(env=env)
@@ -298,12 +355,18 @@ def find_X(N, M, u, A, b, C=None, d=None):
 
 def u_is_feasible(N, M, u, A, b, C=None, d=None):
     X = find_X(N, M, u, A, b, C, d)
+
     if type(X) is np.ndarray:
         return True, X
     else:
         return False, None
 
-def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False, ignore_print=False, print_eq=False):
+def EPM(N, M, D, B, 
+        QMO_solver='best', 
+        print_quality=False, 
+        print_progress=False, 
+        ignore_print=False, 
+        print_eq=False):
 
     # construct extended (u, x) polyhedral
     A, b, C, d = poly_ext_primal(N, M, D, B)
@@ -325,6 +388,8 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
     # analysis
     solve_QP_time = 0
     solve_QP_num = 0
+
+    m = None  # the model from the last iteration, used for warm start
 
     for k in range(MAX_NUM_ITER):
 
@@ -349,7 +414,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
                             np.concatenate([b, -u]),
                             C,
                             d,
-                            solver=solver
+                            solver=solver, 
                 )
 
                 feasibility_tol_ineq = np.maximum(A @ u_ - b, 0)
@@ -375,13 +440,20 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 
         # choose one specific solver
         else:
-            ux_, min_dist = QMO(np.concatenate([u, np.zeros(M * N)]),
+            x_ws = np.zeros(shape=(N, M))  # used for warm start
+            for i in range(N):
+                for j in range(M):
+                    x_ws[i, j] = u[i] / (M * D[i, j]) 
+
+            ux_, min_dist, m = QMO(np.concatenate([u, np.zeros(M * N)]),  # used to construct the objective
                             N,
-                            np.concatenate([A, np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1)], axis=0),
-                            np.concatenate([b, -u]),
-                            C,
-                            d,
-                            solver=QMO_solver
+                            A, b,
+                            np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
+                            C, d,
+                            solver=QMO_solver, 
+                            warm_start_primal=np.concatenate([u, x_ws.flatten()]), 
+                            model_prev_iter=m,
+                            return_model=True
             )
             solve_QP_time += time.time() - QP_start
             solve_QP_num += 1
@@ -401,6 +473,12 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
             eps = eps_approx_eq(N, M, D, B, p, x)
         except:
             print("--- Note ---")
+            break
+
+        # THIS CASE SHOULD NOT HAPPEN
+        # If there is NaN in u, terminate - choose: report unsolved
+        if np.sum(np.isnan(u)) > 0:
+            print("There is NaN in u, terminate.")
             break
 
         next_u_is_feasible, x = u_is_feasible(N, M, u, A, b, C, d)
@@ -447,6 +525,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
             print("p:\n", np.round(p, 3))
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(u, 3))
+
     return num_QMO_a1, num_QMO_e, solved_a1, solved_e, running_time_a1, running_time_e
 
 
@@ -593,17 +672,17 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
         dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{random_generating_method}.csv')
+    df.to_csv(f'{random_generating_method}_warm_start.csv')
 
     return dict_
 
 def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
 
     plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_GFW_a1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_GFW_e'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_EPM_a1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_EPM_e'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -612,14 +691,14 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"rt_{random_generating_method}.png")
+    plt.savefig(f"rt_{random_generating_method}_warm_start.png")
 
 
     plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_GFW_a1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_GFW_e'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_EPM_a1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_EPM_e'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -628,13 +707,13 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"ni_{random_generating_method}.png")
+    plt.savefig(f"ni_{random_generating_method}_warm_start.png")
 
     plt.figure()
-    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_GFW_a1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_GFW_e']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_EPM_a1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_EPM_e']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -643,7 +722,7 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"sr_{random_generating_method}.png")
+    plt.savefig(f"sr_{random_generating_method}_warm_start.png")
 
 
 if __name__ == "__main__": 
@@ -651,7 +730,7 @@ if __name__ == "__main__":
     # size_list = [2, 50, 100, 150, 200, 250, 300]
     size_list = [2, 100, 200, 300]
     # rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
-    rgm_list = ['uniform', ]
+    rgm_list = ['uniform']
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
