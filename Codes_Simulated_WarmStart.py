@@ -552,6 +552,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     seeds = range(num_seeds)  # set how many instances we want to try for one size
     num_LMO_list = [[], []]
     running_time_GFW_list = [[], []]
+    full_num_LMO_list = [[], []]
+    full_running_time_GFW_list = [[], []]
     num_ins_GFW_solved = [0, 0]
     data_GFW = {
         'size': f'N*M = {N}*{M}',
@@ -608,26 +610,53 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         for i in range(2):
             num_ins_GFW_solved[i] += res_GFW[2 + i]
             num_ins_EPM_solved[i] += res_EPM[2 + i]
-            if res_GFW[2 + i]:
+            # if res_GFW[2 + i]:
+            #     num_LMO_list[i].append(res_GFW[i])
+            #     running_time_GFW_list[i].append(res_GFW[4 + i])
+            # if res_EPM[2 + i]:
+            #     num_QMO_list[i].append(res_EPM[i])
+            #     running_time_EPM_list[i].append(res_EPM[4 + i])
+            """
+            We switch to only count the iterations and running time for instances that both algorithms can solve
+            We also record full GFW stats for instances that GFW can solve; we use this to plot the GFW curves in case EPM cannot solve any instance
+            """
+            if res_GFW[2 + i] and res_EPM[2 + i]:
                 num_LMO_list[i].append(res_GFW[i])
                 running_time_GFW_list[i].append(res_GFW[4 + i])
-            if res_EPM[2 + i]:
                 num_QMO_list[i].append(res_EPM[i])
                 running_time_EPM_list[i].append(res_EPM[4 + i])
+            if res_GFW[2 + i]:
+                full_num_LMO_list[i].append(res_GFW[i])
+                full_running_time_GFW_list[i].append(res_GFW[4 + i])
 
-    data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
-    data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
+
     data_GFW['solved-a1'] = num_ins_GFW_solved[0]
     data_GFW['solved-e'] = num_ins_GFW_solved[1]
-    data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
-    data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
-
-    data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
-    data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
     data_EPM['solved-a1'] = num_ins_EPM_solved[0]
     data_EPM['solved-e'] = num_ins_EPM_solved[1]
-    data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
-    data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+
+
+    if data_EPM['solved-a1'] > 0:  # if EPM can solve at least one instance to approximate CE, use the instances that both algorithms can solve to compute the stats
+        data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
+        data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
+        data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
+        data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
+    else:  # otherwise, use all instances that GFW can solve to compute the stats
+        data_GFW['num-iter-a1'] = min(average(full_num_LMO_list[0]), num_iter_max_cap)
+        data_GFW['running-time-a1'] = min(average(full_running_time_GFW_list[0]), running_time_max_cap)
+        data_EPM['num-iter-a1'] = None
+        data_EPM['running-time-a1'] = None
+
+    if data_EPM['solved-e'] > 0:  # if EPM can solve at least one instance to exact CE, use the instances that both algorithms can solve to compute the stats
+        data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
+        data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
+        data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
+        data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+    else:  # otherwise, use all instances that GFW can solve to compute the stats
+        data_GFW['num-iter-e'] = min(average(full_num_LMO_list[1]), num_iter_max_cap)
+        data_GFW['running-time-e'] = min(average(full_running_time_GFW_list[1]), running_time_max_cap)
+        data_EPM['num-iter-e'] = None
+        data_EPM['running-time-e'] = None
 
     print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
 
@@ -728,9 +757,9 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
 if __name__ == "__main__": 
 
     # size_list = [2, 50, 100, 150, 200, 250, 300]
-    size_list = [2, 100, 200, 300]
+    size_list = [2, 100, 200, 300, 400, 500]
     # rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
-    rgm_list = ['uniform']
+    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
