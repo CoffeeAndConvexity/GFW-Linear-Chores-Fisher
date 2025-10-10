@@ -33,10 +33,10 @@ print("- cvxpy installed solvers:", cp.installed_solvers())
 Set up 'Approximate' and 'Exact' tolerances
 """
 
-APPROXIMATE_THR = 0.01
-EXACT_THR = 1e-6
-E2TOL = 1e-6
-E3TOL = 1e-6
+APPROXIMATE_THR = 1e-3
+EXACT_THR = 1e-10
+E2TOL = 1e-10
+E3TOL = 1e-10
 
 def eps_approx_eq(N, M, D, B, p, x, E2Tol=E2TOL, E3Tol=E3TOL, report_all=False, ignore_print=False):
 
@@ -602,10 +602,16 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         res_GFW = GFW(N, M, D, B, print_eq=print_eq)
         res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq)
 
-        if s + 1 < num_seeds:
-            print("o", end ="", flush=True)
+        if res_EPM[3]:  
+            if s + 1 < num_seeds:
+                print("o", end ="", flush=True)
+            else:
+                print("o")
         else:
-            print("o")
+            if s + 1 < num_seeds:
+                print("_", end ="", flush=True)
+            else:
+                print("_")
 
         for i in range(2):
             num_ins_GFW_solved[i] += res_GFW[2 + i]
@@ -636,7 +642,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     data_EPM['solved-e'] = num_ins_EPM_solved[1]
 
 
-    if data_EPM['solved-a1'] > 0:  # if EPM can solve at least one instance to approximate CE, use the instances that both algorithms can solve to compute the stats
+    if data_EPM['solved-a1'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to approximate CE, use the instances that both algorithms can solve to compute the stats
         data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
         data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
         data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
@@ -647,7 +653,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         data_EPM['num-iter-a1'] = None
         data_EPM['running-time-a1'] = None
 
-    if data_EPM['solved-e'] > 0:  # if EPM can solve at least one instance to exact CE, use the instances that both algorithms can solve to compute the stats
+    if data_EPM['solved-e'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to exact CE, use the instances that both algorithms can solve to compute the stats
         data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
         data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
         data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
@@ -684,7 +690,7 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
         N = size
         M = size
         dict_['size'].append(size)
-        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds)
+        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds, num_iter_max_cap=800, running_time_max_cap=1000)
 
         dict_['iteration_GFW_a1'].append(res_GFW['num-iter-a1'])
         dict_['solved_GFW_a1'].append(res_GFW['solved-a1'])
@@ -757,11 +763,11 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
 if __name__ == "__main__": 
 
     # size_list = [2, 50, 100, 150, 200, 250, 300]
-    size_list = [2, 100, 200, 300, 400, 500]
+    size_list = [5, 100, 200, 300, 400]
     # rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
-    rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
+    rgm_list = ['lognormal', 'truncnormal', 'exponential', 'randint', 'uniform', ]
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=50)
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
         # plot_and_save(data, random_generating_method=rgm, num_seeds=100)
