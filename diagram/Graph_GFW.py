@@ -187,14 +187,14 @@ def draw_descent_direction(beta_1, beta_2, with_point=False, color=['blue', 'ora
     if with_point:
         plt.scatter(beta_1, beta_2, marker='o', color=color[1], zorder=10)
 
-def draw_tangent_plane(beta_1, beta_2, color='blue'): 
+def draw_tangent_plane(beta_1, beta_2, color='orange'): 
     l = 0.2
     plt.plot([beta_1 - l * beta_1, beta_1 + l * beta_1], [beta_2 + l * beta_2, beta_2 - l * beta_2], lw=1, ls='--', c=color, zorder=6)
 
 for i in range(len(beta_1_in_algorithm)):
     print(np.log(beta_1_in_algorithm[i]) + np.log(beta_2_in_algorithm[i]))
-    draw_descent_direction(beta_1_in_algorithm[i], beta_2_in_algorithm[i], with_point=False, color=['blue', 'orange'])
-    draw_tangent_plane(beta_1_in_algorithm[i], beta_2_in_algorithm[i], color='blue')
+    draw_descent_direction(beta_1_in_algorithm[i], beta_2_in_algorithm[i], with_point=False, color=['orange', 'orange'])
+    draw_tangent_plane(beta_1_in_algorithm[i], beta_2_in_algorithm[i], color='orange')
 
 
 
