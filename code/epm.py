@@ -89,7 +89,8 @@ def QMO(ux0, N,
             for i in range(len(m_vars)):
                 m_vars[i].PStart = warm_start_primal[i]
 
-        m.update()
+        if model_prev_iter is not None or warm_start_primal is not None:
+            m.update()
         m.Params.LogToConsole = 0
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
@@ -142,7 +143,8 @@ def EPM(N, M, D, B,
         print_quality=False, 
         print_progress=False, 
         ignore_print=False, 
-        print_eq=False):
+        print_eq=False, 
+        warm_start=True):
 
     # construct extended (u, x) polyhedral
     A, b, C, d = poly_ext_primal(N, M, D, B)
@@ -216,21 +218,31 @@ def EPM(N, M, D, B,
 
         # choose one specific solver
         else:
-            x_ws = np.zeros(shape=(N, M))  # used for warm start
-            for i in range(N):
-                for j in range(M):
-                    x_ws[i, j] = u[i] / (M * D[i, j]) 
+            if warm_start: 
+                x_ws = np.zeros(shape=(N, M))  # used for warm start
+                for i in range(N):
+                    for j in range(M):
+                        x_ws[i, j] = u[i] / (M * D[i, j]) 
 
-            ux_, min_dist, m = QMO(np.concatenate([u, np.zeros(M * N)]),  # used to construct the objective
-                            N,
-                            A, b,
-                            np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
-                            C, d,
-                            solver=QMO_solver, 
-                            warm_start_primal=np.concatenate([u, x_ws.flatten()]), 
-                            model_prev_iter=m,
-                            return_model=True
-            )
+                ux_, min_dist, m = QMO(np.concatenate([u, np.zeros(M * N)]),  # used to construct the objective
+                                N,
+                                A, b,
+                                np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
+                                C, d,
+                                solver=QMO_solver, 
+                                warm_start_primal=np.concatenate([u, x_ws.flatten()]), 
+                                model_prev_iter=m,
+                                return_model=True
+                )
+            else:
+                ux_, min_dist = QMO(np.concatenate([u, np.zeros(M * N)]),  # used to construct the objective
+                                N,
+                                A, b,
+                                np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
+                                C, d,
+                                solver=QMO_solver, 
+                )
+
             solve_QP_time += time.time() - QP_start
             solve_QP_num += 1
 

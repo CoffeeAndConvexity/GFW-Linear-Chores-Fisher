@@ -52,12 +52,14 @@ def feasible_point(M, N, D, B, random=False, random_seed=2024):  ###
 def LMO(c, A, b, C=None, d=None, 
         warm_start_primal=None,
         model_prev_iter=None, 
+        LP_solve_method="default", 
         return_dual=False, 
         return_model=False): 
 
+    starting_time = time.time()
     if model_prev_iter is not None:
         m = model_prev_iter
-        m.setObjective(c @ m.getVars()[-len(c):])
+        m.setObjective(c @ m.getVars()[-len(c):])  # update objective
     else: 
         m = gp.Model(env=env)
         N = len(c)
@@ -66,11 +68,17 @@ def LMO(c, A, b, C=None, d=None,
         p = m.addMVar(M)
         beta = m.addMVar(len(c))
 
-        m.setObjective(c @ beta)
+        m.setObjective(c @ beta)  # initial objective
         m.addConstr(A[:, :M] @ p + A[:, M:] @ beta <= b)
         if C is not None and d is not None:
             m.addConstr(C[:, :M] @ p + C[:, M:] @ beta == d)
+    modeling_time = time.time() - starting_time
     
+    if LP_solve_method == "primal simplex":
+        m.Params.Method = 0
+    else: 
+        pass  # use default method
+
     if warm_start_primal is not None:
         m_vars = m.getVars()
         for i in range(len(m_vars)):
@@ -78,21 +86,24 @@ def LMO(c, A, b, C=None, d=None,
 
     m.Params.LogToConsole = 0
     # m.Params.Method = 1
-    m.update()
+    if model_prev_iter is not None or warm_start_primal is not None:
+        m.update()
     m.optimize()
+    solving_time = time.time() - starting_time - modeling_time
 
     # return the optimal value and solution
-    p, beta = m.getVars()[:A.shape[1] - len(c)], m.getVars()[-len(c):]
-    p_value, beta_value = np.array([p[i].X for i in range(len(p))]), np.array([beta[i].X for i in range(len(beta))])
+    p_beta = m.getVars()
+    p_beta_value = np.array([p_beta[i].X for i in range(len(p_beta))])
+    p_value, beta_value = p_beta_value[:A.shape[1] - len(c)], p_beta_value[-len(c):]
     
     if return_dual and return_model:
-        return p_value, beta_value, np.array(m.Pi), m
+        return p_value, beta_value, np.array(m.Pi), m, (modeling_time, solving_time)
     elif return_dual:
-        return p_value, beta_value, np.array(m.Pi)
+        return p_value, beta_value, np.array(m.Pi), (modeling_time, solving_time)
     elif return_model:
-        return p_value, beta_value, m
+        return p_value, beta_value, m, (modeling_time, solving_time)
     else:
-        return p_value, beta_value
+        return p_value, beta_value, (modeling_time, solving_time)
 
 
 '''
@@ -101,7 +112,7 @@ Greedy Frank Wolfe - Main Algorithm
     - At each iteration, we check whether an approximate CE or exact CE is found
     - Running time does not include the time for evaluation
 '''
-def GFW(N, M, D, B, print_eq=False, max_iter=80):  
+def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_method="default"):  
 
     # create the dual polyhedron
     A, b, C, d = polytope_dual(N, M, D, B)
@@ -111,6 +122,7 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80):
     num_LMO_a1, num_LMO_e = MAX_NUM_ITER, MAX_NUM_ITER
     solved_a1, solved_e = False, False
     running_time_a1, running_time_e = None, None
+    avg_modeling_time, avg_solving_time = 0, 0
 
     # counters
     num_LMO = 0
@@ -130,11 +142,21 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80):
         # main
         LP_start = GFW_start = time.time()
 
-        p, beta, gamma, m = LMO(B / beta, A, b, C, d,
-                                warm_start_primal=np.concatenate([p, beta]), 
-                                model_prev_iter=m, 
-                                return_dual=True, 
-                                return_model=True)
+        if warm_start:
+            p, beta, gamma, m, time_count = LMO(B / beta, A, b, C, d,
+                                            # warm_start_primal=np.concatenate([p, beta]), 
+                                            warm_start_primal=None,
+                                            model_prev_iter=m, 
+                                            LP_solve_method=LP_solve_method,
+                                            return_dual=True, 
+                                            return_model=True)
+        else:
+            p, beta, gamma, time_count = LMO(B / beta, A, b, C, d, 
+                                             LP_solve_method=LP_solve_method,
+                                             return_dual=True)
+        
+        avg_modeling_time = (avg_modeling_time * num_LMO + time_count[0]) / (num_LMO + 1)
+        avg_solving_time = (avg_solving_time * num_LMO + time_count[1]) / (num_LMO + 1)
 
         solve_LP_time += time.time() - LP_start
         solve_LP_num += 1
@@ -168,6 +190,7 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80):
                 break  # reach exact CE, terminate
 
     # print("Average LP solving time:", solve_LP_time / solve_LP_num)
+    print("Average modeling time:", avg_modeling_time, "Average solving time:", avg_solving_time)
     if print_eq:
         if solved_e:
             print("p:\n", np.round(p, 3))

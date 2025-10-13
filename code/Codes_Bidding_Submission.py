@@ -115,8 +115,8 @@ def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, nu
         # all budgets are set to 1 
         B = np.ones(shape=N)
 
-        res_GFW = GFW(N, M, D_sampled, B, print_eq=print_eq)
-        res_EPM = EPM(N, M, D_sampled, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq)
+        res_GFW = GFW(N, M, D_sampled, B, print_eq=print_eq, warm_start=True, LP_solve_method="primal simplex")
+        res_EPM = EPM(N, M, D_sampled, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq, warm_start=True)
 
         if res_EPM[3]:  
             if s + 1 < num_seeds:
@@ -221,9 +221,9 @@ def run_and_save_bidding_data(D, distance_matrix, size_list=[2, 50, 100], num_se
         os.makedirs(save_dir)
 
     if with_noise:
-        df.to_csv(f'{save_dir}/bidding_data_with_noise_{size}.csv')
+        df.to_csv(f'{save_dir}/bidding_data_with_noise.csv')
     else:
-        df.to_csv(f'{save_dir}/bidding_data_{size}.csv')
+        df.to_csv(f'{save_dir}/bidding_data.csv')
 
     return dict_
 
@@ -268,9 +268,9 @@ if __name__ == "__main__":
 
     distance_matrix = distance_matrix_among_papers(D)
 
-    size_list = [5, 50, 100, 150, 200, 250, 300]
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False)
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True)
+    size_list = [300]
+    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=10, with_noise=False)
+    # run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=10, with_noise=True)
 
     """
     Codes for Plots
