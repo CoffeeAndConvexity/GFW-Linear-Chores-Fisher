@@ -57,6 +57,7 @@ def LMO(c, A, b, C=None, d=None,
         return_model=False): 
 
     starting_time = time.time()
+    
     if model_prev_iter is not None:
         m = model_prev_iter
         m.setObjective(c @ m.getVars()[-len(c):])  # update objective
@@ -74,21 +75,23 @@ def LMO(c, A, b, C=None, d=None,
             m.addConstr(C[:, :M] @ p + C[:, M:] @ beta == d)
     modeling_time = time.time() - starting_time
     
+    # sometimes we specify the LP solving method
+    m.Params.LogToConsole = 0
     if LP_solve_method == "primal simplex":
         m.Params.Method = 0
     else: 
         pass  # use default method
 
+    # if we have a warm start solution from previous iteration, we might want to use it
     if warm_start_primal is not None:
         m_vars = m.getVars()
         for i in range(len(m_vars)):
             m_vars[i].PStart = warm_start_primal[i]
-
-    m.Params.LogToConsole = 0
-    # m.Params.Method = 1
+    
     if model_prev_iter is not None or warm_start_primal is not None:
         m.update()
     m.optimize()
+    
     solving_time = time.time() - starting_time - modeling_time
 
     # return the optimal value and solution
@@ -112,7 +115,7 @@ Greedy Frank Wolfe - Main Algorithm
     - At each iteration, we check whether an approximate CE or exact CE is found
     - Running time does not include the time for evaluation
 '''
-def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_method="default"):  
+def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_method="default"):  
 
     # create the dual polyhedron
     A, b, C, d = polytope_dual(N, M, D, B)
@@ -124,13 +127,9 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_metho
     running_time_a1, running_time_e = None, None
     avg_modeling_time, avg_solving_time = 0, 0
 
-    # counters
     num_LMO = 0
     running_time = 0
-
-    # analysis
     solve_LP_time = 0
-    solve_LP_num = 0
 
     p, beta = feasible_point(M, N, D, B)
     beta_ = beta  # 'beta_' keeps the last beta values
@@ -139,13 +138,11 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_metho
 
     for k in range(MAX_NUM_ITER):
 
-        # main
         LP_start = GFW_start = time.time()
 
         if warm_start:
             p, beta, gamma, m, time_count = LMO(B / beta, A, b, C, d,
-                                            # warm_start_primal=np.concatenate([p, beta]), 
-                                            warm_start_primal=None,
+                                            warm_start_primal=np.concatenate([p, beta]), 
                                             model_prev_iter=m, 
                                             LP_solve_method=LP_solve_method,
                                             return_dual=True, 
@@ -155,13 +152,14 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_metho
                                              LP_solve_method=LP_solve_method,
                                              return_dual=True)
         
+        # [option] when we want to observe the average modeling and solving time
         avg_modeling_time = (avg_modeling_time * num_LMO + time_count[0]) / (num_LMO + 1)
         avg_solving_time = (avg_solving_time * num_LMO + time_count[1]) / (num_LMO + 1)
 
         solve_LP_time += time.time() - LP_start
-        solve_LP_num += 1
         num_LMO += 1
 
+        # we count the time to update x and beta because we need x as an output - the time cost of this step is minor
         x = -gamma[: N * M].reshape(N, M)
         x = sum(B) / sum(B * beta / beta_) * x
         beta_ = beta
@@ -178,7 +176,7 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_metho
                 continue 
 
         if type(eps) is not str:
-            if eps <= APPROXIMATE_THR and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated
+            if eps <= APPROXIMATE_THR and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated, except we have run out of iteration budget
                 solved_a1 = True
                 num_LMO_a1 = num_LMO
                 running_time_a1 = running_time
@@ -189,8 +187,8 @@ def GFW(N, M, D, B, print_eq=False, max_iter=80, warm_start=True, LP_solve_metho
                 running_time_e = running_time
                 break  # reach exact CE, terminate
 
-    # print("Average LP solving time:", solve_LP_time / solve_LP_num)
-    print("Average modeling time:", avg_modeling_time, "Average solving time:", avg_solving_time)
+    # print("Average LP time cost percentage:", solve_LP_time / running_time * 100, "%")
+    # print("Average modeling time:", avg_modeling_time, "Average solving time:", avg_solving_time)
     if print_eq:
         if solved_e:
             print("p:\n", np.round(p, 3))

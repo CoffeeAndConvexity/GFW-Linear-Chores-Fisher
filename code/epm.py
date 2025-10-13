@@ -45,11 +45,16 @@ def QMO(ux0, N,
         A_, b_,  
         C=None, d=None, 
         solver='OSQP', 
+        QP_solve_method="default", 
         warm_start_primal=None,
         model_prev_iter=None, 
         return_model=False):
 
     if solver == 'OSQP':  # Warm start has not been implemented for OSQP
+
+        if warm_start_primal is not None:
+            print("Note: Warm start has not been implemented for OSQP - ignore warm_start_primal.")
+
         ux = cp.Variable(len(ux0), nonneg=True)
         obj = cp.Minimize(sum((ux[:N] - ux0[:N]) ** 2))
         constraints = [A @ ux <= b, ]
@@ -84,6 +89,13 @@ def QMO(ux0, N,
             if C is not None and d is not None:
                 m.addConstr(C[:, :N] @ u + C[:, N:] @ x == d)
         
+        # sometimes we specify the QP solving method
+        m.Params.LogToConsole = 0
+        if QP_solve_method == "barrier":
+            m.Params.Method = 2
+        else: 
+            pass  # use default method
+
         if warm_start_primal is not None:
             m_vars = m.getVars()
             for i in range(len(m_vars)):
@@ -91,10 +103,11 @@ def QMO(ux0, N,
 
         if model_prev_iter is not None or warm_start_primal is not None:
             m.update()
-        m.Params.LogToConsole = 0
+        
+        # [option] we can set appropriate parameters here to ask for a higher accuracy - the following settings have been tuned
+        m.Params.BarConvTol = 0
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
-        m.Params.BarConvTol = 0
         # m.Params.BarCorrectors = 10000
         m.optimize()
 
@@ -108,7 +121,7 @@ def QMO(ux0, N,
         else:
             return np.concatenate([u__value, x_value]), obj.getValue()
 
-def find_X(N, M, u, A, b, C=None, d=None):
+def find_x(N, M, u, A, b, C=None, d=None):
     m = gp.Model(env=env)
 
     x = m.addMVar(N * M)
@@ -131,15 +144,16 @@ def find_X(N, M, u, A, b, C=None, d=None):
         return "There is no feasible allocation corresponding to given disutility.", eps.X
 
 def u_is_feasible(N, M, u, A, b, C=None, d=None):
-    X = find_X(N, M, u, A, b, C, d)
+    x = find_x(N, M, u, A, b, C, d)
 
-    if type(X) is np.ndarray:
-        return True, X
+    if type(x) is np.ndarray:
+        return True, x
     else:
         return False, None
 
 def EPM(N, M, D, B, 
         QMO_solver='best', 
+        QP_solve_method="default",
         print_quality=False, 
         print_progress=False, 
         ignore_print=False, 
@@ -230,6 +244,7 @@ def EPM(N, M, D, B,
                                 np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
                                 C, d,
                                 solver=QMO_solver, 
+                                QP_solve_method=QP_solve_method,
                                 warm_start_primal=np.concatenate([u, x_ws.flatten()]), 
                                 model_prev_iter=m,
                                 return_model=True
@@ -241,6 +256,7 @@ def EPM(N, M, D, B,
                                 np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
                                 C, d,
                                 solver=QMO_solver, 
+                                QP_solve_method=QP_solve_method
                 )
 
             solve_QP_time += time.time() - QP_start

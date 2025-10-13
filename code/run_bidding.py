@@ -115,8 +115,10 @@ def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, nu
         # all budgets are set to 1 
         B = np.ones(shape=N)
 
-        res_GFW = GFW(N, M, D_sampled, B, print_eq=print_eq, warm_start=True, LP_solve_method="primal simplex")
-        res_EPM = EPM(N, M, D_sampled, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq, warm_start=True)
+        res_GFW = GFW(N, M, D_sampled, B, print_eq=print_eq, 
+                      warm_start=True, LP_solve_method="primal simplex")
+        res_EPM = EPM(N, M, D_sampled, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq, 
+                      warm_start=True, QP_solve_method="barrier")
 
         if res_EPM[3]:  
             if s + 1 < num_seeds:
@@ -268,54 +270,6 @@ if __name__ == "__main__":
 
     distance_matrix = distance_matrix_among_papers(D)
 
-    size_list = [300]
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=10, with_noise=False)
-    # run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=10, with_noise=True)
-
-    """
-    Codes for Plots
-    """
-    
-    # name_list = ['bidding_data', 'bidding_data_with_noise', ]
-
-    # for name in name_list:
-    #     data = {
-    #         'x': list(),
-    #         'i_y1': list(),
-    #         'i_y2': list(),
-    #         'i_z1': list(),
-    #         'i_z2': list(),
-    #         's_y1': list(),
-    #         's_y2': list(),
-    #         's_z1': list(),
-    #         's_z2': list(),
-    #         'r_y1': list(),
-    #         'r_y2': list(),
-    #         'r_z1': list(),
-    #         'r_z2': list(), 
-    #         'e_i_y1': list(),
-    #         'e_i_y2': list(),
-    #         'e_i_z1': list(),
-    #         'e_i_z2': list(),
-    #         'e_s_y1': list(),
-    #         'e_s_y2': list(),
-    #         'e_s_z1': list(),
-    #         'e_s_z2': list(),
-    #         'e_r_y1': list(),
-    #         'e_r_y2': list(),
-    #         'e_r_z1': list(),
-    #         'e_r_z2': list(), 
-    #     }
-    #     for size in size_list: 
-    #         data_s = pd.read_csv(f"{name}_{size}.csv")
-            
-    #         # process data for one size 
-    #         data['x'].append(size)
-            
-    #         for col in data_s.columns: 
-    #             if col != 'Unnamed: 0':
-    #                 mean, std = average_and_std(data_s[col])
-    #                 data[col].append(mean)
-    #                 data[f'e_{col}'].append(std)
-            
-        # plot_and_save(data, name=name)
+    size_list = [5, 50, 100, 150, 200, 250, 300]
+    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False, save_dir='./data')
+    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True, save_dir='./data')
