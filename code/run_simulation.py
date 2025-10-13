@@ -86,8 +86,10 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
 
         B = np.ones(shape=N)
 
-        res_GFW = GFW(N, M, D, B, print_eq=print_eq)
-        res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq)
+        res_GFW = GFW(N, M, D, B, print_eq=print_eq, 
+                      warm_start=True, LP_solve_method="primal simplex")
+        res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq, 
+                      warm_start=True, QP_solve_method="barrier")
 
         if res_EPM[3]:  
             if s + 1 < num_seeds:
@@ -155,7 +157,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
 
     return data_GFW, data_EPM
 
-def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num_seeds=10, download_csv=False):
+def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num_seeds=10, download_csv=False, save_dir="./data"):
 
     dict_ = {
         'size': list(),
@@ -194,7 +196,7 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
         dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{random_generating_method}_warm_start.csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}.csv')
 
     return dict_
 
@@ -205,4 +207,4 @@ if __name__ == "__main__":
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100, save_dir="./data")
