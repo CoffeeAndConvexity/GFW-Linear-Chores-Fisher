@@ -16,6 +16,7 @@ params = {
 }
 env = gp.Env(params=params)
 
+print("- Gurobi version:", gp.gurobi.version(), "-")
 
 """
 Codes for Greedy Frank Wolfe (GFW)

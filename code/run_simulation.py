@@ -176,9 +176,12 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
     }
 
     for size in size_list:
-        N = size
-        M = size
-        dict_['size'].append(size)
+        if type(size) is int: 
+            N = M = size
+            dict_['size'].append(size)
+        else: 
+            N, M = size
+            dict_['size'].append(size[1])  # we set the larger dimension in the second position
         res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds, num_iter_max_cap=800, running_time_max_cap=1000)
 
         dict_['iteration_GFW_a1'].append(res_GFW['num-iter-a1'])
@@ -196,13 +199,13 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
         dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}.csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}_large.csv')
 
     return dict_
 
 if __name__ == "__main__": 
 
-    size_list = [5, 50, 100, 150, 200, 250, 300]
+    size_list = [(100, 1000)]
     rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
     for rgm in rgm_list:
