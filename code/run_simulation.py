@@ -199,15 +199,15 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
         dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}_large.csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}_high_accuracy.csv')
 
     return dict_
 
 if __name__ == "__main__": 
 
-    size_list = [(100, 1000)]
+    size_list = [5, 50, 100, 150, 200, 250, 300]
     rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100, save_dir="./data")
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=50, save_dir="./data")
