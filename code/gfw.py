@@ -2,6 +2,10 @@ import numpy as np
 import time
 import gurobipy as gp
 
+import sys
+import io
+import os
+
 from utils import APPROXIMATE_THR, EXACT_THR, E2TOL, E3TOL, eps_approx_eq
 
 '''
@@ -63,6 +67,7 @@ def LMO(c, A, b, C=None, d=None,
         m = model_prev_iter
         m.setObjective(c @ m.getVars()[-len(c):])  # update objective
     else: 
+        env.setParam("LogFile", "my_optimization_log.log")
         m = gp.Model(env=env)
         N = len(c)
 
@@ -93,6 +98,14 @@ def LMO(c, A, b, C=None, d=None,
         m.update()
     m.optimize()
     
+    # retrieve the number of iterations from lastest log file
+    with open("my_optimization_log.log", "r") as f:
+        lines = f.readlines()
+        for line in lines[::-1]:
+            if "Solved in " in line:
+                num_pivots = int(line.split("Solved in ")[1].split(" iterations")[0])
+                break
+    
     solving_time = time.time() - starting_time - modeling_time
 
     # return the optimal value and solution
@@ -101,13 +114,13 @@ def LMO(c, A, b, C=None, d=None,
     p_value, beta_value = p_beta_value[:A.shape[1] - len(c)], p_beta_value[-len(c):]
     
     if return_dual and return_model:
-        return p_value, beta_value, np.array(m.Pi), m, (modeling_time, solving_time)
+        return p_value, beta_value, np.array(m.Pi), m, (modeling_time, solving_time, num_pivots)
     elif return_dual:
-        return p_value, beta_value, np.array(m.Pi), (modeling_time, solving_time)
+        return p_value, beta_value, np.array(m.Pi), (modeling_time, solving_time, num_pivots)
     elif return_model:
-        return p_value, beta_value, m, (modeling_time, solving_time)
+        return p_value, beta_value, m, (modeling_time, solving_time, num_pivots)
     else:
-        return p_value, beta_value, (modeling_time, solving_time)
+        return p_value, beta_value, (modeling_time, solving_time, num_pivots)
 
 
 '''
@@ -116,7 +129,7 @@ Greedy Frank Wolfe - Main Algorithm
     - At each iteration, we check whether an approximate CE or exact CE is found
     - Running time does not include the time for evaluation
 '''
-def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_method="default"):  
+def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_method="default", report_total_pivots=False):  
 
     # create the dual polyhedron
     A, b, C, d = polytope_dual(N, M, D, B)
@@ -127,6 +140,8 @@ def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_meth
     solved_a1, solved_e = False, False
     running_time_a1, running_time_e = None, None
     avg_modeling_time, avg_solving_time = 0, 0
+    if report_total_pivots:
+        total_pivots = 0
 
     num_LMO = 0
     running_time = 0
@@ -156,6 +171,9 @@ def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_meth
         # [option] when we want to observe the average modeling and solving time
         avg_modeling_time = (avg_modeling_time * num_LMO + time_count[0]) / (num_LMO + 1)
         avg_solving_time = (avg_solving_time * num_LMO + time_count[1]) / (num_LMO + 1)
+
+        if report_total_pivots:
+            total_pivots += time_count[2]
 
         solve_LP_time += time.time() - LP_start
         num_LMO += 1
@@ -196,4 +214,10 @@ def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_meth
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(B / beta, 3))
 
-    return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e
+    with open("my_optimization_log.log", "w") as f:
+        f.write("")  # clear the log file
+
+    if report_total_pivots:
+        return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e, total_pivots
+    else: 
+        return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e
