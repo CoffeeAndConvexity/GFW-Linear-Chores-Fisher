@@ -202,7 +202,7 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
     df.to_csv(f'{save_dir}/{random_generating_method}.csv')
 
     return dict_
-6 
+
 if __name__ == "__main__": 
 
     size_list = [5, 100, 200, 300, 400, 500]

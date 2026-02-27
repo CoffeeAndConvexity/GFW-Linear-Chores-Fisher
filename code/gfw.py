@@ -67,7 +67,7 @@ def LMO(c, A, b, C=None, d=None,
         m = model_prev_iter
         m.setObjective(c @ m.getVars()[-len(c):])  # update objective
     else: 
-        env.setParam("LogFile", "my_optimization_log.log")
+        env.setParam("LogFile", "temp_gfw.log")
         m = gp.Model(env=env)
         N = len(c)
 
@@ -99,7 +99,7 @@ def LMO(c, A, b, C=None, d=None,
     m.optimize()
     
     # retrieve the number of iterations from lastest log file
-    with open("my_optimization_log.log", "r") as f:
+    with open("temp_gfw.log", "r") as f:
         lines = f.readlines()
         for line in lines[::-1]:
             if "Solved in " in line:
@@ -214,7 +214,7 @@ def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_meth
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(B / beta, 3))
 
-    with open("my_optimization_log.log", "w") as f:
+    with open("temp_gfw.log", "w") as f:
         f.write("")  # clear the log file
 
     if report_total_pivots:

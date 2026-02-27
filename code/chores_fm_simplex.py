@@ -72,42 +72,42 @@ from copy import deepcopy
 
 def reduced_costs(A, b, c, basis):
 
-    _, num_var = A.shape
-    B = A[:, basis]
-    c_B = c[basis]
-
     # dual prices (y = c_B^T B^{-1})
+    B, c_B = A[:, basis], c[basis]
     y = np.linalg.solve(B.T, c_B)
 
     # reduced costs
-    rc = np.zeros(num_var)
-    for j in range(num_var):
-        if j not in basis:
-            rc[j] = c[j] - y @ A[:, j]
+    rc = c - y @ A
 
     return rc
 
 def pick_entering_var(rc, rule="Min"):
 
-    all_neg = []
-    all_neg_vals = []
-    for i in range(len(rc)):
-        if rc[i] < -1e-9:
-            all_neg.append(i)
-            all_neg_vals.append((float(rc[i]), i))
-    if len(all_neg) == 0:
-        return -1
-    all_neg = np.sort(all_neg)
-    all_neg_vals = sorted(all_neg_vals, key=lambda x: x[0])
+    if rule == "Min": 
+        if min(rc) < -1e-9:
+            return np.argmin(rc)
+        else:
+            return -1
 
-    # print("Pick an entering variable from", all_neg_vals)
+    # all_neg = []
+    # all_neg_vals = []
+    # for i in range(len(rc)):
+    #     if rc[i] < -1e-9:
+    #         all_neg.append(i)
+    #         all_neg_vals.append((float(rc[i]), i))
+    # if len(all_neg) == 0:
+    #     return -1
+    # all_neg = np.sort(all_neg)
+    # all_neg_vals = sorted(all_neg_vals, key=lambda x: x[0])
+
+    rc_neg_idx = np.arange(len(rc))[rc < -1e-9]
+    if len(rc_neg_idx) == 0:
+        return -1
 
     if rule == "Brand":
-        return all_neg[0]
+        return rc_neg_idx[0]
     elif rule == "Random":
-        return np.random.choice(all_neg)
-    elif rule == "Min":
-        return all_neg_vals[0][1]
+        return np.random.choice(rc_neg_idx)
 
     raise ValueError("Invalid rule")
 
@@ -115,34 +115,17 @@ def pick_leaving_var(A, b, x, entering_var, basis, rule="Brand"):
 
     Binv_Ae = np.linalg.solve(A[:, basis], A[:, entering_var])
     move_vector = Binv_Ae
-    # print("Binv_Ae:")
-    # for entry in Binv_Ae:
-    #     print(entry, end=" ")
-    # print()
 
     # THIS CASE SHOULD NOT HAPPEN
-    if max(Binv_Ae) <= 1e-12:
-        return "The problem is unbounded"
+    # if max(Binv_Ae) <= 1e-12:
+    #     return "The problem is unbounded"
 
-    mrt_list = []
-    mrt_details_list = []
     Binv_b = np.linalg.solve(A[:, basis], b)
 
-    for i in range(len(basis)):
-        if Binv_Ae[i] > 0 and Binv_b[i] >= 0:
-            theta_i = Binv_b[i] / Binv_Ae[i]
-            mrt_list.append(theta_i)
-            mrt_details_list.append((theta_i, Binv_b[i], Binv_Ae[i]))
-
-    # sort mrt_details_list
-    mrt_details_list = sorted(mrt_details_list, key=lambda x: x[0])
-    # print("mrt_details_list", mrt_details_list)
-
-    mrt_list = np.array(mrt_list)
-    mrt_list = mrt_list[mrt_list > 0]
-
-    theta = min(mrt_list)
-    # print("theta", theta)
+    mask = (Binv_Ae > 0) & (Binv_b >= 0)
+    theta_array = Binv_b[mask] / Binv_Ae[mask]
+    theta_array = theta_array[theta_array > 0]
+    theta = min(theta_array)
 
     # print("x[basis]:")
     # for entry in x[basis]:
@@ -155,10 +138,12 @@ def pick_leaving_var(A, b, x, entering_var, basis, rule="Brand"):
     all_min_ratio = []
     x_new_basis = x[basis] - theta * move_vector
     # x_new_basis is a full-length x vector
-    min_x_new_basis = min(x_new_basis)
-    for i in range(len(x_new_basis)):
-        if x_new_basis[i] <= min_x_new_basis + 1e-12:
-            all_min_ratio.append(i)
+    min_x_new_basis = np.min(x_new_basis)
+    all_min_ratio = np.nonzero(x_new_basis <= min_x_new_basis + 1e-12)[0]
+ 
+    # for i in range(len(x_new_basis)):
+    #     if x_new_basis[i] <= min_x_new_basis + 1e-12:
+    #         all_min_ratio.append(i)
 
     # print(theta, all_min_ratio)
 
@@ -173,16 +158,9 @@ def pick_leaving_var(A, b, x, entering_var, basis, rule="Brand"):
 def pivot(A, b, c, x, basis, precision=3, entering_var_rule="Min"):
 
     status = "continue"
-
     log = ""
-    # log += "current basis: " + str(basis) + "\n"
-    # log += "current point: " + str(np.round(x, precision)) + "\n"
-    # log += "current objective value: " + str(np.round(np.dot(c, x), precision)) + "\n"
 
     rc = reduced_costs(A, b, c, basis)
-    # print("[reduced costs] ->", rc)
-    # print("[minimum reduced costs] ->", min(rc), "(", np.argmin(rc), ")")
-    # log += "reduced costs: " + str(np.round(rc, precision)) + "\n"
 
     # print("To pick an entering variable")
     entering_var = pick_entering_var(rc, rule=entering_var_rule)
@@ -190,9 +168,6 @@ def pivot(A, b, c, x, basis, precision=3, entering_var_rule="Min"):
         log += "The current solution is optimal"
         status = "optimal"
         return x, basis, log, status
-
-    # print("Entering variable:", entering_var)
-    log += "entering variable: " + str(entering_var) + "\n"
 
     leaving_var, theta, move_vector = pick_leaving_var(A, b, x, entering_var, basis, rule="Brand")
     if type(leaving_var) == list:
@@ -221,24 +196,17 @@ def pivot(A, b, c, x, basis, precision=3, entering_var_rule="Min"):
     # print(np.linalg.matrix_rank(A[:, new_basis]))
     # print("Binv_b", np.linalg.solve(A[:, new_basis], b))
 
-    log += "leaving variable: " + str(leaving_var) + "\n"
-    log += "theta: " + str(np.round(theta, precision)) + "\n"
-
     # print("confirm entering and leaving variables")
 
     # print("previous point", x)
-    next_point = np.zeros(A.shape[1])
-    next_point[new_basis] = np.linalg.solve(A[:, new_basis], b)
+    # next_point = np.zeros(A.shape[1])
+    # next_point[new_basis] = np.linalg.solve(A[:, new_basis], b)
     # print("new point computed by the new basis", next_point)
 
     new_point = x.copy()
     new_point[basis] -= theta * move_vector
     new_point[entering_var] = theta
     # print("new point computed by the moving vector", new_point)
-
-    # log += "next basis: " + str(new_basis) + "\n"
-    # log += "next point: " + str(np.round(new_point, precision)) + "\n"
-    # log += "next objective value: " + str(np.round(np.dot(c, new_point), precision))
 
     return new_point, new_basis, log, status
 
@@ -325,7 +293,7 @@ def Simplex(N, M, D, B, report_total_pivots=True):
 
     return total_pivots_Simplex 
 
-size_list = [20, 60, 100]
+size_list = [20, 60]
 
 data = {
     "size": [],

@@ -11,10 +11,10 @@ EXACT_THR = r'1e-6'
 def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
 
     plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact ({EXACT_THR})', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact ({EXACT_THR})', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact ({EXACT_THR})', marker='^', color='darkgreen', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact ({EXACT_THR})', marker='*', color='darkorange', linewidth=2.5, markersize=20)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -27,10 +27,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
 
 
     plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact ({EXACT_THR})', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact ({EXACT_THR})', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact ({EXACT_THR})', marker='^', color='darkgreen', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact ({EXACT_THR})', marker='*', color='darkorange', linewidth=2.5, markersize=20)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -42,10 +42,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"ni_{random_generating_method}.png")
 
     plt.figure()
-    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact ({EXACT_THR})', marker='^', color='g', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=20)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact ({EXACT_THR})', marker='*', color='orange', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate ({APPROXIMATE_THR})', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact ({EXACT_THR})', marker='^', color='darkgreen', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate ({APPROXIMATE_THR})', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=20)
+    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact ({EXACT_THR})', marker='*', color='darkorange', linewidth=2.5, markersize=20)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
