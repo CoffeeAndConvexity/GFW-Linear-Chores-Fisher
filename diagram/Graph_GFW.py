@@ -171,7 +171,7 @@ plt.fill_between(vertices_considered["beta_1"], vertices_considered["beta_2"], 3
 
 # Plot the path of the algorithm
 # ------------------------------------------------
-plt.plot(beta_1_in_algorithm, beta_2_in_algorithm, lw=2, c='blue', marker='s', markersize=10, markerfacecolor='orange', markeredgewidth=2, zorder=20)
+plt.plot(beta_1_in_algorithm, beta_2_in_algorithm, lw=2, c='blue', marker='s', markersize=10, markerfacecolor='darkorange', markeredgewidth=2, zorder=20)
 for i in range(len(beta_1_in_algorithm) - 1):
     segment_length = np.sqrt((beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]) ** 2 + (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]) ** 2)
     plt.arrow(beta_1_in_algorithm[i], beta_2_in_algorithm[i], 0.6 * (beta_1_in_algorithm[i + 1] - beta_1_in_algorithm[i]), 0.6 * (beta_2_in_algorithm[i + 1] - beta_2_in_algorithm[i]), shape='full', lw=1, length_includes_head=True, head_length=0.06, head_width=0.05, overhang=0.2, color='blue', capstyle='round', zorder=16)
@@ -187,14 +187,14 @@ def draw_descent_direction(beta_1, beta_2, with_point=False, color=['blue', 'ora
     if with_point:
         plt.scatter(beta_1, beta_2, marker='o', color=color[1], zorder=10)
 
-def draw_tangent_plane(beta_1, beta_2, color='orange'): 
+def draw_tangent_plane(beta_1, beta_2, color='darkorange'): 
     l = 0.2
     plt.plot([beta_1 - l * beta_1, beta_1 + l * beta_1], [beta_2 + l * beta_2, beta_2 - l * beta_2], lw=1, ls='--', c=color, zorder=6)
 
 for i in range(len(beta_1_in_algorithm)):
     print(np.log(beta_1_in_algorithm[i]) + np.log(beta_2_in_algorithm[i]))
     draw_descent_direction(beta_1_in_algorithm[i], beta_2_in_algorithm[i], with_point=False, color=['orange', 'orange'])
-    draw_tangent_plane(beta_1_in_algorithm[i], beta_2_in_algorithm[i], color='orange')
+    draw_tangent_plane(beta_1_in_algorithm[i], beta_2_in_algorithm[i], color='darkorange')
 
 
 

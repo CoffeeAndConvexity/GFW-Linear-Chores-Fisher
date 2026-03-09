@@ -4,6 +4,7 @@ Chores CEEI Experiments
 """
 
 import numpy as np
+np.seterr(divide='ignore')
 from scipy.stats import truncnorm
 from sklearn.cluster import KMeans
 import gurobipy as gp
@@ -12,11 +13,15 @@ import pandas as pd
 import cvxpy as cp
 import time
 
+'''
+Set up Gurobi environment with WLS license (or use a local license if you have one)
+'''
+
 # Create an environment with your WLS license
 params = {
-"WLSACCESSID": 'bd6082d8-df30-497b-86f3-f189f173114f',
-"WLSSECRET": '33a99b27-d33d-4640-ab8e-6b4db5d020bd',
-"LICENSEID": 2446748,
+    "WLSACCESSID": '0f33ff11-ef92-485a-97f0-af4a28654d6b',
+    "WLSSECRET": '880ecd7e-6fe7-4566-bb77-2590cc321d04',
+    "LICENSEID": 2546016,
 }
 env = gp.Env(params=params)
 
@@ -28,7 +33,7 @@ print("- cvxpy installed solvers:", cp.installed_solvers())
 Set up 'Approximate' and 'Exact' tolerances
 """
 
-APPROXIMATE_THR = 0.01
+APPROXIMATE_THR = 1e-2
 EXACT_THR = 1e-6
 E2TOL = 1e-6
 E3TOL = 1e-6
@@ -63,6 +68,7 @@ def eps_approx_eq(N, M, D, B, p, x, E2Tol=E2TOL, E3Tol=E3TOL, report_all=False, 
 
     if report_all:
         if not ignore_print:
+            print()
             print("===============================================================")
             print("(E1) Equal Budget \t\t (E2) Optimal Bundle \t\t (E3) Market Clearance")
             print("---------------------------------------------------------------")
@@ -109,36 +115,66 @@ def feasible_point(M, N, D, B, random=False, random_seed=2024):  ###
 
     return p_0, beta_0
 
-def LMO(c, A, b, C=None, d=None, return_dual=False):
-    m = gp.Model(env=env)
-    N = len(c)
+# Linear Minimization Oracle (LMO)
+def LMO(c, A, b, C=None, d=None, 
+        warm_start_primal=None,
+        model_prev_iter=None, 
+        return_dual=False, 
+        return_model=False): 
 
-    M = A.shape[1] - len(c)
-    p = m.addMVar(M)
-    beta = m.addMVar(len(c))
+    if model_prev_iter is not None:
+        m = model_prev_iter
+        m.setObjective(c @ m.getVars()[-len(c):])
+    else: 
+        m = gp.Model(env=env)
+        N = len(c)
 
-    m.setObjective(c @ beta)
-    m.addConstr(A[:, :M] @ p + A[:, M:] @ beta <= b)
-    if C is not None and d is not None:
-        m.addConstr(C[:, :M] @ p + C[:, M:] @ beta == d)
-    # m.PStart = x0
+        M = A.shape[1] - len(c)
+        p = m.addMVar(M)
+        beta = m.addMVar(len(c))
+
+        m.setObjective(c @ beta)
+        m.addConstr(A[:, :M] @ p + A[:, M:] @ beta <= b)
+        if C is not None and d is not None:
+            m.addConstr(C[:, :M] @ p + C[:, M:] @ beta == d)
+    
+    if warm_start_primal is not None:
+        m_vars = m.getVars()
+        for i in range(len(m_vars)):
+            m_vars[i].Start = warm_start_primal[i]
 
     m.Params.LogToConsole = 0
     # m.Params.Method = 1
+    m.update()
     m.optimize()
 
-    if return_dual:
-        return p.X, beta.X, np.array(m.Pi)
+    # return the optimal value and solution
+    p, beta = m.getVars()[:A.shape[1] - len(c)], m.getVars()[-len(c):]
+    p_value, beta_value = np.array([p[i].X for i in range(len(p))]), np.array([beta[i].X for i in range(len(beta))])
+    
+    if return_dual and return_model:
+        return p_value, beta_value, np.array(m.Pi), m
+    elif return_dual:
+        return p_value, beta_value, np.array(m.Pi)
+    elif return_model:
+        return p_value, beta_value, m
     else:
-        return p.X, beta.X
+        return p_value, beta_value
 
-def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
+
+'''
+Greedy Frank Wolfe - Main Algorithm
+    - The algorithm ternimates when an exact CE is found, or the maximum number of iterations is reached
+    - At each iteration, we check whether an approximate CE or exact CE is found
+    - Running time does not include the time for evaluation
+'''
+def GFW(N, M, D, B, print_eq=False, max_iter=80):  
 
     # create the dual polyhedron
     A, b, C, d = polytope_dual(N, M, D, B)
 
     # initialize
-    MAX_NUM_ITER = 80
+    MAX_NUM_ITER = max_iter
     num_LMO_a1, num_LMO_e = MAX_NUM_ITER, MAX_NUM_ITER
     solved_a1, solved_e = False, False
     running_time_a1, running_time_e = None, None
@@ -154,12 +190,18 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
     p, beta = feasible_point(M, N, D, B)
     beta_ = beta  # 'beta_' keeps the last beta values
 
+    m = None  # the model from the last iteration, used for warm start
+
     for k in range(MAX_NUM_ITER):
 
         # main
         LP_start = GFW_start = time.time()
 
-        p, beta, gamma = LMO(B / beta, A, b, C, d, return_dual=True)
+        p, beta, gamma, m = LMO(B / beta, A, b, C, d,
+                                warm_start_primal=np.concatenate([p, beta]), 
+                                model_prev_iter=m, 
+                                return_dual=True, 
+                                return_model=True)
 
         solve_LP_time += time.time() - LP_start
         solve_LP_num += 1
@@ -175,33 +217,30 @@ def GFW(N, M, D, B, return_eq=False):  # Greedy Frank Wolfe
         eps = eps_approx_eq(N, M, D, B, p, x, ignore_print=True)
 
         if type(eps) is str:  # then this step should not be considered as one candidate for approximate and exact equilibrium
-            if k == MAX_NUM_ITER - 1:  # if reach the maximum number of iterations, then we terminate the algorithm
-                break 
+            if k == MAX_NUM_ITER - 1: 
+                break  # reach maximum number of iterations, terminate
             else:  # otherwise, continue to the next iteration 
                 continue 
 
         if type(eps) is not str:
             if eps <= APPROXIMATE_THR and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated
                 solved_a1 = True
-                # print("GFW - a1")
-                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_LMO_a1 = num_LMO
                 running_time_a1 = running_time
 
             if eps <= EXACT_THR:
                 solved_e = True
-                # print("GFW: e")
-                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_LMO_e = num_LMO
                 running_time_e = running_time
-                break
+                break  # reach exact CE, terminate
 
     # print("Average LP solving time:", solve_LP_time / solve_LP_num)
-    if return_eq:
+    if print_eq:
         if solved_e:
             print("p:\n", np.round(p, 3))
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(B / beta, 3))
+
     return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e
 
 
@@ -215,7 +254,7 @@ def poly_ext_primal(N, M, D, B):
     for i in range(N):
         A[0][i, i] = -1
         A[0][i, N + i * M: N + i * M + M] = D[i]
-    # show add x is nonnegative constraint when solving QP using some solver
+    # add x is nonnegative constraint when solving QP using some solver
     A = np.concatenate(A, axis=0)
     b = np.zeros(N)
     C = np.zeros(shape=(M, N + M * N))
@@ -225,8 +264,16 @@ def poly_ext_primal(N, M, D, B):
 
     return A, b, C, d
 
-def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
-    if solver == 'OSQP':
+def QMO(ux0, N, 
+        A, b,
+        A_, b_,  
+        C=None, d=None, 
+        solver='OSQP', 
+        warm_start_primal=None,
+        model_prev_iter=None, 
+        return_model=False):
+
+    if solver == 'OSQP':  # Warm start has not been implemented for OSQP
         ux = cp.Variable(len(ux0), nonneg=True)
         obj = cp.Minimize(sum((ux[:N] - ux0[:N]) ** 2))
         constraints = [A @ ux <= b, ]
@@ -242,27 +289,47 @@ def QMO(ux0, N, A, b, C=None, d=None, solver='OSQP'):
         return ux.value, prob.value
 
     elif solver == 'GUROBI':
-        m = gp.Model(env=env)
 
+        if model_prev_iter is not None:
+            m = model_prev_iter
+            m.setObjective((m.getVars()[:N] - ux0[:N]) @ (m.getVars()[:N] - ux0[:N]))
+            # update the constraints on u, by constraint index
+            for idx, con in enumerate(m.getConstrs()[N:2*N]): 
+                con.RHS = b_[idx]
+        else:
+            m = gp.Model(env=env)
+
+            u = m.addMVar(N)
+            x = m.addMVar(A.shape[1] - N)
+            u0 = ux0[:N]
+            m.setObjective((u - u0) @ (u - u0))  # need to update u0 in each iteration
+            m.addConstr(A[:, :N] @ u + A[:, N:] @ x <= b)
+            m.addConstr(A_[:, :N] @ u + A_[:, N:] @ x <= b_)  # need to update RHS in each iteration
+            if C is not None and d is not None:
+                m.addConstr(C[:, :N] @ u + C[:, N:] @ x == d)
+        
+        if warm_start_primal is not None:
+            m_vars = m.getVars()
+            for i in range(len(m_vars)):
+                m_vars[i].PStart = warm_start_primal[i]
+
+        m.update()
         m.Params.LogToConsole = 0
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
-        m.Params.BarConvTol = 0.0
+        m.Params.BarConvTol = 0
         # m.Params.BarCorrectors = 10000
-
-        u = m.addMVar(N)
-        x = m.addMVar(A.shape[1] - N)
-        u0 = ux0[:N]
-        m.setObjective((u - u0) @ (u - u0))
-        m.addConstr(A[:, :N] @ u + A[:, N:] @ x <= b)
-        if C is not None and d is not None:
-            m.addConstr(C[:, :N] @ u + C[:, N:] @ x == d)
-
         m.optimize()
 
         obj = m.getObjective()
 
-        return np.concatenate([u.X, x.X]), obj.getValue()
+        u_, x = m.getVars()[:N], m.getVars()[N:]
+        u__value, x_value = np.array([u_[i].X for i in range(len(u_))]), np.array([x[i].X for i in range(len(x))])
+
+        if return_model:
+            return np.concatenate([u__value, x_value]), obj.getValue(), m
+        else:
+            return np.concatenate([u__value, x_value]), obj.getValue()
 
 def find_X(N, M, u, A, b, C=None, d=None):
     m = gp.Model(env=env)
@@ -288,12 +355,18 @@ def find_X(N, M, u, A, b, C=None, d=None):
 
 def u_is_feasible(N, M, u, A, b, C=None, d=None):
     X = find_X(N, M, u, A, b, C, d)
+
     if type(X) is np.ndarray:
         return True, X
     else:
         return False, None
 
-def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False, ignore_print=False, return_eq=False):
+def EPM(N, M, D, B, 
+        QMO_solver='best', 
+        print_quality=False, 
+        print_progress=False, 
+        ignore_print=False, 
+        print_eq=False):
 
     # construct extended (u, x) polyhedral
     A, b, C, d = poly_ext_primal(N, M, D, B)
@@ -302,7 +375,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
     u = u0 = np.amin(D, axis=1) / (N + 1) ** 2  # or / (N + 1)
 
     # initialize
-    MAX_NUM_ITER = 80
+    MAX_NUM_ITER = 50
     MAX_FEASIBILITY_TOL = 1e-6
     num_QMO_a1, num_QMO_e = MAX_NUM_ITER, MAX_NUM_ITER
     solved_a1, solved_e = False, False
@@ -315,6 +388,8 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
     # analysis
     solve_QP_time = 0
     solve_QP_num = 0
+
+    m = None  # the model from the last iteration, used for warm start
 
     for k in range(MAX_NUM_ITER):
 
@@ -339,7 +414,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
                             np.concatenate([b, -u]),
                             C,
                             d,
-                            solver=solver
+                            solver=solver, 
                 )
 
                 feasibility_tol_ineq = np.maximum(A @ u_ - b, 0)
@@ -365,18 +440,25 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 
         # choose one specific solver
         else:
-            ux_, min_dist = QMO(np.concatenate([u, np.zeros(M * N)]),
+            x_ws = np.zeros(shape=(N, M))  # used for warm start
+            for i in range(N):
+                for j in range(M):
+                    x_ws[i, j] = u[i] / (M * D[i, j]) 
+
+            ux_, min_dist, m = QMO(np.concatenate([u, np.zeros(M * N)]),  # used to construct the objective
                             N,
-                            np.concatenate([A, np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1)], axis=0),
-                            np.concatenate([b, -u]),
-                            C,
-                            d,
-                            solver=QMO_solver
+                            A, b,
+                            np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
+                            C, d,
+                            solver=QMO_solver, 
+                            warm_start_primal=np.concatenate([u, x_ws.flatten()]), 
+                            model_prev_iter=m,
+                            return_model=True
             )
             solve_QP_time += time.time() - QP_start
             solve_QP_num += 1
 
-        u_, x_ = ux_[:N], ux_[N:].reshape(N, M)
+        u_, x = ux_[:N], ux_[N:].reshape(N, M)
         a = u_ - u
         a = N * a / sum(a * u_)
         u = 1 / a
@@ -388,9 +470,15 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
         c = a.reshape(-1, 1) * D
         p = np.amin(c, axis=0)
         try:
-            eps = eps_approx_eq(N, M, D, B, p, x_)
+            eps = eps_approx_eq(N, M, D, B, p, x)
         except:
             print("--- Note ---")
+            break
+
+        # THIS CASE SHOULD NOT HAPPEN
+        # If there is NaN in u, terminate - choose: report unsolved
+        if np.sum(np.isnan(u)) > 0:
+            print("There is NaN in u, terminate.")
             break
 
         next_u_is_feasible, x = u_is_feasible(N, M, u, A, b, C, d)
@@ -402,8 +490,6 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
         if type(eps) is not str:
             if eps <= APPROXIMATE_THR and num_QMO_a1 == MAX_NUM_ITER:
                 solved_a1 = True
-                # print("EPM - a1")
-                # eps_approx_eq(N, M, D, B, p, x_, report_all=True)
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time
         if print_progress:
@@ -421,29 +507,25 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 
             if type(eps) is not str and eps <= APPROXIMATE_THR and num_QMO_a1 > num_QMO:
                 solved_a1 = True
-                # print("EPM - a1")
-                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time
 
             if type(eps) is not str and eps <= EXACT_THR:
                 solved_e = True
-                # print("EPM - e")
-                # eps_approx_eq(N, M, D, B, p, x, report_all=True)
                 num_QMO_e = num_QMO
                 running_time_e = running_time
 
             if print_progress:
                 print()
-
             break
 
     # print("Average QP solving time:", solve_QP_time / solve_QP_num)
-    if return_eq:
+    if print_eq:
         if solved_e:
             print("p:\n", np.round(p, 3))
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(u, 3))
+
     return num_QMO_a1, num_QMO_e, solved_a1, solved_e, running_time_a1, running_time_e
 
 
@@ -451,7 +533,7 @@ def EPM(N, M, D, B, QMO_solver='best', print_quality=False, print_progress=False
 run, save, and plot
 """
 
-def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=180, running_time_max_cap=200, return_eq=False):
+def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, print_eq=False):
 
     def average(lst):  # return the average of a list
         num_nonNone = 0
@@ -470,6 +552,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     seeds = range(num_seeds)  # set how many instances we want to try for one size
     num_LMO_list = [[], []]
     running_time_GFW_list = [[], []]
+    full_num_LMO_list = [[], []]
+    full_running_time_GFW_list = [[], []]
     num_ins_GFW_solved = [0, 0]
     data_GFW = {
         'size': f'N*M = {N}*{M}',
@@ -515,93 +599,126 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         Run the Greedy Frank Wolfe algorithm
         '''
 
-        res_GFW = GFW(N, M, D, B, return_eq=return_eq)
-        res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, return_eq=return_eq)
+        res_GFW = GFW(N, M, D, B, print_eq=print_eq)
+        res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq)
 
-        if s + 1 < num_seeds:
-            print("o", end ="")
+        if res_EPM[3]:  
+            if s + 1 < num_seeds:
+                print("o", end ="", flush=True)
+            else:
+                print("o")
         else:
-            print("o")
+            if s + 1 < num_seeds:
+                print("_", end ="", flush=True)
+            else:
+                print("_")
 
         for i in range(2):
             num_ins_GFW_solved[i] += res_GFW[2 + i]
             num_ins_EPM_solved[i] += res_EPM[2 + i]
-            if res_GFW[2 + i]:
+            # if res_GFW[2 + i]:
+            #     num_LMO_list[i].append(res_GFW[i])
+            #     running_time_GFW_list[i].append(res_GFW[4 + i])
+            # if res_EPM[2 + i]:
+            #     num_QMO_list[i].append(res_EPM[i])
+            #     running_time_EPM_list[i].append(res_EPM[4 + i])
+            """
+            We switch to only count the iterations and running time for instances that both algorithms can solve
+            We also record full GFW stats for instances that GFW can solve; we use this to plot the GFW curves in case EPM cannot solve any instance
+            """
+            if res_GFW[2 + i] and res_EPM[2 + i]:
                 num_LMO_list[i].append(res_GFW[i])
                 running_time_GFW_list[i].append(res_GFW[4 + i])
-            if res_EPM[2 + i]:
                 num_QMO_list[i].append(res_EPM[i])
                 running_time_EPM_list[i].append(res_EPM[4 + i])
+            if res_GFW[2 + i]:
+                full_num_LMO_list[i].append(res_GFW[i])
+                full_running_time_GFW_list[i].append(res_GFW[4 + i])
 
-    data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
-    data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
+
     data_GFW['solved-a1'] = num_ins_GFW_solved[0]
     data_GFW['solved-e'] = num_ins_GFW_solved[1]
-    data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
-    data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
-
-    data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
-    data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
     data_EPM['solved-a1'] = num_ins_EPM_solved[0]
     data_EPM['solved-e'] = num_ins_EPM_solved[1]
-    data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
-    data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
 
-    print(f"STATS: {data_GFW['num-iter-a1']}/{data_GFW['solved-a1']}/{data_GFW['running-time-a1']} vs {data_EPM['num-iter-a1']}/{data_EPM['solved-a1']}/{data_EPM['running-time-a1']}")
-    print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+
+    if data_EPM['solved-a1'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to approximate CE, use the instances that both algorithms can solve to compute the stats
+        data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
+        data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
+        data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
+        data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
+    else:  # otherwise, use all instances that GFW can solve to compute the stats
+        data_GFW['num-iter-a1'] = min(average(full_num_LMO_list[0]), num_iter_max_cap)
+        data_GFW['running-time-a1'] = min(average(full_running_time_GFW_list[0]), running_time_max_cap)
+        data_EPM['num-iter-a1'] = None
+        data_EPM['running-time-a1'] = None
+
+    if data_EPM['solved-e'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to exact CE, use the instances that both algorithms can solve to compute the stats
+        data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
+        data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
+        data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
+        data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+    else:  # otherwise, use all instances that GFW can solve to compute the stats
+        data_GFW['num-iter-e'] = min(average(full_num_LMO_list[1]), num_iter_max_cap)
+        data_GFW['running-time-e'] = min(average(full_running_time_GFW_list[1]), running_time_max_cap)
+        data_EPM['num-iter-e'] = None
+        data_EPM['running-time-e'] = None
+
+    print(f"E STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+    print(f"A1 STATS: {data_GFW['num-iter-a1']}/{data_GFW['solved-a1']}/{data_GFW['running-time-a1']} vs {data_EPM['num-iter-a1']}/{data_EPM['solved-a1']}/{data_EPM['running-time-a1']}")
 
     return data_GFW, data_EPM
 
 def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num_seeds=10, download_csv=False):
 
     dict_ = {
-        'x': list(),
-        'i_y1': list(),
-        'i_y2': list(),
-        'i_z1': list(),
-        'i_z2': list(),
-        's_y1': list(),
-        's_y2': list(),
-        's_z1': list(),
-        's_z2': list(),
-        'r_y1': list(),
-        'r_y2': list(),
-        'r_z1': list(),
-        'r_z2': list()
+        'size': list(),
+        'iteration_GFW_a1': list(),
+        'iteration_GFW_e': list(),
+        'iteration_EPM_a1': list(),
+        'iteration_EPM_e': list(),
+        'solved_GFW_a1': list(),
+        'solved_GFW_e': list(),
+        'solved_EPM_a1': list(),
+        'solved_EPM_e': list(),
+        'runningtime_GFW_a1': list(),
+        'runningtime_GFW_e': list(),
+        'runningtime_EPM_a1': list(),
+        'runningtime_EPM_e': list()
     }
 
     for size in size_list:
         N = size
         M = size
-        dict_['x'].append(size)
-        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds)
+        dict_['size'].append(size)
+        res_GFW, res_EPM = run_GFW_vs_EPM(N, M, random_generating_method, num_seeds, num_iter_max_cap=800, running_time_max_cap=1000)
 
-        dict_['i_y1'].append(res_GFW['num-iter-a1'])
-        dict_['s_y1'].append(res_GFW['solved-a1'])
-        dict_['r_y1'].append(res_GFW['running-time-a1'])
-        dict_['i_y2'].append(res_GFW['num-iter-e'])
-        dict_['s_y2'].append(res_GFW['solved-e'])
-        dict_['r_y2'].append(res_GFW['running-time-e'])
+        dict_['iteration_GFW_a1'].append(res_GFW['num-iter-a1'])
+        dict_['solved_GFW_a1'].append(res_GFW['solved-a1'])
+        dict_['runningtime_GFW_a1'].append(res_GFW['running-time-a1'])
+        dict_['iteration_GFW_e'].append(res_GFW['num-iter-e'])
+        dict_['solved_GFW_e'].append(res_GFW['solved-e'])
+        dict_['runningtime_GFW_e'].append(res_GFW['running-time-e'])
 
-        dict_['i_z1'].append(res_EPM['num-iter-a1'])
-        dict_['s_z1'].append(res_EPM['solved-a1'])
-        dict_['r_z1'].append(res_EPM['running-time-a1'])
-        dict_['i_z2'].append(res_EPM['num-iter-e'])
-        dict_['s_z2'].append(res_EPM['solved-e'])
-        dict_['r_z2'].append(res_EPM['running-time-e'])
+        dict_['iteration_EPM_a1'].append(res_EPM['num-iter-a1'])
+        dict_['solved_EPM_a1'].append(res_EPM['solved-a1'])
+        dict_['runningtime_EPM_a1'].append(res_EPM['running-time-a1'])
+        dict_['iteration_EPM_e'].append(res_EPM['num-iter-e'])
+        dict_['solved_EPM_e'].append(res_EPM['solved-e'])
+        dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'test_U_{random_generating_method}.csv')
+    df.to_csv(f'{random_generating_method}_warm_start.csv')
 
     return dict_
 
 def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
 
     plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_GFW_a1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_GFW_e'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_EPM_a1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_EPM_e'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -610,14 +727,14 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"test_U_rt_{random_generating_method}.png")
+    plt.savefig(f"rt_{random_generating_method}_warm_start.png")
 
 
     plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_GFW_a1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_GFW_e'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_EPM_a1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_EPM_e'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -626,13 +743,13 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"test_U_ni_{random_generating_method}.png")
+    plt.savefig(f"ni_{random_generating_method}_warm_start.png")
 
     plt.figure()
-    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_GFW_a1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_GFW_e']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_EPM_a1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_EPM_e']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -641,15 +758,17 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.legend(fontsize=16)
     plt.tight_layout()
 
-    plt.savefig(f"test_U_sr_{random_generating_method}.png")
+    plt.savefig(f"sr_{random_generating_method}_warm_start.png")
 
 
 if __name__ == "__main__": 
 
-    size_list = [150, 200, 250]
-    rgm_list = ['uniform', ]
+    size_list = [5, 50, 100, 150, 200, 250, 300]
+    # size_list = [5, 100, 200, 300, 400]
+    # rgm_list = ['uniform', 'lognormal', 'truncnormal', 'exponential', 'randint']
+    rgm_list = ['lognormal', 'truncnormal', 'exponential', 'randint', 'uniform']
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=50)
-        plot_and_save(data, random_generating_method=rgm, num_seeds=50)
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=100)
+        # plot_and_save(data, random_generating_method=rgm, num_seeds=100)

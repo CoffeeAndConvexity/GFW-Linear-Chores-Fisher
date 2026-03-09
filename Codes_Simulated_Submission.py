@@ -600,10 +600,10 @@ def run_and_save(size_list=[2, 50, 100], random_generating_method='uniform', num
 def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=False):
 
     plt.figure()
-    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_y1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_y2'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_z1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['r_z2'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -616,10 +616,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
 
 
     plt.figure()
-    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_y1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_y2'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_z1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], data['i_z2'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -631,10 +631,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"ni_{random_generating_method}.png")
 
     plt.figure()
-    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
-    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_y1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_y2']) / num_seeds, label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_z1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['x'], np.array(data['s_z2']) / num_seeds, label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
