@@ -108,7 +108,7 @@ def QMO(ux0, N,
         m.Params.BarConvTol = 0
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
-        # m.Params.BarCorrectors = 10000
+        # m.Params.BarCorrectors = 1000
         m.optimize()
 
         obj = m.getObjective()

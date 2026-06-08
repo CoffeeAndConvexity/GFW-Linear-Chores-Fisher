@@ -21,11 +21,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
         os.makedirs(save_dir)
 
     plt.figure()
-    # GFW has higher z-order to be on top of EPM
-    plt.plot(data['size'], data['runningtime_GFW_a1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18, zorder=10)
-    plt.plot(data['size'], data['runningtime_GFW_e'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18, zorder=10)
-    plt.plot(data['size'], data['runningtime_EPM_a1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18, zorder=2)
-    plt.plot(data['size'], data['runningtime_EPM_e'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18, zorder=2)
+    plt.plot(data['size'], data['runningtime_GFW_a1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_GFW_e'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_EPM_a1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['runningtime_EPM_e'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -37,10 +36,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"{save_dir}/rt_{random_generating_method}.png")
 
     plt.figure()
-    plt.plot(data['size'], data['iteration_GFW_a1'], label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18, zorder=10)
-    plt.plot(data['size'], data['iteration_GFW_e'], label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18, zorder=10)
-    plt.plot(data['size'], data['iteration_EPM_a1'], label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18, zorder=2)
-    plt.plot(data['size'], data['iteration_EPM_e'], label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18, zorder=2)
+    plt.plot(data['size'], data['iteration_GFW_a1'], label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_GFW_e'], label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_EPM_a1'], label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], data['iteration_EPM_e'], label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
@@ -52,10 +51,10 @@ def plot_and_save(data, random_generating_method, num_seeds=10, download_fig=Fal
     plt.savefig(f"{save_dir}/ni_{random_generating_method}.png")
 
     plt.figure()
-    plt.plot(data['size'], np.array(data['solved_GFW_a1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='darkgreen', linestyle='dashed', linewidth=2.5, markersize=18, zorder=10)
-    plt.plot(data['size'], np.array(data['solved_GFW_e']) / num_seeds, label=f'GFW: Exact', marker='^', color='darkgreen', linewidth=2.5, markersize=18, zorder=10)
-    plt.plot(data['size'], np.array(data['solved_EPM_a1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='darkorange', linestyle='dashed', linewidth=2.5, markersize=18, zorder=2)
-    plt.plot(data['size'], np.array(data['solved_EPM_e']) / num_seeds, label=f'EPM: Exact', marker='*', color='darkorange', linewidth=2.5, markersize=18, zorder=2)
+    plt.plot(data['size'], np.array(data['solved_GFW_a1']) / num_seeds, label=f'GFW: Approximate', marker='^', color='g', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_GFW_e']) / num_seeds, label=f'GFW: Exact', marker='^', color='g', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_EPM_a1']) / num_seeds, label=f'EPM: Approximate', marker='*', color='orange', linestyle='dashed', linewidth=2.5, markersize=18)
+    plt.plot(data['size'], np.array(data['solved_EPM_e']) / num_seeds, label=f'EPM: Exact', marker='*', color='orange', linewidth=2.5, markersize=18)
 
     plt.xticks(fontsize=16)
     plt.yticks(fontsize=16)
