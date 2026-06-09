@@ -9,6 +9,11 @@ EXACT_THR = 1e-8
 E2TOL = 1e-8
 E3TOL = 1e-8
 
+gurobi_license_params = {
+    "WLSACCESSID": '0f33ff11-ef92-485a-97f0-af4a28654d6b',
+    "WLSSECRET": '880ecd7e-6fe7-4566-bb77-2590cc321d04',
+    "LICENSEID": 2546016,
+}
 
 
 def eps_approx_eq(N, M, D, B, p, x, E2Tol=E2TOL, E3Tol=E3TOL, report_all=False, ignore_print=False):

@@ -4,20 +4,14 @@ import time
 import cvxpy as cp
 import gurobipy as gp
 
-from utils import APPROXIMATE_THR, EXACT_THR, E2TOL, E3TOL, eps_approx_eq
+from utils import APPROXIMATE_THR, EXACT_THR, E2TOL, E3TOL, eps_approx_eq, gurobi_license_params
 
 '''
 Set up Gurobi environment with WLS license (or use a local license if you have one)
 '''
 
-# Create an environment with your WLS license
-params = {
-    "WLSACCESSID": '0f33ff11-ef92-485a-97f0-af4a28654d6b',
-    "WLSSECRET": '880ecd7e-6fe7-4566-bb77-2590cc321d04',
-    "LICENSEID": 2546016,
-}
-env = gp.Env(params=params)
-
+# Create an environment with your WLS license parameters
+env = gp.Env(params=gurobi_license_params)
 
 
 """
@@ -158,7 +152,8 @@ def EPM(N, M, D, B,
         print_progress=False, 
         ignore_print=False, 
         print_eq=False, 
-        warm_start=True):
+    warm_start=True,
+    return_eq=False):
 
     # construct extended (u, x) polyhedral
     A, b, C, d = poly_ext_primal(N, M, D, B)
@@ -329,5 +324,10 @@ def EPM(N, M, D, B,
             print("p:\n", np.round(p, 3))
             print("x:\n", np.round(x, 3))
             print("u:\n", np.round(u, 3))
+
+    if return_eq and solved_e:
+        return num_QMO_a1, num_QMO_e, solved_a1, solved_e, running_time_a1, running_time_e, (p, x, u)
+    elif return_eq:
+        return num_QMO_a1, num_QMO_e, solved_a1, solved_e, running_time_a1, running_time_e, None
 
     return num_QMO_a1, num_QMO_e, solved_a1, solved_e, running_time_a1, running_time_e
