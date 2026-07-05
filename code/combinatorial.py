@@ -463,7 +463,7 @@ def combinatorial_metrics(
     if return_eq and solved_e:
         p_arr = np.asarray(p, dtype=float)
         x_arr = np.asarray(x, dtype=float)
-        u_arr = np.sum(p_arr * x_arr, axis=1)
+        u_arr = np.sum(D_np * x_arr, axis=1)
         return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e, (p_arr, x_arr, u_arr)
     elif return_eq:
         return num_LMO_a1, num_LMO_e, solved_a1, solved_e, running_time_a1, running_time_e, None

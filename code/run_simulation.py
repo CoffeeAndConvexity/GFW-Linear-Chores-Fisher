@@ -40,7 +40,7 @@ def _compute_welfare_from_utilities(u):
     if u_arr.size == 0:
         return None, None, None
     utilitarian = float(np.sum(u_arr))
-    egalitarian = float(np.min(u_arr))
+    egalitarian = float(np.max(u_arr))
     if np.any(u_arr <= 0):
         nash = None
     else:
@@ -58,19 +58,23 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
 
     algorithms = _normalize_algorithms(algorithms)
 
-    def average(lst):  # return the average of a list
+    def average_std(lst):  # return the average of a list
         num_nonNone = 0
         sum = 0
+        sum_sq = 0
 
         for e in lst:
             if e is not None:
                 num_nonNone += 1
                 sum += e
+                sum_sq += e * e
 
         if num_nonNone > 0:
-            return sum / num_nonNone
+            mean = sum / num_nonNone
+            variance = (sum_sq - num_nonNone * mean * mean) / (num_nonNone - 1) if num_nonNone > 1 else 0
+            return mean, np.sqrt(variance)
         else:
-            return np.inf
+            return np.inf, np.inf
 
     seeds = range(num_seeds)  # set how many instances we want to try for one size
     num_LMO_list = [[], []]
@@ -216,7 +220,6 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
                 num_COMB_list[i].append(res_COMB[i])
                 running_time_COMB_list[i].append(res_COMB[4 + i])
 
-
     data_GFW['solved-a1'] = num_ins_GFW_solved[0]
     data_GFW['solved-e'] = num_ins_GFW_solved[1]
     data_EPM['solved-a1'] = num_ins_EPM_solved[0]
@@ -224,42 +227,81 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     data_COMB['solved-a1'] = num_ins_COMB_solved[0]
     data_COMB['solved-e'] = num_ins_COMB_solved[1]
 
-
     if data_EPM['solved-a1'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to approximate CE, use the instances that both algorithms can solve to compute the stats
-        data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
-        data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
-        data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
-        data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
+        data_GFW_num_iter_a1 = average_std(num_LMO_list[0])
+        data_GFW['num-iter-a1'] = min(data_GFW_num_iter_a1[0], num_iter_max_cap)
+        data_GFW['num-iter-a1-std'] = data_GFW_num_iter_a1[1]
+        data_GFW_running_time_a1 = average_std(running_time_GFW_list[0])
+        data_GFW['running-time-a1'] = min(data_GFW_running_time_a1[0], running_time_max_cap)
+        data_GFW['running-time-a1-std'] = data_GFW_running_time_a1[1]
+        data_EPM_num_iter_a1 = average_std(num_QMO_list[0])
+        data_EPM['num-iter-a1'] = min(data_EPM_num_iter_a1[0], num_iter_max_cap)
+        data_EPM['num-iter-a1-std'] = data_EPM_num_iter_a1[1]
+        data_EPM_running_time_a1 = average_std(running_time_EPM_list[0])
+        data_EPM['running-time-a1'] = min(data_EPM_running_time_a1[0], running_time_max_cap)
+        data_EPM['running-time-a1-std'] = data_EPM_running_time_a1[1]
     else:  # otherwise, use all instances that GFW can solve to compute the stats
-        data_GFW['num-iter-a1'] = min(average(full_num_LMO_list[0]), num_iter_max_cap)
-        data_GFW['running-time-a1'] = min(average(full_running_time_GFW_list[0]), running_time_max_cap)
+        data_GFW_num_iter_a1 = average_std(full_num_LMO_list[0])
+        data_GFW['num-iter-a1'] = min(data_GFW_num_iter_a1[0], num_iter_max_cap)
+        data_GFW['num-iter-a1-std'] = data_GFW_num_iter_a1[1]
+        data_GFW_running_time_a1 = average_std(full_running_time_GFW_list[0])
+        data_GFW['running-time-a1'] = min(data_GFW_running_time_a1[0], running_time_max_cap)
+        data_GFW['running-time-a1-std'] = data_GFW_running_time_a1[1]
         data_EPM['num-iter-a1'] = None
+        data_EPM['num-iter-a1-std'] = None
         data_EPM['running-time-a1'] = None
+        data_EPM['running-time-a1-std'] = None
 
     if data_EPM['solved-e'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to exact CE, use the instances that both algorithms can solve to compute the stats
-        data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
-        data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
-        data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
-        data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+        data_GFW_num_iter_e = average_std(num_LMO_list[1])
+        data_GFW['num-iter-e'] = min(data_GFW_num_iter_e[0], num_iter_max_cap)
+        data_GFW['num-iter-e-std'] = data_GFW_num_iter_e[1]
+        data_GFW_running_time_e = average_std(running_time_GFW_list[1])
+        data_GFW['running-time-e'] = min(data_GFW_running_time_e[0], running_time_max_cap)
+        data_GFW['running-time-e-std'] = data_GFW_running_time_e[1]
+        data_EPM_num_iter_e = average_std(num_QMO_list[1])
+        data_EPM['num-iter-e'] = min(data_EPM_num_iter_e[0], num_iter_max_cap)
+        data_EPM['num-iter-e-std'] = data_EPM_num_iter_e[1]
+        data_EPM_running_time_e = average_std(running_time_EPM_list[1])
+        data_EPM['running-time-e'] = min(data_EPM_running_time_e[0], running_time_max_cap)
+        data_EPM['running-time-e-std'] = data_EPM_running_time_e[1]
     else:  # otherwise, use all instances that GFW can solve to compute the stats
-        data_GFW['num-iter-e'] = min(average(full_num_LMO_list[1]), num_iter_max_cap)
-        data_GFW['running-time-e'] = min(average(full_running_time_GFW_list[1]), running_time_max_cap)
+        data_GFW_num_iter_e = average_std(full_num_LMO_list[1])
+        data_GFW['num-iter-e'] = min(data_GFW_num_iter_e[0], num_iter_max_cap)
+        data_GFW['num-iter-e-std'] = data_GFW_num_iter_e[1]
+        data_GFW_running_time_e = average_std(full_running_time_GFW_list[1])
+        data_GFW['running-time-e'] = min(data_GFW_running_time_e[0], running_time_max_cap)
+        data_GFW['running-time-e-std'] = data_GFW_running_time_e[1]
         data_EPM['num-iter-e'] = None
+        data_EPM['num-iter-e-std'] = None
         data_EPM['running-time-e'] = None
+        data_EPM['running-time-e-std'] = None
 
     if data_COMB['solved-a1'] > 0:
-        data_COMB['num-iter-a1'] = min(average(num_COMB_list[0]), num_iter_max_cap)
-        data_COMB['running-time-a1'] = min(average(running_time_COMB_list[0]), running_time_max_cap)
+        data_COMB_num_iter_a1 = average_std(num_COMB_list[0])
+        data_COMB['num-iter-a1'] = min(data_COMB_num_iter_a1[0], num_iter_max_cap)
+        data_COMB['num-iter-a1-std'] = data_COMB_num_iter_a1[1]
+        data_COMB_running_time_a1 = average_std(running_time_COMB_list[0])
+        data_COMB['running-time-a1'] = min(data_COMB_running_time_a1[0], running_time_max_cap)
+        data_COMB['running-time-a1-std'] = data_COMB_running_time_a1[1]
     else:
         data_COMB['num-iter-a1'] = None
+        data_COMB['num-iter-a1-std'] = None
         data_COMB['running-time-a1'] = None
+        data_COMB['running-time-a1-std'] = None
 
     if data_COMB['solved-e'] > 0:
-        data_COMB['num-iter-e'] = min(average(num_COMB_list[1]), num_iter_max_cap)
-        data_COMB['running-time-e'] = min(average(running_time_COMB_list[1]), running_time_max_cap)
+        data_COMB_num_iter_e = average_std(num_COMB_list[1])
+        data_COMB['num-iter-e'] = min(data_COMB_num_iter_e[0], num_iter_max_cap)
+        data_COMB['num-iter-e-std'] = data_COMB_num_iter_e[1]
+        data_COMB_running_time_e = average_std(running_time_COMB_list[1])
+        data_COMB['running-time-e'] = min(data_COMB_running_time_e[0], running_time_max_cap)
+        data_COMB['running-time-e-std'] = data_COMB_running_time_e[1]
     else:
         data_COMB['num-iter-e'] = None
+        data_COMB['num-iter-e-std'] = None
         data_COMB['running-time-e'] = None
+        data_COMB['running-time-e-std'] = None
 
     print(
         f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} "
@@ -269,15 +311,15 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
 
     welfare_summary = {
         'size': f'{N}x{M}',
-        'utilitarian_GFW_e': average(welfare_data['utilitarian_GFW_e']) if len(welfare_data['utilitarian_GFW_e']) > 0 else None,
-        'egalitarian_GFW_e': average(welfare_data['egalitarian_GFW_e']) if len(welfare_data['egalitarian_GFW_e']) > 0 else None,
-        'nash_GFW_e': average(welfare_data['nash_GFW_e']) if len(welfare_data['nash_GFW_e']) > 0 else None,
-        'utilitarian_EPM_e': average(welfare_data['utilitarian_EPM_e']) if len(welfare_data['utilitarian_EPM_e']) > 0 else None,
-        'egalitarian_EPM_e': average(welfare_data['egalitarian_EPM_e']) if len(welfare_data['egalitarian_EPM_e']) > 0 else None,
-        'nash_EPM_e': average(welfare_data['nash_EPM_e']) if len(welfare_data['nash_EPM_e']) > 0 else None,
-        'utilitarian_COMB_e': average(welfare_data['utilitarian_COMB_e']) if len(welfare_data['utilitarian_COMB_e']) > 0 else None,
-        'egalitarian_COMB_e': average(welfare_data['egalitarian_COMB_e']) if len(welfare_data['egalitarian_COMB_e']) > 0 else None,
-        'nash_COMB_e': average(welfare_data['nash_COMB_e']) if len(welfare_data['nash_COMB_e']) > 0 else None,
+        'utilitarian_GFW_e': average_std(welfare_data['utilitarian_GFW_e'])[0] if len(welfare_data['utilitarian_GFW_e']) > 0 else None,
+        'egalitarian_GFW_e': average_std(welfare_data['egalitarian_GFW_e'])[0] if len(welfare_data['egalitarian_GFW_e']) > 0 else None,
+        'nash_GFW_e': average_std(welfare_data['nash_GFW_e'])[0] if len(welfare_data['nash_GFW_e']) > 0 else None,
+        'utilitarian_EPM_e': average_std(welfare_data['utilitarian_EPM_e'])[0] if len(welfare_data['utilitarian_EPM_e']) > 0 else None,
+        'egalitarian_EPM_e': average_std(welfare_data['egalitarian_EPM_e'])[0] if len(welfare_data['egalitarian_EPM_e']) > 0 else None,
+        'nash_EPM_e': average_std(welfare_data['nash_EPM_e'])[0] if len(welfare_data['nash_EPM_e']) > 0 else None,
+        'utilitarian_COMB_e': average_std(welfare_data['utilitarian_COMB_e'])[0] if len(welfare_data['utilitarian_COMB_e']) > 0 else None,
+        'egalitarian_COMB_e': average_std(welfare_data['egalitarian_COMB_e'])[0] if len(welfare_data['egalitarian_COMB_e']) > 0 else None,
+        'nash_COMB_e': average_std(welfare_data['nash_COMB_e'])[0] if len(welfare_data['nash_COMB_e']) > 0 else None,
     }
 
     return data_GFW, data_EPM, data_COMB, welfare_summary
@@ -289,11 +331,17 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
     dict_ = {
         'size': list(),
         'iteration_GFW_a1': list(),
+        'iteration_GFW_a1-std': list(),
         'iteration_GFW_e': list(),
+        'iteration_GFW_e-std': list(),
         'iteration_EPM_a1': list(),
+        'iteration_EPM_a1-std': list(),
         'iteration_EPM_e': list(),
+        'iteration_EPM_e-std': list(),
         'iteration_COMB_a1': list(),
+        'iteration_COMB_a1-std': list(),
         'iteration_COMB_e': list(),
+        'iteration_COMB_e-std': list(),
         'solved_GFW_a1': list(),
         'solved_GFW_e': list(),
         'solved_EPM_a1': list(),
@@ -301,11 +349,17 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         'solved_COMB_a1': list(),
         'solved_COMB_e': list(),
         'runningtime_GFW_a1': list(),
+        'runningtime_GFW_a1-std': list(),
         'runningtime_GFW_e': list(),
+        'runningtime_GFW_e-std': list(),
         'runningtime_EPM_a1': list(),
+        'runningtime_EPM_a1-std': list(),
         'runningtime_EPM_e': list(),
+        'runningtime_EPM_e-std': list(),
         'runningtime_COMB_a1': list(),
+        'runningtime_COMB_a1-std': list(),
         'runningtime_COMB_e': list(),
+        'runningtime_COMB_e-std': list(),
     }
 
     welfare_dict = {
@@ -321,7 +375,8 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         'nash_COMB_e': list(),
     }
 
-    for size in size_list:
+    size_string = ""
+    for idx, size in enumerate(size_list):
         N, M = size
         dict_['size'].append(f"{N}x{M}")
         res_GFW, res_EPM, res_COMB, welfare_res = run_GFW_vs_EPM(
@@ -336,25 +391,37 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         )
 
         dict_['iteration_GFW_a1'].append(res_GFW['num-iter-a1'])
+        dict_['iteration_GFW_a1-std'].append(res_GFW['num-iter-a1-std'])
         dict_['solved_GFW_a1'].append(res_GFW['solved-a1'])
         dict_['runningtime_GFW_a1'].append(res_GFW['running-time-a1'])
+        dict_['runningtime_GFW_a1-std'].append(res_GFW['running-time-a1-std'])
         dict_['iteration_GFW_e'].append(res_GFW['num-iter-e'])
+        dict_['iteration_GFW_e-std'].append(res_GFW['num-iter-e-std'])
         dict_['solved_GFW_e'].append(res_GFW['solved-e'])
         dict_['runningtime_GFW_e'].append(res_GFW['running-time-e'])
+        dict_['runningtime_GFW_e-std'].append(res_GFW['running-time-e-std'])
 
         dict_['iteration_EPM_a1'].append(res_EPM['num-iter-a1'])
+        dict_['iteration_EPM_a1-std'].append(res_EPM['num-iter-a1-std'])
         dict_['solved_EPM_a1'].append(res_EPM['solved-a1'])
         dict_['runningtime_EPM_a1'].append(res_EPM['running-time-a1'])
+        dict_['runningtime_EPM_a1-std'].append(res_EPM['running-time-a1-std'])
         dict_['iteration_EPM_e'].append(res_EPM['num-iter-e'])
+        dict_['iteration_EPM_e-std'].append(res_EPM['num-iter-e-std'])
         dict_['solved_EPM_e'].append(res_EPM['solved-e'])
         dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
+        dict_['runningtime_EPM_e-std'].append(res_EPM['running-time-e-std'])
 
         dict_['iteration_COMB_a1'].append(res_COMB['num-iter-a1'])
+        dict_['iteration_COMB_a1-std'].append(res_COMB['num-iter-a1-std'])
         dict_['solved_COMB_a1'].append(res_COMB['solved-a1'])
         dict_['runningtime_COMB_a1'].append(res_COMB['running-time-a1'])
+        dict_['runningtime_COMB_a1-std'].append(res_COMB['running-time-a1-std'])
+        dict_['iteration_COMB_e-std'].append(res_COMB['num-iter-e-std'])
         dict_['iteration_COMB_e'].append(res_COMB['num-iter-e'])
         dict_['solved_COMB_e'].append(res_COMB['solved-e'])
         dict_['runningtime_COMB_e'].append(res_COMB['running-time-e'])
+        dict_['runningtime_COMB_e-std'].append(res_COMB['running-time-e-std'])
 
         welfare_dict['size'].append(f"{N}x{M}")
         welfare_dict['utilitarian_GFW_e'].append(welfare_res['utilitarian_GFW_e'])
@@ -367,20 +434,35 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         welfare_dict['egalitarian_COMB_e'].append(welfare_res['egalitarian_COMB_e'])
         welfare_dict['nash_COMB_e'].append(welfare_res['nash_COMB_e'])
 
+        if idx == 0:
+            size_string += f"{N}x{M}"
+        elif idx == 1:
+            size_string += f".{N}x{M}"
+            if len(size_list) > 3:
+                size_string += "..."
+        elif idx == len(size_list) - 1:
+            size_string += f".{N}x{M}"
+
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}.csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string} .csv')
 
     welfare_df = pd.DataFrame.from_dict(welfare_dict)
-    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_welfare.csv')
+    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare.csv')
 
     return dict_
 
 if __name__ == "__main__": 
 
+    size_list = [(5, 5), (50, 50)]
+    # ================ the above is for test =====================
     # size_list = [(100, 100), (200, 100), (300, 100), (400, 100), (500, 100), (600, 100)]
-    size_list = [(100, 100), (100, 200), (100, 300), (100, 400), (100, 500), (100, 600)]
-    rgm_list = ['uniform', ]
+    # size_list = [(100, 100), (100, 200), (100, 300), (100, 400), (100, 500), (100, 600)]
+    # size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]
+    # size_list = [(3, 3), (6, 6), (9, 9), (12, 12), (15, 15)]
+    # size_list = [(10, 10), (20, 20), (30, 30)]
+    rgm_list = ['uniform', 'exponential', 'lognormal', 'truncnormal', 'randint']
+    NUM_SEEDS = 50
 
     for rgm in rgm_list:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=30, save_dir="../data", algorithms=["GFW", "EPM"])
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=NUM_SEEDS, save_dir="../data", algorithms=["GFW", "EPM"])
