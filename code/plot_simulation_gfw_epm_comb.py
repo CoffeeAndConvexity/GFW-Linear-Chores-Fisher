@@ -23,14 +23,20 @@ import matplotlib
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 import numpy as np
 import pandas as pd
 
 
+
+CSV_NAMES = [
+    "uniform_5x5.50x50....300x300_10.csv",
+]
+
 ALGORITHMS = {
     "GFW": {"label": "GFW", "color": "darkgreen", "marker": "^"},
     "EPM": {"label": "EPM", "color": "darkorange", "marker": "*"},
-    "COMB": {"label": "COMB", "color": "royalblue", "marker": "o"},
+    # "COMB": {"label": "COMB", "color": "royalblue", "marker": "o"},
 }
 
 METRICS = {
@@ -83,63 +89,80 @@ def discover_csv_files(data_dir: Path) -> list[Path]:
     return csv_files
 
 
-def values_for_metric(data: pd.DataFrame, metric: str, algorithm: str, suffix: str, num_seeds: int) -> pd.Series | None:
+def values_for_metric(
+    data: pd.DataFrame,
+    metric: str,
+    algorithm: str,
+    suffix: str,
+    num_seeds: int,
+) -> tuple[pd.Series | None, pd.Series | None]:
     column = f"{METRICS[metric]['prefix']}_{algorithm}_{suffix}"
+    std_column = f"{column}-std"
     if column not in data.columns:
-        return None
+        return None, None
 
     values = pd.to_numeric(data[column], errors="coerce")
+    std = pd.to_numeric(data[std_column], errors="coerce") if std_column in data.columns else None
     if metric == "solved":
         values = values / num_seeds
-    return values
+        if std is not None:
+            std = std / num_seeds
+    return values, std
 
+def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: int) -> Path | None:
+    
+    data = pd.read_csv(csv_path)
+    if "size" not in data.columns:
+        raise ValueError(f"{csv_path} does not contain a 'size' column.")
 
-def plot_metric(
-    data: pd.DataFrame,
-    csv_path: Path,
-    output_dir: Path,
-    *,
-    metric: str,
-    variant: str,
-    num_seeds: int,
-) -> Path | None:
+    x_axis = data["size"]
+    
+    fig, axes = plt.subplots(1, 3, figsize=(19, 5.5), sharex=True)
+    print(fig, axes)
+    metric_order = ["iteration", "runningtime", "solved"]
     plotted_any = False
-    plt.figure(figsize=(8, 5.5))
 
-    for algorithm, style in ALGORITHMS.items():
-        for suffix, suffix_label, linestyle in VARIANTS[variant]:
-            values = values_for_metric(data, metric, algorithm, suffix, num_seeds)
-            if values is None:
-                continue
+    for ax, metric in zip(axes, metric_order):
+        metric_plotted = False
+        for algorithm, style in ALGORITHMS.items():
+            for suffix, suffix_label, linestyle in VARIANTS[variant]:
+                values, std = values_for_metric(data, metric, algorithm, suffix, num_seeds)
+                if values is None:
+                    continue
 
-            label = style["label"] if variant != "both" else f"{style['label']}: {suffix_label}"
-            plt.plot(
-                data["size"],
-                values,
-                label=label,
-                marker=style["marker"],
-                color=style["color"],
-                linestyle=linestyle,
-                linewidth=2.5,
-                markersize=10,
-            )
-            plotted_any = True
+                label = style["label"] if variant != "both" else f"{style['label']}: {suffix_label}"
+                ax.errorbar(x_axis, values,
+                    label=label,
+                    marker=style["marker"],
+                    color=style["color"],
+                    linestyle=linestyle,
+                    linewidth=2.0,
+                    markersize=8,
+                    yerr=std,
+                    capsize=3,
+                )
+                metric_plotted = True
+                plotted_any = True
+
+        ax.set_title(METRICS[metric]["ylabel"], fontsize=13)
+        ax.tick_params(axis="both", labelsize=11)
+        ax.set_xlabel("Size of instances", fontsize=12)
+        if metric_plotted:
+            ax.legend(fontsize=9)
+
+    axes[0].set_ylabel("Value", fontsize=12)
+    fig.tight_layout()
 
     if not plotted_any:
-        plt.close()
+        plt.close(fig)
         return None
 
-    plt.xticks(fontsize=12, rotation=15)
-    plt.yticks(fontsize=12)
-    plt.xlabel("Size of instances", fontsize=14)
-    plt.ylabel(METRICS[metric]["ylabel"], fontsize=14)
-    plt.legend(fontsize=11)
-    plt.tight_layout()
-
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / f"{METRICS[metric]['filename_prefix']}_{clean_name(csv_path)}_{variant}.png"
-    plt.savefig(output_path, dpi=200)
-    plt.close()
+    output_path = output_dir / f"{clean_name(csv_path)}_{'vs'.join(ALGORITHMS.keys())}.pdf"
+    with PdfPages(output_path) as pdf:
+        pdf.savefig(fig, bbox_inches="tight")
+    plt.close(fig)
+
     return output_path
 
 
@@ -149,17 +172,10 @@ def plot_csv(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: int) 
         raise ValueError(f"{csv_path} does not contain a 'size' column.")
 
     output_paths = []
-    for metric in METRICS:
-        output_path = plot_metric(
-            data,
-            csv_path,
-            output_dir,
-            metric=metric,
-            variant=variant,
-            num_seeds=num_seeds,
-        )
-        if output_path is not None:
-            output_paths.append(output_path)
+    pdf_path = plot_csv_pdf(csv_path, output_dir, variant=variant, num_seeds=num_seeds)
+    if pdf_path is not None:
+        output_paths.append(pdf_path)
+
     return output_paths
 
 
@@ -183,12 +199,7 @@ def main() -> None:
     parser.add_argument("--variant", choices=sorted(VARIANTS), default="both")
     args = parser.parse_args()
 
-    if args.num_seeds <= 0:
-        raise ValueError("--num-seeds must be positive.")
-
-    csv_files = args.csv_files or discover_csv_files(args.data_dir)
-    if not csv_files:
-        raise ValueError(f"No simulation CSV files with COMB columns found in {args.data_dir}.")
+    csv_files = [args.data_dir / name for name in CSV_NAMES]
 
     for csv_path in csv_files:
         output_paths = plot_csv(csv_path, args.output_dir, variant=args.variant, num_seeds=args.num_seeds)

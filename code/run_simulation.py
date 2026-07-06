@@ -19,6 +19,17 @@ from epm import *
 from combinatorial import combinatorial_metrics
 
 
+
+
+
+ALGORITHMS = ["GFW", "EPM", ]
+NUM_SEEDS = 100
+RGM = ["uniform", "exponential", "lognormal", "truncnormal", "randint"]
+
+
+
+
+
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
         return {"GFW", "EPM", "COMB"}
@@ -444,25 +455,24 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
             size_string += f".{N}x{M}"
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string} .csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}.csv')
 
     welfare_df = pd.DataFrame.from_dict(welfare_dict)
-    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare.csv')
+    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
 
     return dict_
 
 if __name__ == "__main__": 
 
-    size_list = [(5, 5), (50, 50)]
+    # size_list = [(5, 5), (10, 10), (20, 20), (30, 30)]
     # ================ the above is for test =====================
     # size_list = [(100, 100), (200, 100), (300, 100), (400, 100), (500, 100), (600, 100)]
     # size_list = [(100, 100), (100, 200), (100, 300), (100, 400), (100, 500), (100, 600)]
-    # size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]
+    size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]
     # size_list = [(3, 3), (6, 6), (9, 9), (12, 12), (15, 15)]
     # size_list = [(10, 10), (20, 20), (30, 30)]
-    rgm_list = ['uniform', 'exponential', 'lognormal', 'truncnormal', 'randint']
-    NUM_SEEDS = 50
+    # rgm_list = ['uniform', 'exponential', 'lognormal', 'truncnormal', 'randint']
 
-    for rgm in rgm_list:
+    for rgm in RGM:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=NUM_SEEDS, save_dir="../data", algorithms=["GFW", "EPM"])
+        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=NUM_SEEDS, save_dir="../data", algorithms=ALGORITHMS)
