@@ -31,17 +31,19 @@ import pandas as pd
 X_ROTATION = 15
 
 CSV_NAMES = [
+    "uniform_5x5.10x10....30x30_100.csv",
     # "uniform_5x5.50x50....300x300_100.csv",
     # "exponential_5x5.50x50....300x300_100.csv",
     # "lognormal_5x5.50x50....300x300_100.csv",
     # "truncnormal_5x5.50x50....300x300_100.csv",
-    "uniform_10x100.200x100....1000x100_100.csv",
+    # "uniform_10x100.200x100....1000x100_100.csv",
+    # "uniform_100x10.100x200....100x1000_100.csv",
 ]
 
 ALGORITHMS = {
     "GFW": {"label": "GFW", "color": "darkgreen", "marker": "^", "order": 0.8},
-    # "EPM": {"label": "EPM", "color": "darkorange", "marker": "*", "order": 0.6},
-    # "COMB": {"label": "COMB", "color": "royalblue", "marker": "o", "order": 0.5},
+    "EPM": {"label": "EPM", "color": "darkorange", "marker": "*", "order": 0.6},
+    "COMB": {"label": "COMB", "color": "royalblue", "marker": "o", "order": 0.5},
 }
 
 METRICS = {
