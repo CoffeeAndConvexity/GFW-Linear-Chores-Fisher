@@ -28,15 +28,20 @@ import numpy as np
 import pandas as pd
 
 
+X_ROTATION = 15
 
 CSV_NAMES = [
-    "uniform_5x5.50x50....300x300_10.csv",
+    # "uniform_5x5.50x50....300x300_100.csv",
+    # "exponential_5x5.50x50....300x300_100.csv",
+    # "lognormal_5x5.50x50....300x300_100.csv",
+    # "truncnormal_5x5.50x50....300x300_100.csv",
+    "uniform_10x100.200x100....1000x100_100.csv",
 ]
 
 ALGORITHMS = {
-    "GFW": {"label": "GFW", "color": "darkgreen", "marker": "^"},
-    "EPM": {"label": "EPM", "color": "darkorange", "marker": "*"},
-    # "COMB": {"label": "COMB", "color": "royalblue", "marker": "o"},
+    "GFW": {"label": "GFW", "color": "darkgreen", "marker": "^", "order": 0.8},
+    # "EPM": {"label": "EPM", "color": "darkorange", "marker": "*", "order": 0.6},
+    # "COMB": {"label": "COMB", "color": "royalblue", "marker": "o", "order": 0.5},
 }
 
 METRICS = {
@@ -58,9 +63,9 @@ METRICS = {
 }
 
 VARIANTS = {
-    "approx": [("a1", "Approximate", "dashed")],
-    "exact": [("e", "Exact", "solid")],
-    "both": [("a1", "Approximate", "dashed"), ("e", "Exact", "solid")],
+    "approx": [("a1", "approx", "dashed")],
+    "exact": [("e", "exact", "solid")],
+    "both": [("a1", "approx", "dashed"), ("e", "exact", "solid")],
 }
 
 
@@ -115,10 +120,21 @@ def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: i
     if "size" not in data.columns:
         raise ValueError(f"{csv_path} does not contain a 'size' column.")
 
-    x_axis = data["size"]
+    data_size = data["size"]
+    new_data_size = []
+    for i in range(len(data_size)):
+        ds = list(data_size[i].split("x"))
+        if ds[0] == ds[1]:
+            new_data_size.append(f"{ds[0]}")
+        else:
+            new_data_size.append(data_size[i])
+    x_axis = new_data_size
     
-    fig, axes = plt.subplots(1, 3, figsize=(19, 5.5), sharex=True)
-    print(fig, axes)
+    fig, axes = plt.subplots(1, 3, figsize=(18, 4), sharex=True)
+    fig.subplots_adjust(
+        wspace=-0.5,  # horizontal gap
+        hspace=-0.5   # vertical gap
+    )
     metric_order = ["iteration", "runningtime", "solved"]
     plotted_any = False
 
@@ -129,28 +145,54 @@ def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: i
                 values, std = values_for_metric(data, metric, algorithm, suffix, num_seeds)
                 if values is None:
                     continue
-
-                label = style["label"] if variant != "both" else f"{style['label']}: {suffix_label}"
-                ax.errorbar(x_axis, values,
-                    label=label,
-                    marker=style["marker"],
-                    color=style["color"],
-                    linestyle=linestyle,
-                    linewidth=2.0,
-                    markersize=8,
-                    yerr=std,
-                    capsize=3,
-                )
+                
+                if suffix == "e":
+                    ax.plot(x_axis, 
+                        values, 
+                        label=f"{style['label']}: {suffix_label}", 
+                        color=style["color"], 
+                        marker=style["marker"],
+                        markersize=12, 
+                        linestyle=linestyle, 
+                        linewidth=3,
+                        zorder=2 + style["order"])
+                    ax.fill_between(x_axis, 
+                                    values - std if std is not None else values, 
+                                    values + std if std is not None else values,
+                                    color=style["color"],
+                                    alpha=0.2,
+                                    linewidth=3,
+                                    edgecolor="none",
+                                    zorder=0 + style["order"]
+                    )
+                else:
+                    ax.errorbar(x_axis, 
+                                values, 
+                                yerr=std if std is not None else None,
+                                label=f"{style['label']}: {suffix_label}",
+                                color=style["color"],
+                                marker=style["marker"],
+                                markersize=12,
+                                linestyle=linestyle,
+                                linewidth=3,
+                                elinewidth=2,        # error bar line width
+                                capsize=3.5,           # cap length
+                                capthick=2,          # cap thickness
+                                alpha=0.6,
+                                zorder=1 + style["order"]
+                    )
                 metric_plotted = True
                 plotted_any = True
 
-        ax.set_title(METRICS[metric]["ylabel"], fontsize=13)
-        ax.tick_params(axis="both", labelsize=11)
-        ax.set_xlabel("Size of instances", fontsize=12)
-        if metric_plotted:
-            ax.legend(fontsize=9)
+        # ax.set_title(METRICS[metric]["ylabel"], fontsize=16)
+        ax.tick_params(axis="both", labelsize=18, rotation=X_ROTATION)
+        # ax.set_xlabel("Size of instances", fontsize=16)
+        if ax == axes[2]:
+            ax.set_ylim([-0.1, 1.1])
+        if metric_plotted and ax == axes[0]:
+            ax.legend(fontsize=16, loc="upper left")
 
-    axes[0].set_ylabel("Value", fontsize=12)
+    # axes[0].set_ylabel("Value", fontsize=16)
     fig.tight_layout()
 
     if not plotted_any:
@@ -181,6 +223,7 @@ def plot_csv(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: int) 
 
 def main() -> None:
     script_dir = Path(__file__).resolve().parent
+    print(f"Script directory: {script_dir}")
     default_data_dir = script_dir.parent / "data"
     default_output_dir = script_dir.parent / "figures"
 
