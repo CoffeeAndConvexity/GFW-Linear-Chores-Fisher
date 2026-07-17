@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Chores CEEI Experiments
 """
@@ -18,17 +17,9 @@ from gfw import *
 from epm import *
 from combinatorial import combinatorial_metrics
 
-
-
-
-
-ALGORITHMS = ["GFW", "EPM", ]
+ALGORITHMS = ["GFW", "EPM", "COMB"]
 NUM_SEEDS = 100
-RGM = ["uniform", "exponential", "lognormal", "truncnormal", "randint"]
-
-
-
-
+RGM = ["randint", ]
 
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
@@ -93,39 +84,15 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
     full_num_LMO_list = [[], []]
     full_running_time_GFW_list = [[], []]
     num_ins_GFW_solved = [0, 0]
-    data_GFW = {
-        'size': f'N*M = {N}*{M}',
-        'num-iter-a1': None,
-        'num-iter-e': None,
-        'solved-a1': None,
-        'solved-e': None,
-        'running-time-a1': None,
-        'running-time-e': None,
-    }
+    data_GFW = {'size': f'N*M = {N}*{M}',}
     num_QMO_list = [[], []]
     running_time_EPM_list = [[], []]
     num_ins_EPM_solved = [0, 0]
-    data_EPM = {
-        'size': f'N*M = {N}*{M}',
-        'num-iter-a1': None,
-        'num-iter-e': None,
-        'solved-a1': None,
-        'solved-e': None,
-        'running-time-a1': None,
-        'running-time-e': None,
-    }
+    data_EPM = {'size': f'N*M = {N}*{M}',}
     num_COMB_list = [[], []]
     running_time_COMB_list = [[], []]
     num_ins_COMB_solved = [0, 0]
-    data_COMB = {
-        'size': f'N*M = {N}*{M}',
-        'num-iter-a1': None,
-        'num-iter-e': None,
-        'solved-a1': None,
-        'solved-e': None,
-        'running-time-a1': None,
-        'running-time-e': None,
-    }
+    data_COMB = {'size': f'N*M = {N}*{M}',}
 
     welfare_data = {
         'size': f'N*M = {N}*{M}',
@@ -457,8 +424,8 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
     df = pd.DataFrame.from_dict(dict_)
     df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}.csv')
 
-    welfare_df = pd.DataFrame.from_dict(welfare_dict)
-    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
+    # welfare_df = pd.DataFrame.from_dict(welfare_dict)
+    # welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
 
     return dict_
 
@@ -466,12 +433,10 @@ if __name__ == "__main__":
 
     # size_list = [(5, 5), (10, 10), (20, 20), (30, 30)]
     # ================ the above is for test =====================
-    # size_list = [(100, 100), (200, 100), (300, 100), (400, 100), (500, 100), (600, 100)]
-    # size_list = [(100, 100), (100, 200), (100, 300), (100, 400), (100, 500), (100, 600)]
-    size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]
-    # size_list = [(3, 3), (6, 6), (9, 9), (12, 12), (15, 15)]
-    # size_list = [(10, 10), (20, 20), (30, 30)]
-    # rgm_list = ['uniform', 'exponential', 'lognormal', 'truncnormal', 'randint']
+    # size_list = [(10, 100), (500, 100), (1000, 100), (1500, 100), (2000, 100), (2500, 100), (3000, 100)]  # only GFW can solve these sizes of problems
+    # size_list = [(100, 10), (100, 500), (100, 1000), (100, 1500), (100, 2000), (100, 2500), (100, 3000)]  # only GFW can solve these sizes of problems
+    # size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]  # GFW, EPM
+    size_list = [(5, 5), (10, 10), (15, 15), (20, 20), (25, 25), (30, 30)]  # GFW, EPM, COMB
 
     for rgm in RGM:
         print(f"================== {rgm} ==================")

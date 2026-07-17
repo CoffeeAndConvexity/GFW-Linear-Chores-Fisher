@@ -36,11 +36,11 @@ CSV_NAMES = [
     # "truncnormal_5x5.10x10....30x30_100.csv",
     # "exponential_5x5.10x10....30x30_100.csv",
     # "randint_5x5.10x10....30x30_100.csv",
-    "uniform_5x5.50x50....300x300_100.csv",
-    "exponential_5x5.50x50....300x300_100.csv",
-    "lognormal_5x5.50x50....300x300_100.csv",
-    "truncnormal_5x5.50x50....300x300_100.csv",
-    "randint_5x5.50x50....300x300_100.csv",
+    # "uniform_5x5.50x50....300x300_100.csv",
+    # "exponential_5x5.50x50....300x300_100.csv",
+    # "lognormal_5x5.50x50....300x300_100.csv",
+    # "truncnormal_5x5.50x50....300x300_100.csv",
+    # "randint_5x5.50x50....300x300_100.csv",
     # ["uniform_10x100.500x100....3000x100_100.csv", 
     #  "exponential_10x100.500x100....3000x100_100.csv", 
     #  "lognormal_10x100.500x100....3000x100_100.csv", 
@@ -51,6 +51,8 @@ CSV_NAMES = [
     #  "lognormal_100x10.100x500....100x3000_100.csv",
     #  "truncnormal_100x10.100x500....100x3000_100.csv",
     #  "randint_100x10.100x500....100x3000_100.csv"],
+    "bidding_5x5.50x50....300x300_100.csv",
+    "biddingwithnoise_5x5.50x50....300x300_100.csv",
 ]
 
 ALGORITHMS = {
