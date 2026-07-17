@@ -52,6 +52,24 @@ def average(lst):  # return the average of a list
 
 def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, print_eq=False):
 
+    def average_std(lst):  # return the average of a list
+        num_nonNone = 0
+        sum = 0
+        sum_sq = 0
+
+        for e in lst:
+            if e is not None:
+                num_nonNone += 1
+                sum += e
+                sum_sq += e * e
+
+        if num_nonNone > 0:
+            mean = sum / num_nonNone
+            variance = (sum_sq - num_nonNone * mean * mean) / (num_nonNone - 1) if num_nonNone > 1 else 0
+            return mean, np.sqrt(variance)
+        else:
+            return np.inf, np.inf
+
     seeds = range(num_seeds)  # set how many instances we want to try for one size
     num_LMO_list = [[], []]
     running_time_GFW_list = [[], []]
@@ -153,69 +171,128 @@ def run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=True, nu
     data_EPM['solved-e'] = num_ins_EPM_solved[1]
 
     if data_EPM['solved-a1'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to approximate CE, use the instances that both algorithms can solve to compute the stats
-        data_GFW['num-iter-a1'] = min(average(num_LMO_list[0]), num_iter_max_cap)
-        data_GFW['running-time-a1'] = min(average(running_time_GFW_list[0]), running_time_max_cap)
-        data_EPM['num-iter-a1'] = min(average(num_QMO_list[0]), num_iter_max_cap)
-        data_EPM['running-time-a1'] = min(average(running_time_EPM_list[0]), running_time_max_cap)
+        data_GFW_num_iter_a1 = average_std(num_LMO_list[0])
+        data_GFW['num-iter-a1'] = min(data_GFW_num_iter_a1[0], num_iter_max_cap)
+        data_GFW['num-iter-a1-std'] = data_GFW_num_iter_a1[1]
+        data_GFW_running_time_a1 = average_std(running_time_GFW_list[0])
+        data_GFW['running-time-a1'] = min(data_GFW_running_time_a1[0], running_time_max_cap)
+        data_GFW['running-time-a1-std'] = data_GFW_running_time_a1[1]
+        data_EPM_num_iter_a1 = average_std(num_QMO_list[0])
+        data_EPM['num-iter-a1'] = min(data_EPM_num_iter_a1[0], num_iter_max_cap)
+        data_EPM['num-iter-a1-std'] = data_EPM_num_iter_a1[1]
+        data_EPM_running_time_a1 = average_std(running_time_EPM_list[0])
+        data_EPM['running-time-a1'] = min(data_EPM_running_time_a1[0], running_time_max_cap)
+        data_EPM['running-time-a1-std'] = data_EPM_running_time_a1[1]
     else:  # otherwise, use all instances that GFW can solve to compute the stats
-        data_GFW['num-iter-a1'] = min(average(full_num_LMO_list[0]), num_iter_max_cap)
-        data_GFW['running-time-a1'] = min(average(full_running_time_GFW_list[0]), running_time_max_cap)
+        data_GFW_num_iter_a1 = average_std(full_num_LMO_list[0])
+        data_GFW['num-iter-a1'] = min(data_GFW_num_iter_a1[0], num_iter_max_cap)
+        data_GFW['num-iter-a1-std'] = data_GFW_num_iter_a1[1]
+        data_GFW_running_time_a1 = average_std(full_running_time_GFW_list[0])
+        data_GFW['running-time-a1'] = min(data_GFW_running_time_a1[0], running_time_max_cap)
+        data_GFW['running-time-a1-std'] = data_GFW_running_time_a1[1]
         data_EPM['num-iter-a1'] = None
+        data_EPM['num-iter-a1-std'] = None
         data_EPM['running-time-a1'] = None
+        data_EPM['running-time-a1-std'] = None
 
     if data_EPM['solved-e'] > 0.05 * num_seeds:  # if EPM can solve at least 5% of the instances to exact CE, use the instances that both algorithms can solve to compute the stats
-        data_GFW['num-iter-e'] = min(average(num_LMO_list[1]), num_iter_max_cap)
-        data_GFW['running-time-e'] = min(average(running_time_GFW_list[1]), running_time_max_cap)
-        data_EPM['num-iter-e'] = min(average(num_QMO_list[1]), num_iter_max_cap)
-        data_EPM['running-time-e'] = min(average(running_time_EPM_list[1]), running_time_max_cap)
+        data_GFW_num_iter_e = average_std(num_LMO_list[1])
+        data_GFW['num-iter-e'] = min(data_GFW_num_iter_e[0], num_iter_max_cap)
+        data_GFW['num-iter-e-std'] = data_GFW_num_iter_e[1]
+        data_GFW_running_time_e = average_std(running_time_GFW_list[1])
+        data_GFW['running-time-e'] = min(data_GFW_running_time_e[0], running_time_max_cap)
+        data_GFW['running-time-e-std'] = data_GFW_running_time_e[1]
+        data_EPM_num_iter_e = average_std(num_QMO_list[1])
+        data_EPM['num-iter-e'] = min(data_EPM_num_iter_e[0], num_iter_max_cap)
+        data_EPM['num-iter-e-std'] = data_EPM_num_iter_e[1]
+        data_EPM_running_time_e = average_std(running_time_EPM_list[1])
+        data_EPM['running-time-e'] = min(data_EPM_running_time_e[0], running_time_max_cap)
+        data_EPM['running-time-e-std'] = data_EPM_running_time_e[1]
     else:  # otherwise, use all instances that GFW can solve to compute the stats
-        data_GFW['num-iter-e'] = min(average(full_num_LMO_list[1]), num_iter_max_cap)
-        data_GFW['running-time-e'] = min(average(full_running_time_GFW_list[1]), running_time_max_cap)
+        data_GFW_num_iter_e = average_std(full_num_LMO_list[1])
+        data_GFW['num-iter-e'] = min(data_GFW_num_iter_e[0], num_iter_max_cap)
+        data_GFW['num-iter-e-std'] = data_GFW_num_iter_e[1]
+        data_GFW_running_time_e = average_std(full_running_time_GFW_list[1])
+        data_GFW['running-time-e'] = min(data_GFW_running_time_e[0], running_time_max_cap)
+        data_GFW['running-time-e-std'] = data_GFW_running_time_e[1]
         data_EPM['num-iter-e'] = None
+        data_EPM['num-iter-e-std'] = None
         data_EPM['running-time-e'] = None
+        data_EPM['running-time-e-std'] = None
 
-    print(f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}")
+    print(
+        f"STATS: {data_GFW['num-iter-e']}/{data_GFW['solved-e']}/{data_GFW['running-time-e']} "
+        f"vs {data_EPM['num-iter-e']}/{data_EPM['solved-e']}/{data_EPM['running-time-e']}"
+    )
 
     return data_GFW, data_EPM
 
 
-def run_and_save_bidding_data(D, distance_matrix, size_list=[2, 50, 100], num_seeds=10, with_noise=True, save_dir='./data'):
+def run_and_save_bidding_data(D, distance_matrix, size_list=[2, 50, 100], num_seeds=10, with_noise=True, save_dir='../data'):
 
     dict_ = {
         'size': list(),
         'iteration_GFW_a1': list(),
+        'iteration_GFW_a1-std': list(),
         'iteration_GFW_e': list(),
+        'iteration_GFW_e-std': list(),
         'iteration_EPM_a1': list(),
+        'iteration_EPM_a1-std': list(),
         'iteration_EPM_e': list(),
+        'iteration_EPM_e-std': list(),
         'solved_GFW_a1': list(),
         'solved_GFW_e': list(),
         'solved_EPM_a1': list(),
         'solved_EPM_e': list(),
         'runningtime_GFW_a1': list(),
+        'runningtime_GFW_a1-std': list(),
         'runningtime_GFW_e': list(),
+        'runningtime_GFW_e-std': list(),
         'runningtime_EPM_a1': list(),
-        'runningtime_EPM_e': list()
+        'runningtime_EPM_a1-std': list(),
+        'runningtime_EPM_e': list(),
+        'runningtime_EPM_e-std': list(),
     }
 
-    for size in size_list: 
+    size_string = ""
+    for idx, size in enumerate(size_list):
         N = size
         M = size
-        dict_['size'].append(size)
+        dict_['size'].append(f"{N}x{M}")
         res_GFW, res_EPM = run_GFW_vs_EPM_on_bidding_data(N, M, D, distance_matrix, with_noise=with_noise, num_seeds=num_seeds)
 
         dict_['iteration_GFW_a1'].append(res_GFW['num-iter-a1'])
+        dict_['iteration_GFW_a1-std'].append(res_GFW['num-iter-a1-std'])
         dict_['solved_GFW_a1'].append(res_GFW['solved-a1'])
         dict_['runningtime_GFW_a1'].append(res_GFW['running-time-a1'])
+        dict_['runningtime_GFW_a1-std'].append(res_GFW['running-time-a1-std'])
         dict_['iteration_GFW_e'].append(res_GFW['num-iter-e'])
+        dict_['iteration_GFW_e-std'].append(res_GFW['num-iter-e-std'])
         dict_['solved_GFW_e'].append(res_GFW['solved-e'])
         dict_['runningtime_GFW_e'].append(res_GFW['running-time-e'])
+        dict_['runningtime_GFW_e-std'].append(res_GFW['running-time-e-std'])
 
         dict_['iteration_EPM_a1'].append(res_EPM['num-iter-a1'])
+        dict_['iteration_EPM_a1-std'].append(res_EPM['num-iter-a1-std'])
         dict_['solved_EPM_a1'].append(res_EPM['solved-a1'])
         dict_['runningtime_EPM_a1'].append(res_EPM['running-time-a1'])
+        dict_['runningtime_EPM_a1-std'].append(res_EPM['running-time-a1-std'])
         dict_['iteration_EPM_e'].append(res_EPM['num-iter-e'])
+        dict_['iteration_EPM_e-std'].append(res_EPM['num-iter-e-std'])
         dict_['solved_EPM_e'].append(res_EPM['solved-e'])
         dict_['runningtime_EPM_e'].append(res_EPM['running-time-e'])
+        dict_['runningtime_EPM_e-std'].append(res_EPM['running-time-e-std'])
+
+        if idx == 0:
+            size_string += f"{N}x{M}"
+        elif idx == 1:
+            size_string += f".{N}x{M}"
+            if len(size_list) > 3:
+                size_string += "..."
+        elif idx == len(size_list) - 1:
+            size_string += f".{N}x{M}"
+
+    # print(dict_)
 
     df = pd.DataFrame.from_dict(dict_)
 
@@ -223,27 +300,19 @@ def run_and_save_bidding_data(D, distance_matrix, size_list=[2, 50, 100], num_se
         os.makedirs(save_dir)
 
     if with_noise:
-        df.to_csv(f'{save_dir}/bidding_data_with_noise.csv')
+        df.to_csv(f'{save_dir}/bidding_with_noise_{size_string}_{num_seeds}.csv')
     else:
-        df.to_csv(f'{save_dir}/bidding_data.csv')
+        df.to_csv(f'{save_dir}/bidding_{size_string}_{num_seeds}.csv')
 
     return dict_
 
-def average_and_std(lst):
-    nonNone_list = list()
-
-    for e in lst:
-        if (e is not None) and (e is not np.nan) and (e is not pd.NA) and (not math.isnan(e)):
-            nonNone_list.append(e)
-
-    if len(nonNone_list) > 0:
-        return np.mean(nonNone_list), np.std(nonNone_list)
-    else:
-        return None, None
-
 
 if __name__ == "__main__": 
-    df = pd.read_csv('./bidding-data.csv')
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    data_path = os.path.join(current_dir, '../data/bidding-data.csv')
+    print("Resolved path:", os.path.normpath(data_path))
+    print("Exists:", os.path.exists(data_path))
+    df = pd.read_csv(data_path)
 
     dict_bidder_index = dict()
     i = 0
@@ -271,5 +340,5 @@ if __name__ == "__main__":
     distance_matrix = distance_matrix_among_papers(D)
 
     size_list = [5, 50, 100, 150, 200, 250, 300]
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False, save_dir='./data')
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True, save_dir='./data')
+    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False, save_dir='../data')
+    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True, save_dir='../data')
