@@ -124,7 +124,7 @@ Greedy Frank Wolfe - Main Algorithm
     - At each iteration, we check whether an approximate CE or exact CE is found
     - Running time does not include the time for evaluation
 '''
-def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_method="default", report_total_pivots=False, return_eq=False):  
+def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_method="default", approx_thr=APPROXIMATE_THR, report_total_pivots=False, return_eq=False):  
 
     # create the dual polyhedron
     A, b, C, d = polytope_dual(N, M, D, B)
@@ -190,7 +190,7 @@ def GFW(N, M, D, B, print_eq=False, max_iter=100, warm_start=True, LP_solve_meth
                 continue 
 
         if type(eps) is not str:
-            if eps <= APPROXIMATE_THR and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated, except we have run out of iteration budget
+            if eps <= approx_thr and num_LMO_a1 == MAX_NUM_ITER:  # the second condition ensures that 'num_LMO_1' has not been updated, except we have run out of iteration budget
                 solved_a1 = True
                 num_LMO_a1 = num_LMO
                 running_time_a1 = running_time

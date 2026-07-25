@@ -15,6 +15,91 @@ env = gp.Env(params=gurobi_license_params)
 SolverName = str
 
 
+class _BalanceAllocationModel:
+    def __init__(self, n_agents: int, n_chores: int, *, solver: SolverName, warm_start: bool) -> None:
+        try:
+            import cvxpy as cp
+        except ModuleNotFoundError as exc:
+            raise ModuleNotFoundError(
+                "cvxpy is required for balance_allocation. Install it with: pip install cvxpy"
+            ) from exc
+
+        self.cp = cp
+        self.n_agents = n_agents
+        self.n_chores = n_chores
+        self.solver_name = str(solver).strip().lower()
+        self.warm_start = bool(warm_start)
+
+        self.x_var = cp.Variable((n_agents, n_chores), nonneg=True)
+        self.p_param = cp.Parameter(n_chores, nonneg=True)
+        self.edge_mask = cp.Parameter((n_agents, n_chores), nonneg=True)
+
+        e_expr = self.x_var @ self.p_param
+        constraints = [cp.sum(self.x_var, axis=0) == 1, self.x_var <= self.edge_mask]
+        objective = cp.Maximize(cp.geo_mean(e_expr))
+        self.problem = cp.Problem(objective, constraints)  # type: ignore
+
+    def solve(self, p, mpb_edges, *, x_init=None) -> tuple[np.ndarray, np.ndarray, set[int]]:
+        p_arr = np.asarray(p, dtype=float)
+        mask_arr = np.asarray(mpb_edges, dtype=float)
+
+        self.p_param.value = np.maximum(p_arr, 0.0)
+        self.edge_mask.value = np.maximum(mask_arr, 0.0)
+
+        if self.warm_start and x_init is not None:
+            x_init_arr = np.asarray(x_init, dtype=float)
+            if x_init_arr.shape == (self.n_agents, self.n_chores):
+                self.x_var.value = np.minimum(np.maximum(x_init_arr, 0.0), self.edge_mask.value)
+
+        if self.solver_name in {"cvxpy", "scs"}:
+            self.problem.solve(
+                solver=self.cp.SCS,
+                eps=1e-9,
+                max_iters=100_000,
+                verbose=False,
+                warm_start=self.warm_start,
+            )
+        elif self.solver_name in {"cvxpy_strict", "scs_strict"}:
+            self.problem.solve(
+                solver=self.cp.SCS,
+                eps=1e-11,
+                max_iters=300_000,
+                verbose=False,
+                warm_start=self.warm_start,
+            )
+        elif self.solver_name == "gurobi":
+            self.problem.solve(
+                solver=self.cp.GUROBI,
+                env=env,
+                verbose=False,
+                warm_start=self.warm_start,
+            )
+        elif self.solver_name == "mosek":
+            self.problem.solve(
+                solver=self.cp.MOSEK,
+                verbose=False,
+                warm_start=self.warm_start,
+            )
+        else:
+            raise ValueError(
+                f"Unknown COMB solver '{self.solver_name}'. Use one of: cvxpy/scs, cvxpy_strict/scs_strict, gurobi, mosek."
+            )
+
+        if self.problem.status not in {self.cp.OPTIMAL, self.cp.OPTIMAL_INACCURATE}:
+            raise ValueError(f"CVXPY failed to solve balance-allocation: status={self.problem.status}")
+        if self.x_var.value is None:
+            raise ValueError("CVXPY returned no solution for x.")
+
+        x = np.asarray(self.x_var.value, dtype=float)
+        e = np.sum(p_arr * x, axis=1)
+
+        min_surplus = float(np.min(e))
+        surplus_eps = 1e-8
+        s_set = {i for i, surplus in enumerate(e) if abs(float(surplus) - min_surplus) <= surplus_eps}
+
+        return x, e, s_set
+
+
 def _rescale_prices_and_earnings(p, e, n_agents, *, tol: float = 1e-8):
     
     e_arr = np.asarray(e, dtype=float)
@@ -70,7 +155,7 @@ def price_update(e, p, S, D):
 
 
 def balance_allocation(
-    p, D, *, solver="cvxpy",
+    p, D, *, solver="cvxpy", x_init=None, warm_start: bool = True, model: _BalanceAllocationModel | None = None,
 ) -> tuple[list[list[float]], list[float], set[int]]:
     """
     Implement Balance-allocation(p).
@@ -89,45 +174,30 @@ def balance_allocation(
     mpb = np.amin(D / p, axis=1)
     mpb_edges = np.where(np.abs(D / p - mpb[:, None]) <= eps, 1, 0)
 
-    # Use CVXPY to solve the convex optimization problem for balance allocation.
-    try:
-        import cvxpy as cp
-    except ModuleNotFoundError as exc:
-        raise ModuleNotFoundError(
-            "cvxpy is required for balance_allocation. Install it with: pip install cvxpy"
-        ) from exc
+    reusable_model = model
+    if reusable_model is None:
+        reusable_model = _BalanceAllocationModel(
+            n_agents,
+            n_chores,
+            solver=solver,
+            warm_start=warm_start,
+        )
 
-    x_var = cp.Variable((n_agents, n_chores), nonneg=True)
-    p_const = cp.Constant([float(v) for v in p])
-    e_expr = x_var @ p_const
-
-    constraints = [cp.sum(x_var, axis=0) == 1]
-    constraints.extend(
-        x_var[i, j] == 0 for i in range(n_agents) for j in range(n_chores) if mpb_edges[i, j] == 0
-    )
-    objective = cp.Maximize(cp.geo_mean(e_expr))
-    problem = cp.Problem(objective, constraints) # type: ignore
-
-    # SCS is widely available with cvxpy and handles this convex program.
-    problem.solve(solver=cp.SCS, eps=1e-9, max_iters=100_000, verbose=False)
-
-    if problem.status not in {cp.OPTIMAL, cp.OPTIMAL_INACCURATE}:
-        raise ValueError(f"CVXPY failed to solve balance-allocation: status={problem.status}")
-    if x_var.value is None:
-        raise ValueError("CVXPY returned no solution for x.")
-
-    x = np.asarray(x_var.value, dtype=float)
-    e = np.sum(p * x, axis=1)
-    # End of CVXPY solution.
-
-    min_surplus = min(e)
-    surplus_eps = 1e-8
-    s_set = {i for i, surplus in enumerate(e) if abs(surplus - min_surplus) <= surplus_eps}
-
-    return x, e, s_set
+    return reusable_model.solve(p, mpb_edges, x_init=x_init)
 
 
-def allocation_update(x, p, S, D, e, gamma_set: Iterable[int], *, solver="cvxpy"):
+def allocation_update(
+    x,
+    p,
+    S,
+    D,
+    e,
+    gamma_set: Iterable[int],
+    *,
+    solver="cvxpy",
+    warm_start: bool = True,
+    model: _BalanceAllocationModel | None = None,
+):
     """
     Implement Allocation-Update(x, p, S).
 
@@ -157,7 +227,7 @@ def allocation_update(x, p, S, D, e, gamma_set: Iterable[int], *, solver="cvxpy"
     e_max = max(e[i] for i in s_set)
     e_min = min(e[i] for i in outside)
     if sum(p[j] for j in j_set) > (e_min - e_max) / 2.0:
-        return balance_allocation(p, D, solver=solver)
+        return balance_allocation(p, D, solver=solver, x_init=x, warm_start=warm_start, model=model)
     else:
         for j in sorted(j_set):
             i_pick = edges_by_chore[j][0]
@@ -180,6 +250,7 @@ def combinatorial_metrics(
     max_iter: int = 10_000,
     print_eq: bool = False,
     solver: SolverName = "cvxpy",
+    warm_start: bool = True,
     return_eq: bool = False,
 ) -> tuple[int, int, bool, bool, float | None, float | None] | tuple[int, int, bool, bool, float | None, float | None, tuple[np.ndarray, np.ndarray, np.ndarray] | None]:
     """
@@ -189,8 +260,15 @@ def combinatorial_metrics(
     The approximation/exactness checks use eps_approx_eq with
     APPROXIMATE_THR, EXACT_THR, E2TOL, and E3TOL from utils.py.
     """
+    persistent_model = _BalanceAllocationModel(
+        N,
+        M,
+        solver=solver,
+        warm_start=warm_start,
+    )
+
     p = np.amin(D_np, axis=0)
-    x, e, s_set = balance_allocation(p, D_np, solver=solver)
+    x, e, s_set = balance_allocation(p, D_np, solver=solver, warm_start=warm_start, model=persistent_model)
     p, e = _rescale_prices_and_earnings(p, e, N)
 
     max_num_iter = max_iter
@@ -243,7 +321,15 @@ def combinatorial_metrics(
             if "Gamma(S) contains all chores" not in str(exc):
                 raise
 
-            x, e, s_set = balance_allocation(p, D_np, solver=solver)
+            x, e, s_set = balance_allocation(
+                p,
+                D_np,
+                solver=solver,
+                x_init=x,
+                warm_start=warm_start,
+                model=persistent_model,
+            )
+            
             p, e = _rescale_prices_and_earnings(p, e, N)
             running_time += time.time() - iter_start
             num_CMO += 1
@@ -253,7 +339,17 @@ def combinatorial_metrics(
         # print("p:", p, type(p))
         # print("e:", e, type(e))
 
-        x, e, s_set = allocation_update(x, p, s_set, D_np, e, gamma_set, solver=solver)
+        x, e, s_set = allocation_update(
+            x,
+            p,
+            s_set,
+            D_np,
+            e,
+            gamma_set,
+            solver=solver,
+            warm_start=warm_start,
+            model=persistent_model,
+        )
         p, e = _rescale_prices_and_earnings(p, e, N)
 
         # print("-> p:", p)

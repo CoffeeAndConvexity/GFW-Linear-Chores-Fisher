@@ -100,9 +100,12 @@ def QMO(ux0, N,
         
         # [option] we can set appropriate parameters here to ask for a higher accuracy - the following settings have been tuned
         m.Params.BarConvTol = 0
+        # UNCOMMENT the following lines if you want to set a higher accuracy for the QP solver
+        # =============================================
         # m.Params.FeasibilityTol = 1e-9
         # m.Params.OptimalityTol = 1e-9
         # m.Params.BarCorrectors = 1000
+        # =============================================
         m.optimize()
 
         obj = m.getObjective()
@@ -152,8 +155,9 @@ def EPM(N, M, D, B,
         print_progress=False, 
         ignore_print=False, 
         print_eq=False, 
-    warm_start=True,
-    return_eq=False):
+        approx_thr=APPROXIMATE_THR,
+        warm_start=True,
+        return_eq=False):
 
     # construct extended (u, x) polyhedral
     A, b, C, d = poly_ext_primal(N, M, D, B)
@@ -287,7 +291,7 @@ def EPM(N, M, D, B,
         if type(eps) is not str and eps > 1:
             break
         if type(eps) is not str:
-            if eps <= APPROXIMATE_THR and num_QMO_a1 == MAX_NUM_ITER:
+            if eps <= approx_thr and num_QMO_a1 == MAX_NUM_ITER:
                 solved_a1 = True
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time
@@ -304,7 +308,7 @@ def EPM(N, M, D, B,
             else:
                 eps = eps_approx_eq(N, M, D, B, p, x)
 
-            if type(eps) is not str and eps <= APPROXIMATE_THR and num_QMO_a1 > num_QMO:
+            if type(eps) is not str and eps <= approx_thr and num_QMO_a1 > num_QMO:
                 solved_a1 = True
                 num_QMO_a1 = num_QMO
                 running_time_a1 = running_time

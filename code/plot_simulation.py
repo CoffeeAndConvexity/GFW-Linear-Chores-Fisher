@@ -31,11 +31,11 @@ import pandas as pd
 X_ROTATION = 0
 
 CSV_NAMES = [
-    # "uniform_5x5.10x10....30x30_100.csv",
-    # "lognormal_5x5.10x10....30x30_100.csv",
-    # "truncnormal_5x5.10x10....30x30_100.csv",
-    # "exponential_5x5.10x10....30x30_100.csv",
-    # "randint_5x5.10x10....30x30_100.csv",
+    "uniform_5x5.10x10....30x30_100.csv",
+    "lognormal_5x5.10x10....30x30_100.csv",
+    "truncnormal_5x5.10x10....30x30_100.csv",
+    "exponential_5x5.10x10....30x30_100.csv",
+    "randint_5x5.10x10....30x30_100.csv",
     # "uniform_5x5.50x50....300x300_100.csv",
     # "exponential_5x5.50x50....300x300_100.csv",
     # "lognormal_5x5.50x50....300x300_100.csv",
@@ -51,14 +51,15 @@ CSV_NAMES = [
     #  "lognormal_100x10.100x500....100x3000_100.csv",
     #  "truncnormal_100x10.100x500....100x3000_100.csv",
     #  "randint_100x10.100x500....100x3000_100.csv"],
-    "bidding_5x5.50x50....300x300_100.csv",
-    "biddingwithnoise_5x5.50x50....300x300_100.csv",
+    # "bidding_5x5.50x50....300x300_100.csv",
+    # "biddingwithnoise_5x5.50x50....300x300_100.csv",
+    # "uniformha_5x5.50x50....300x300_100.csv",
 ]
 
 ALGORITHMS = {
     "GFW": {"label": "GFW", "color": ["darkgreen", "darkblue", "darkred", "darkcyan", "darkmagenta"], "marker": "^", "order": 0.8},
     "EPM": {"label": "EPM", "color": ["darkorange", "orange", "gold", "darkgoldenrod", "peru"], "marker": "*", "order": 0.6},
-    # "COMB": {"label": "COMB", "color": ["royalblue", "deepskyblue", "dodgerblue", "cornflowerblue", "mediumblue"], "marker": "o", "order": 0.5},
+    "COMB": {"label": "COMB", "color": ["royalblue", "deepskyblue", "dodgerblue", "cornflowerblue", "mediumblue"], "marker": "o", "order": 0.5},
 }
 
 METRICS = {

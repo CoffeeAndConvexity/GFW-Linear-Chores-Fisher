@@ -19,7 +19,7 @@ from combinatorial import combinatorial_metrics
 
 ALGORITHMS = ["GFW", "EPM", "COMB"]
 NUM_SEEDS = 100
-RGM = ["randint", ]
+RGM = ["uniform", "exponential", "lognormal", "truncnormal", "randint"]
 
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
@@ -56,7 +56,7 @@ print("- cvxpy installed solvers:", cp.installed_solvers())
 run, save, and plot
 """
 
-def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, print_eq=False, comb_solver='cvxpy', algorithms=None):
+def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_iter_max_cap=80, running_time_max_cap=100, print_eq=False, comb_solver='scs_strict', algorithms=None):
 
     algorithms = _normalize_algorithms(algorithms)
 
@@ -302,7 +302,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
 
     return data_GFW, data_EPM, data_COMB, welfare_summary
 
-def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_method='uniform', num_seeds=10, download_csv=False, save_dir="../data", comb_solver='cvxpy', algorithms=None):
+def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_method='uniform', num_seeds=10, download_csv=False, save_dir="../data", comb_solver='scs_strict', algorithms=None):
 
     algorithms = _normalize_algorithms(algorithms)
 
@@ -422,7 +422,7 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
             size_string += f".{N}x{M}"
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}.csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}_combws.csv')
 
     # welfare_df = pd.DataFrame.from_dict(welfare_dict)
     # welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
@@ -440,4 +440,11 @@ if __name__ == "__main__":
 
     for rgm in RGM:
         print(f"================== {rgm} ==================")
-        data = run_and_save(size_list=size_list, random_generating_method=rgm, num_seeds=NUM_SEEDS, save_dir="../data", algorithms=ALGORITHMS)
+        data = run_and_save(
+            size_list=size_list,
+            random_generating_method=rgm,
+            num_seeds=NUM_SEEDS,
+            save_dir="../data",
+            comb_solver='scs_strict',
+            algorithms=ALGORITHMS,
+        )

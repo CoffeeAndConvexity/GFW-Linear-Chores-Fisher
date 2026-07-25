@@ -5,6 +5,7 @@ Set up 'Approximate' and 'Exact' tolerances
 """
 
 APPROXIMATE_THR = 1e-2
+APPROXIMATE_THR_LIST = [5e-1, 5e-2, 5e-3, 5e-4]
 EXACT_THR = 1e-8
 E2TOL = 1e-8
 E3TOL = 1e-8
