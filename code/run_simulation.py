@@ -18,8 +18,8 @@ from epm import *
 from combinatorial import combinatorial_metrics
 
 ALGORITHMS = ["GFW", "EPM", "COMB"]
-NUM_SEEDS = 100
-RGM = ["uniform", "exponential", "lognormal", "truncnormal", "randint"]
+NUM_SEEDS = 10
+RGM = ["randint10", ]
 
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
@@ -122,6 +122,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
             D = truncnorm.rvs(a=1e-3, b=10, size=(N, M), random_state=s)
         elif random_generating_method == 'exponential':
             D = np.random.exponential(size=(N, M))
+        elif random_generating_method == 'randint10':
+            D = np.random.randint(low=1, high=11, size=(N, M))
 
         B = np.ones(shape=N)
 
@@ -146,25 +148,25 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
             res_COMB = (None, None, False, False, None, None, None)
 
         if res_GFW[3] and res_GFW[6] is not None:
-            _, _, u_gfw = res_GFW[6]
-            util, egal, nash = _compute_welfare_from_utilities(u_gfw)
-            welfare_data['utilitarian_GFW_e'].append(util)
-            welfare_data['egalitarian_GFW_e'].append(egal)
-            welfare_data['nash_GFW_e'].append(nash)
-
-        if res_EPM[3] and res_EPM[6] is not None:
-            _, _, u_epm = res_EPM[6]
-            util, egal, nash = _compute_welfare_from_utilities(u_epm)
-            welfare_data['utilitarian_EPM_e'].append(util)
-            welfare_data['egalitarian_EPM_e'].append(egal)
-            welfare_data['nash_EPM_e'].append(nash)
-
-        if res_COMB[3] and res_COMB[6] is not None:
-            _, _, u_comb = res_COMB[6]
-            util, egal, nash = _compute_welfare_from_utilities(u_comb)
-            welfare_data['utilitarian_COMB_e'].append(util)
-            welfare_data['egalitarian_COMB_e'].append(egal)
-            welfare_data['nash_COMB_e'].append(nash)
+            if res_EPM[3] and res_EPM[6] is not None:
+                if res_COMB[3] and res_COMB[6] is not None:
+                    _, _, u_gfw = res_GFW[6]
+                    util, egal, nash = _compute_welfare_from_utilities(u_gfw)
+                    welfare_data['utilitarian_GFW_e'].append(util)
+                    welfare_data['egalitarian_GFW_e'].append(egal)
+                    welfare_data['nash_GFW_e'].append(nash)
+                
+                    _, _, u_epm = res_EPM[6]
+                    util, egal, nash = _compute_welfare_from_utilities(u_epm)
+                    welfare_data['utilitarian_EPM_e'].append(util)
+                    welfare_data['egalitarian_EPM_e'].append(egal)
+                    welfare_data['nash_EPM_e'].append(nash)
+                
+                    _, _, u_comb = res_COMB[6]
+                    util, egal, nash = _compute_welfare_from_utilities(u_comb)
+                    welfare_data['utilitarian_COMB_e'].append(util)
+                    welfare_data['egalitarian_COMB_e'].append(egal)
+                    welfare_data['nash_COMB_e'].append(nash)
 
         progress_res = res_EPM if "EPM" in algorithms else res_GFW if "GFW" in algorithms else res_COMB
         if progress_res[3]:  
@@ -422,10 +424,10 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
             size_string += f".{N}x{M}"
 
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}_combws.csv')
+    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}.csv')
 
-    # welfare_df = pd.DataFrame.from_dict(welfare_dict)
-    # welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
+    welfare_df = pd.DataFrame.from_dict(welfare_dict)
+    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
 
     return dict_
 
@@ -436,7 +438,12 @@ if __name__ == "__main__":
     # size_list = [(10, 100), (500, 100), (1000, 100), (1500, 100), (2000, 100), (2500, 100), (3000, 100)]  # only GFW can solve these sizes of problems
     # size_list = [(100, 10), (100, 500), (100, 1000), (100, 1500), (100, 2000), (100, 2500), (100, 3000)]  # only GFW can solve these sizes of problems
     # size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]  # GFW, EPM
-    size_list = [(5, 5), (10, 10), (15, 15), (20, 20), (25, 25), (30, 30)]  # GFW, EPM, COMB
+    # size_list = [(5, 5), (10, 10), (15, 15), (20, 20), (25, 25), (30, 30)]  # GFW, EPM, COMB
+    size_list = [(i, i) for i in range(5, 81, 5)]  # GFW, EPM, COMB
+
+    save_dir = "../data"
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    save_dir = os.path.join(current_dir, save_dir)
 
     for rgm in RGM:
         print(f"================== {rgm} ==================")
@@ -444,7 +451,7 @@ if __name__ == "__main__":
             size_list=size_list,
             random_generating_method=rgm,
             num_seeds=NUM_SEEDS,
-            save_dir="../data",
+            save_dir=save_dir,
             comb_solver='scs_strict',
             algorithms=ALGORITHMS,
         )
