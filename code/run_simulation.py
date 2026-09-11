@@ -19,7 +19,7 @@ from combinatorial import combinatorial_metrics
 
 ALGORITHMS = ["GFW", "EPM", "COMB"]
 NUM_SEEDS = 10
-RGM = ["randint10", ]
+RGM = ["uniform", "randint", "lognormal", "truncnormal", "exponential", "randint10"]
 
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
@@ -105,6 +105,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         'utilitarian_COMB_e': [],
         'egalitarian_COMB_e': [],
         'nash_COMB_e': [],
+        'distant_prices': [],
     }
 
     print(f"-*-*-*- SIZE: {N}*{M} -*-*-*-")
@@ -150,23 +151,25 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         if res_GFW[3] and res_GFW[6] is not None:
             if res_EPM[3] and res_EPM[6] is not None:
                 if res_COMB[3] and res_COMB[6] is not None:
-                    _, _, u_gfw = res_GFW[6]
+                    p_gfw, x_gfw, u_gfw = res_GFW[6]
                     util, egal, nash = _compute_welfare_from_utilities(u_gfw)
                     welfare_data['utilitarian_GFW_e'].append(util)
                     welfare_data['egalitarian_GFW_e'].append(egal)
                     welfare_data['nash_GFW_e'].append(nash)
                 
-                    _, _, u_epm = res_EPM[6]
+                    p_epm, x_epm, u_epm = res_EPM[6]
                     util, egal, nash = _compute_welfare_from_utilities(u_epm)
                     welfare_data['utilitarian_EPM_e'].append(util)
                     welfare_data['egalitarian_EPM_e'].append(egal)
                     welfare_data['nash_EPM_e'].append(nash)
                 
-                    _, _, u_comb = res_COMB[6]
+                    p_comb, x_comb, u_comb = res_COMB[6]
                     util, egal, nash = _compute_welfare_from_utilities(u_comb)
                     welfare_data['utilitarian_COMB_e'].append(util)
                     welfare_data['egalitarian_COMB_e'].append(egal)
                     welfare_data['nash_COMB_e'].append(nash)
+
+                    welfare_data['distant_prices'].append(np.linalg.norm(p_gfw - p_epm) + np.linalg.norm(p_gfw - p_comb) + np.linalg.norm(p_epm - p_comb))
 
         progress_res = res_EPM if "EPM" in algorithms else res_GFW if "GFW" in algorithms else res_COMB
         if progress_res[3]:  
@@ -300,6 +303,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         'utilitarian_COMB_e': average_std(welfare_data['utilitarian_COMB_e'])[0] if len(welfare_data['utilitarian_COMB_e']) > 0 else None,
         'egalitarian_COMB_e': average_std(welfare_data['egalitarian_COMB_e'])[0] if len(welfare_data['egalitarian_COMB_e']) > 0 else None,
         'nash_COMB_e': average_std(welfare_data['nash_COMB_e'])[0] if len(welfare_data['nash_COMB_e']) > 0 else None,
+        'distant_prices': average_std(welfare_data['distant_prices'])[0] if len(welfare_data['distant_prices']) > 0 else None,
     }
 
     return data_GFW, data_EPM, data_COMB, welfare_summary
@@ -353,6 +357,7 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         'utilitarian_COMB_e': list(),
         'egalitarian_COMB_e': list(),
         'nash_COMB_e': list(),
+        'distant_prices': list(),
     }
 
     size_string = ""
@@ -413,6 +418,7 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         welfare_dict['utilitarian_COMB_e'].append(welfare_res['utilitarian_COMB_e'])
         welfare_dict['egalitarian_COMB_e'].append(welfare_res['egalitarian_COMB_e'])
         welfare_dict['nash_COMB_e'].append(welfare_res['nash_COMB_e'])
+        welfare_dict['distant_prices'].append(welfare_res['distant_prices'])
 
         if idx == 0:
             size_string += f"{N}x{M}"
@@ -439,7 +445,8 @@ if __name__ == "__main__":
     # size_list = [(100, 10), (100, 500), (100, 1000), (100, 1500), (100, 2000), (100, 2500), (100, 3000)]  # only GFW can solve these sizes of problems
     # size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]  # GFW, EPM
     # size_list = [(5, 5), (10, 10), (15, 15), (20, 20), (25, 25), (30, 30)]  # GFW, EPM, COMB
-    size_list = [(i, i) for i in range(5, 81, 5)]  # GFW, EPM, COMB
+    # size_list = [(i, i) for i in range(3, 51)]  # GFW, EPM, COMB
+    size_list = [(i, i) for i in range(5, 51, 5)]  # GFW, EPM, COMB
 
     save_dir = "../data"
     current_dir = os.path.dirname(os.path.abspath(__file__))

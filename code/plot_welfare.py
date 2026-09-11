@@ -119,7 +119,7 @@ def plot_welfare(csv_path: Path, output_dir: Path) -> Path:
 
     for ax in axes:
         ax.set_xticks(x)
-        ax.set_xticklabels(x_labels, rotation=45, ha="right")
+        ax.set_xticklabels(x_labels, ha="right")
         ax.tick_params(axis="both", labelsize=11)
         ax.legend(fontsize=11)
 
@@ -151,7 +151,10 @@ def main() -> None:
 
     current_dir = Path(__file__).parent.resolve()
     csv_dir = current_dir / "../data"
-    csv_path = csv_dir / "randint10_5x5.10x10....80x80_welfare_10.csv"
+    # csv_path = csv_dir / "uniform_5x5.10x10....80x80_welfare_10.csv"
+    # csv_path = csv_dir / "exponential_5x5.10x10....80x80_welfare_10.csv"
+    csv_path = csv_dir / "lognormal_5x5.10x10....80x80_welfare_10.csv"
+    # csv_path = csv_dir / "uniform_3x3.4x4....50x50_welfare_1.csv"
     output_dir = current_dir / "../figures"
 
     if not csv_path.exists():
