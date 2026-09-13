@@ -190,3 +190,21 @@ python Graph_GFW.py
 ```
 
 `Graph_GFW.py` uses Gurobi and LaTeX-rendered labels, so it needs the configured solver license and a LaTeX installation. The other two use NumPy, SciPy, Matplotlib, and CVXPY.
+
+## Citation
+
+If you use this code or data in your work, please cite [the accompanying paper](https://doi.org/10.1145/3670865.3673516):
+
+```bibtex
+@inproceedings{chaudhury2024competitive,
+  author = {Bhaskar Ray Chaudhury and Christian Kroer and Ruta Mehta and Tianlong Nan},
+  title = {Competitive Equilibrium for Chores: from Dual {Eisenberg-Gale} to a Fast, Greedy, {LP}-based Algorithm},
+  booktitle = {Proceedings of the 25th ACM Conference on Economics and Computation},
+  series = {EC '24},
+  pages = {40--40},
+  publisher = {Association for Computing Machinery},
+  year = {2024},
+  doi = {10.1145/3670865.3673516},
+  url = {https://doi.org/10.1145/3670865.3673516}
+}
+```
