@@ -1,4 +1,4 @@
-# Chores-CEEI
+# GFW-Linear-Chores-Fisher
 
 This repository contains implementations and numerical experiments for computing a competitive equilibrium with equal incomes (CEEI) when every item is a chore. It compares three approaches:
 
