@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 
 """
@@ -10,11 +12,22 @@ EXACT_THR = 1e-8
 E2TOL = 1e-8
 E3TOL = 1e-8
 
+# Gurobi normally discovers a local or WLS license through ``gurobi.lic``.
+# These optional environment variables are useful in CI or other ephemeral
+# environments where writing a license file is inconvenient.  Credentials must
+# never be committed to the repository.
 gurobi_license_params = {
-    "WLSACCESSID": '0f33ff11-ef92-485a-97f0-af4a28654d6b',
-    "WLSSECRET": '880ecd7e-6fe7-4566-bb77-2590cc321d04',
-    "LICENSEID": 2546016,
+    key: value
+    for key, value in {
+        "WLSACCESSID": os.environ.get("GUROBI_WLSACCESSID"),
+        "WLSSECRET": os.environ.get("GUROBI_WLSSECRET"),
+        "LICENSEID": os.environ.get("GUROBI_LICENSEID"),
+    }.items()
+    if value
 }
+
+if "LICENSEID" in gurobi_license_params:
+    gurobi_license_params["LICENSEID"] = int(gurobi_license_params["LICENSEID"])
 
 
 def eps_approx_eq(N, M, D, B, p, x, E2Tol=E2TOL, E3Tol=E3TOL, report_all=False, ignore_print=False):

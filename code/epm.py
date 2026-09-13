@@ -40,6 +40,7 @@ def QMO(ux0, N,
         C=None, d=None, 
         solver='OSQP', 
         QP_solve_method="default", 
+        high_accuracy=False,
         warm_start_primal=None,
         model_prev_iter=None, 
         return_model=False):
@@ -98,14 +99,12 @@ def QMO(ux0, N,
         if model_prev_iter is not None or warm_start_primal is not None:
             m.update()
         
-        # [option] we can set appropriate parameters here to ask for a higher accuracy - the following settings have been tuned
+        # Optional settings used for the historical ``uniformha`` experiment.
         m.Params.BarConvTol = 0
-        # UNCOMMENT the following lines if you want to set a higher accuracy for the QP solver
-        # =============================================
-        # m.Params.FeasibilityTol = 1e-9
-        # m.Params.OptimalityTol = 1e-9
-        # m.Params.BarCorrectors = 1000
-        # =============================================
+        if high_accuracy:
+            m.Params.FeasibilityTol = 1e-9
+            m.Params.OptimalityTol = 1e-9
+            m.Params.BarCorrectors = 1000
         m.optimize()
 
         obj = m.getObjective()
@@ -151,6 +150,7 @@ def u_is_feasible(N, M, u, A, b, C=None, d=None):
 def EPM(N, M, D, B, 
         QMO_solver='best', 
         QP_solve_method="default",
+        high_accuracy=False,
         print_quality=False, 
         print_progress=False, 
         ignore_print=False, 
@@ -244,6 +244,7 @@ def EPM(N, M, D, B,
                                 C, d,
                                 solver=QMO_solver, 
                                 QP_solve_method=QP_solve_method,
+                                high_accuracy=high_accuracy,
                                 warm_start_primal=np.concatenate([u, x_ws.flatten()]), 
                                 model_prev_iter=m,
                                 return_model=True
@@ -255,7 +256,8 @@ def EPM(N, M, D, B,
                                 np.concatenate([-np.identity(N), np.zeros((N, M * N))], axis=1), -u, 
                                 C, d,
                                 solver=QMO_solver, 
-                                QP_solve_method=QP_solve_method
+                                QP_solve_method=QP_solve_method,
+                                high_accuracy=high_accuracy,
                 )
 
             solve_QP_time += time.time() - QP_start

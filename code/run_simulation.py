@@ -2,15 +2,14 @@
 Chores CEEI Experiments
 """
 
+import argparse
+from pathlib import Path
+
 import numpy as np
 np.seterr(divide='ignore')
 from scipy.stats import truncnorm
-from sklearn.cluster import KMeans
-import gurobipy as gp
-import matplotlib.pyplot as plt
 import pandas as pd
 import cvxpy as cp
-import time
 
 from utils import APPROXIMATE_THR, EXACT_THR, E2TOL, E3TOL, eps_approx_eq
 from gfw import *
@@ -20,6 +19,18 @@ from combinatorial import combinatorial_metrics
 ALGORITHMS = ["GFW", "EPM", "COMB"]
 NUM_SEEDS = 10
 RGM = ["uniform", "randint", "lognormal", "truncnormal", "exponential", "randint10"]
+VALID_RGM = RGM + ["uniformha"]
+
+
+def parse_size(value):
+    try:
+        n_text, m_text = value.lower().split("x", 1)
+        n, m = int(n_text), int(m_text)
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise argparse.ArgumentTypeError("sizes must use NxM format, for example 30x30") from exc
+    if n <= 0 or m <= 0:
+        raise argparse.ArgumentTypeError("size dimensions must be positive")
+    return n, m
 
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
@@ -115,7 +126,7 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
         np.random.seed(s)
         if random_generating_method == 'randint':
             D = np.random.randint(low=1, high=1001, size=(N, M))
-        elif random_generating_method == 'uniform':
+        elif random_generating_method in {'uniform', 'uniformha'}:
             D = np.random.uniform(size=(N, M))
         elif random_generating_method == 'lognormal':
             D = np.random.lognormal(size=(N, M))
@@ -125,6 +136,10 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
             D = np.random.exponential(size=(N, M))
         elif random_generating_method == 'randint10':
             D = np.random.randint(low=1, high=11, size=(N, M))
+        else:
+            raise ValueError(
+                f"Unknown distribution '{random_generating_method}'. Valid options are {VALID_RGM}."
+            )
 
         B = np.ones(shape=N)
 
@@ -136,7 +151,8 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, num_i
 
         if "EPM" in algorithms:
             res_EPM = EPM(N, M, D, B, QMO_solver='GUROBI', ignore_print=True, print_eq=print_eq, 
-                          warm_start=True, QP_solve_method="barrier", return_eq=True)
+                          warm_start=True, QP_solve_method="barrier",
+                          high_accuracy=random_generating_method == 'uniformha', return_eq=True)
         else:
             res_EPM = (None, None, False, False, None, None, None)
 
@@ -429,36 +445,45 @@ def run_and_save(size_list=[(2, 2), (50, 50), (100, 100)], random_generating_met
         elif idx == len(size_list) - 1:
             size_string += f".{N}x{M}"
 
+    save_dir = Path(save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
+
     df = pd.DataFrame.from_dict(dict_)
-    df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}.csv')
+    df.to_csv(save_dir / f'{random_generating_method}_{size_string}_{num_seeds}.csv')
 
     welfare_df = pd.DataFrame.from_dict(welfare_dict)
-    welfare_df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_welfare_{NUM_SEEDS}.csv')
+    welfare_df.to_csv(save_dir / f'{random_generating_method}_{size_string}_welfare_{num_seeds}.csv')
 
     return dict_
 
-if __name__ == "__main__": 
+def main():
+    script_dir = Path(__file__).resolve().parent
+    parser = argparse.ArgumentParser(description="Run synthetic Chores-CEEI experiments.")
+    parser.add_argument(
+        "--sizes",
+        nargs="+",
+        type=parse_size,
+        default=[(i, i) for i in range(5, 51, 5)],
+        metavar="NxM",
+    )
+    parser.add_argument("--distributions", nargs="+", choices=VALID_RGM, default=RGM)
+    parser.add_argument("--num-seeds", type=int, default=NUM_SEEDS)
+    parser.add_argument("--algorithms", nargs="+", choices=ALGORITHMS, default=ALGORITHMS)
+    parser.add_argument("--comb-solver", default="scs_strict")
+    parser.add_argument("--save-dir", type=Path, default=script_dir.parent / "data")
+    args = parser.parse_args()
 
-    # size_list = [(5, 5), (10, 10), (20, 20), (30, 30)]
-    # ================ the above is for test =====================
-    # size_list = [(10, 100), (500, 100), (1000, 100), (1500, 100), (2000, 100), (2500, 100), (3000, 100)]  # only GFW can solve these sizes of problems
-    # size_list = [(100, 10), (100, 500), (100, 1000), (100, 1500), (100, 2000), (100, 2500), (100, 3000)]  # only GFW can solve these sizes of problems
-    # size_list = [(5, 5), (50, 50), (100, 100), (150, 150), (200, 200), (250, 250), (300, 300)]  # GFW, EPM
-    # size_list = [(5, 5), (10, 10), (15, 15), (20, 20), (25, 25), (30, 30)]  # GFW, EPM, COMB
-    # size_list = [(i, i) for i in range(3, 51)]  # GFW, EPM, COMB
-    size_list = [(i, i) for i in range(5, 51, 5)]  # GFW, EPM, COMB
-
-    save_dir = "../data"
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    save_dir = os.path.join(current_dir, save_dir)
-
-    for rgm in RGM:
-        print(f"================== {rgm} ==================")
-        data = run_and_save(
-            size_list=size_list,
-            random_generating_method=rgm,
-            num_seeds=NUM_SEEDS,
-            save_dir=save_dir,
-            comb_solver='scs_strict',
-            algorithms=ALGORITHMS,
+    for distribution in args.distributions:
+        print(f"================== {distribution} ==================")
+        run_and_save(
+            size_list=args.sizes,
+            random_generating_method=distribution,
+            num_seeds=args.num_seeds,
+            save_dir=args.save_dir,
+            comb_solver=args.comb_solver,
+            algorithms=args.algorithms,
         )
+
+
+if __name__ == "__main__":
+    main()

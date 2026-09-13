@@ -3,16 +3,11 @@
 Chores CEEI Experiments
 """
 
+import argparse
+from pathlib import Path
+
 import numpy as np
-from scipy.stats import truncnorm
-from sklearn.cluster import KMeans
-import gurobipy as gp
-import matplotlib.pyplot as plt
 import pandas as pd
-import cvxpy as cp
-import time 
-import math 
-import os
 
 from utils import APPROXIMATE_THR, EXACT_THR, E2TOL, E3TOL, eps_approx_eq
 from gfw import *
@@ -296,23 +291,30 @@ def run_and_save_bidding_data(D, distance_matrix, size_list=[2, 50, 100], num_se
 
     df = pd.DataFrame.from_dict(dict_)
 
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
+    save_dir = Path(save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
 
     if with_noise:
-        df.to_csv(f'{save_dir}/bidding_with_noise_{size_string}_{num_seeds}.csv')
+        df.to_csv(save_dir / f'biddingwithnoise_{size_string}_{num_seeds}.csv')
     else:
-        df.to_csv(f'{save_dir}/bidding_{size_string}_{num_seeds}.csv')
+        df.to_csv(save_dir / f'bidding_{size_string}_{num_seeds}.csv')
 
     return dict_
 
 
-if __name__ == "__main__": 
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_path = os.path.join(current_dir, '../data/bidding-data.csv')
-    print("Resolved path:", os.path.normpath(data_path))
-    print("Exists:", os.path.exists(data_path))
-    df = pd.read_csv(data_path)
+def main():
+    script_dir = Path(__file__).resolve().parent
+    parser = argparse.ArgumentParser(description="Run the AAMAS bidding-data experiments.")
+    parser.add_argument("--data", type=Path, default=script_dir.parent / "data" / "bidding-data.csv")
+    parser.add_argument("--sizes", nargs="+", type=int, default=[5, 50, 100, 150, 200, 250, 300])
+    parser.add_argument("--num-seeds", type=int, default=100)
+    parser.add_argument("--variant", choices=["plain", "noise", "both"], default="both")
+    parser.add_argument("--save-dir", type=Path, default=script_dir.parent / "data")
+    args = parser.parse_args()
+
+    print("Resolved path:", args.data.resolve())
+    print("Exists:", args.data.exists())
+    df = pd.read_csv(args.data)
 
     dict_bidder_index = dict()
     i = 0
@@ -339,6 +341,25 @@ if __name__ == "__main__":
 
     distance_matrix = distance_matrix_among_papers(D)
 
-    size_list = [5, 50, 100, 150, 200, 250, 300]
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=False, save_dir='../data')
-    run_and_save_bidding_data(D, distance_matrix, size_list=size_list, num_seeds=100, with_noise=True, save_dir='../data')
+    if args.variant in {"plain", "both"}:
+        run_and_save_bidding_data(
+            D,
+            distance_matrix,
+            size_list=args.sizes,
+            num_seeds=args.num_seeds,
+            with_noise=False,
+            save_dir=args.save_dir,
+        )
+    if args.variant in {"noise", "both"}:
+        run_and_save_bidding_data(
+            D,
+            distance_matrix,
+            size_list=args.sizes,
+            num_seeds=args.num_seeds,
+            with_noise=True,
+            save_dir=args.save_dir,
+        )
+
+
+if __name__ == "__main__":
+    main()

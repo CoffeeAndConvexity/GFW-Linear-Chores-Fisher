@@ -30,32 +30,6 @@ import pandas as pd
 
 X_ROTATION = 0
 
-CSV_NAMES = [
-    "uniform_5x5.10x10....30x30_100.csv",
-    "lognormal_5x5.10x10....30x30_100.csv",
-    "truncnormal_5x5.10x10....30x30_100.csv",
-    "exponential_5x5.10x10....30x30_100.csv",
-    "randint_5x5.10x10....30x30_100.csv",
-    # "uniform_5x5.50x50....300x300_100.csv",
-    # "exponential_5x5.50x50....300x300_100.csv",
-    # "lognormal_5x5.50x50....300x300_100.csv",
-    # "truncnormal_5x5.50x50....300x300_100.csv",
-    # "randint_5x5.50x50....300x300_100.csv",
-    # ["uniform_10x100.500x100....3000x100_100.csv", 
-    #  "exponential_10x100.500x100....3000x100_100.csv", 
-    #  "lognormal_10x100.500x100....3000x100_100.csv", 
-    #  "truncnormal_10x100.500x100....3000x100_100.csv",
-    #  "randint_10x100.500x100....3000x100_100.csv"],
-    # ["uniform_100x10.100x500....100x3000_100.csv",
-    #  "exponential_100x10.100x500....100x3000_100.csv",
-    #  "lognormal_100x10.100x500....100x3000_100.csv",
-    #  "truncnormal_100x10.100x500....100x3000_100.csv",
-    #  "randint_100x10.100x500....100x3000_100.csv"],
-    # "bidding_5x5.50x50....300x300_100.csv",
-    # "biddingwithnoise_5x5.50x50....300x300_100.csv",
-    # "uniformha_5x5.50x50....300x300_100.csv",
-]
-
 ALGORITHMS = {
     "GFW": {"label": "GFW", "color": ["darkgreen", "darkblue", "darkred", "darkcyan", "darkmagenta"], "marker": "^", "order": 0.8},
     "EPM": {"label": "EPM", "color": ["darkorange", "orange", "gold", "darkgoldenrod", "peru"], "marker": "*", "order": 0.6},
@@ -87,7 +61,7 @@ VARIANTS = {
 }
 
 
-def clean_name(path: Path) -> str:
+def clean_name(path: Path | list[Path]) -> str:
     if isinstance(path, list):
         # concatenate the word before "_" in each path's stem
         stem = "_".join([re.match(r"([A-Za-z]+)_", p.stem).group(1) for p in path])
@@ -143,7 +117,17 @@ def values_for_metric(
             std = std / num_seeds
     return values, std
 
-def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: int) -> Path | None:
+
+def algorithm_has_results(data: pd.DataFrame, algorithm: str, variant: str) -> bool:
+    """Return whether an algorithm has finite iteration/time results to plot."""
+    for suffix, _, _ in VARIANTS[variant]:
+        for prefix in ("iteration", "runningtime"):
+            column = f"{prefix}_{algorithm}_{suffix}"
+            if column in data.columns and pd.to_numeric(data[column], errors="coerce").notna().any():
+                return True
+    return False
+
+def plot_csv_pdf(csv_path: Path | list[Path], output_dir: Path, *, variant: str, num_seeds: int) -> Path | None:
     
     fig, axes = plt.subplots(1, 3, figsize=(18, 4), sharex=True)
     fig.subplots_adjust(
@@ -152,6 +136,7 @@ def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: i
     )
     metric_order = ["iteration", "runningtime", "solved"]
     plotted_any = False
+    plotted_algorithms: set[str] = set()
 
     original_csv_path = csv_path
     print(f"Plotting CSV file: {csv_path}")
@@ -161,6 +146,9 @@ def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: i
         data = pd.read_csv(csv_path)
         if "size" not in data.columns:
             raise ValueError(f"{csv_path} does not contain a 'size' column.")
+        active_algorithms = {
+            algorithm for algorithm in ALGORITHMS if algorithm_has_results(data, algorithm, variant)
+        }
 
         data_size = data["size"]
         new_data_size = []
@@ -174,30 +162,33 @@ def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: i
 
         for ax, metric in zip(axes, metric_order):
             for algorithm, style in ALGORITHMS.items():
+                if algorithm not in active_algorithms:
+                    continue
                 for suffix, suffix_label, linestyle in VARIANTS[variant]:
                     values, std = values_for_metric(data, metric, algorithm, suffix, num_seeds)
-                    if values is None:
+                    if values is None or not values.notna().any():
                         continue
                     
                     if suffix == "e":
                         ax.plot(x_axis, values, 
                             label=f"{style['label']}: {suffix_label}", 
-                            color=style["color"][idx], marker=style["marker"], markersize=12, 
+                            color=style["color"][idx % len(style["color"])], marker=style["marker"], markersize=12,
                             linestyle=linestyle, linewidth=3, zorder=2 + style["order"])
                         ax.fill_between(x_axis, values - std if std is not None else values, 
                                         values + std if std is not None else values,
-                                        color=style["color"][idx], alpha=0.2, linewidth=3,
+                                        color=style["color"][idx % len(style["color"])], alpha=0.2, linewidth=3,
                                         edgecolor="none", zorder=0 + style["order"])
                     elif suffix == "a1":
                         ax.errorbar(x_axis, values, yerr=std if std is not None else None,
                                     label=f"{style['label']}: {suffix_label}",
-                                    color=style["color"][idx],
+                                    color=style["color"][idx % len(style["color"])],
                                     marker=style["marker"], markersize=12,
                                     linestyle=linestyle, linewidth=3, elinewidth=2, 
                                     capsize=3.5, capthick=2, alpha=0.6, zorder=1 + style["order"]
                         )
                     
                     plotted_any = True
+                    plotted_algorithms.add(algorithm)
 
             # ax.set_title(METRICS[metric]["ylabel"], fontsize=16)
             ax.tick_params(axis="both", labelsize=18, rotation=X_ROTATION)
@@ -215,7 +206,10 @@ def plot_csv_pdf(csv_path: Path, output_dir: Path, *, variant: str, num_seeds: i
         return None
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_path = output_dir / f"{clean_name(original_csv_path)}_{'vs'.join(ALGORITHMS.keys())}.pdf"
+    algorithm_suffix = "vs".join(
+        algorithm for algorithm in ALGORITHMS if algorithm in plotted_algorithms
+    )
+    output_path = output_dir / f"{clean_name(original_csv_path)}_{algorithm_suffix}.pdf"
     print(f"Saving plot to {output_path}")
     with PdfPages(output_path) as pdf:
         pdf.savefig(fig, bbox_inches="tight")
@@ -238,24 +232,37 @@ def main() -> None:
         type=Path,
         help="CSV files to plot. If omitted, all non-welfare CSVs with COMB columns in ../data are used.",
     )
+    parser.add_argument(
+        "--group",
+        nargs="+",
+        action="append",
+        type=Path,
+        default=[],
+        metavar="CSV",
+        help="Plot several CSVs as differently colored series in one PDF; may be repeated.",
+    )
     parser.add_argument("--data-dir", type=Path, default=default_data_dir)
     parser.add_argument("--output-dir", type=Path, default=default_output_dir)
     parser.add_argument("--num-seeds", type=int, default=100)
     parser.add_argument("--variant", choices=sorted(VARIANTS), default="both")
     args = parser.parse_args()
 
-    csv_files = []
-    for names in CSV_NAMES:
-        if isinstance(names, list):
-            new_list = []
-            for name in names:
-                new_list.append(args.data_dir / name)
-            csv_files.append(new_list)
-        else:
-            csv_files.append(args.data_dir / names)
+    csv_files: list[Path | list[Path]] = []
+    if args.csv_files:
+        csv_files.extend(args.csv_files)
+    elif not args.group:
+        csv_files.extend(discover_csv_files(args.data_dir))
+    csv_files.extend(args.group)
+
+    if not csv_files:
+        raise FileNotFoundError(f"No matching CSV files found in {args.data_dir}")
 
     for csv_path in csv_files:
-        output_paths = plot_csv_pdf(csv_path, args.output_dir, variant=args.variant, num_seeds=args.num_seeds)
+        paths = csv_path if isinstance(csv_path, list) else [csv_path]
+        missing = [path for path in paths if not path.exists()]
+        if missing:
+            raise FileNotFoundError(f"CSV not found: {missing[0]}")
+        plot_csv_pdf(csv_path, args.output_dir, variant=args.variant, num_seeds=args.num_seeds)
 
 
 if __name__ == "__main__":

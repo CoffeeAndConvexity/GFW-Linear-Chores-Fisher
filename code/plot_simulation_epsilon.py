@@ -68,6 +68,7 @@ def csv_path_for_epsilon(
 def read_iteration_stats(
     csv_paths: dict[float, Path],
     size_label: str,
+    num_seeds: int,
 ) -> tuple[dict[str, dict[str, dict[str, list[float]]]], dict[str, dict[str, list[float]]]]:
     results: dict[str, dict[str, dict[str, list[float]]]] = {}
     solved_results: dict[str, dict[str, list[float]]] = {}
@@ -118,7 +119,7 @@ def read_iteration_stats(
                     if solved_col in data.columns
                     else np.nan
                 )
-                solved_results[algorithm][suffix].append(solved_value / NUM_SEEDS if np.isfinite(solved_value) else np.nan)
+                solved_results[algorithm][suffix].append(solved_value / num_seeds if np.isfinite(solved_value) else np.nan)
 
     return results, solved_results
 
@@ -193,7 +194,7 @@ def plot_iterations_vs_epsilon(
             valid = np.isfinite(y_values)
             color = style["color"][0]
 
-            if suffix == "a1" and valid.any():
+            if valid.any():
                 x = x_axis[valid]
                 y = y_values[valid]
                 std = y_std[valid]
@@ -366,9 +367,13 @@ def main() -> None:
         for epsilon in epsilons
     }
 
-    results, solved_results = read_iteration_stats(csv_paths, size_label=args.size)
+    results, solved_results = read_iteration_stats(
+        csv_paths,
+        size_label=args.size,
+        num_seeds=args.num_seeds,
+    )
     epsilon_part = "_".join(f"{e:g}" for e in epsilons)
-    xmode_label = "epsilon"
+    xmode_label = "epsilon" if args.xmode == "epsilon" else "inverse_epsilon"
     output_path = (
         args.output_dir
         / f"{args.distribution}_{args.size}_{args.num_seeds}_iterations_vs_{xmode_label}_{args.xscale}x_{args.yscale}y_{epsilon_part}_{'vs'.join(ALGORITHMS.keys())}.pdf"

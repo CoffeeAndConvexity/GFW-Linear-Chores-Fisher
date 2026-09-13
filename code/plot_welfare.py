@@ -133,34 +133,27 @@ def plot_welfare(csv_path: Path, output_dir: Path) -> Path:
 
 
 def main() -> None:
+    script_dir = Path(__file__).resolve().parent
     parser = argparse.ArgumentParser(description="Plot welfare metrics from a welfare CSV.")
     parser.add_argument(
         "--csv",
         type=Path,
-        default=Path("../data/randint10_5x5.10x10....50x50_welfare_10.csv"),
+        default=script_dir.parent / "data" / "lognormal_5x5.10x10....80x80_welfare_10.csv",
         help="Path to the welfare CSV file.",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path("../figures"),
+        default=script_dir.parent / "figures",
         help="Directory where the output figure is saved.",
     )
 
     args = parser.parse_args()
 
-    current_dir = Path(__file__).parent.resolve()
-    csv_dir = current_dir / "../data"
-    # csv_path = csv_dir / "uniform_5x5.10x10....80x80_welfare_10.csv"
-    # csv_path = csv_dir / "exponential_5x5.10x10....80x80_welfare_10.csv"
-    csv_path = csv_dir / "lognormal_5x5.10x10....80x80_welfare_10.csv"
-    # csv_path = csv_dir / "uniform_3x3.4x4....50x50_welfare_1.csv"
-    output_dir = current_dir / "../figures"
+    if not args.csv.exists():
+        raise FileNotFoundError(f"CSV not found: {args.csv}")
 
-    if not csv_path.exists():
-        raise FileNotFoundError(f"CSV not found: {csv_path}")
-
-    output_path = plot_welfare(csv_path=csv_path, output_dir=output_dir)
+    output_path = plot_welfare(csv_path=args.csv, output_dir=args.output_dir)
     print(f"Saved: {output_path}")
 
 

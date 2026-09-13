@@ -2,24 +2,34 @@
 Chores CEEI Experiments
 """
 
+import argparse
+from pathlib import Path
+
 import numpy as np
 np.seterr(divide='ignore')
 from scipy.stats import truncnorm
-from sklearn.cluster import KMeans
-import gurobipy as gp
-import matplotlib.pyplot as plt
 import pandas as pd
 import cvxpy as cp
-import time
 
 from utils import APPROXIMATE_THR_LIST, EXACT_THR, E2TOL, E3TOL, eps_approx_eq
 from gfw import *
 from epm import *
 from combinatorial import combinatorial_metrics
 
-ALGORITHMS = ["GFW", "EPM", ]
+ALGORITHMS = ["GFW", "EPM"]
 NUM_SEEDS = 100
-RGM = ["randint", ]
+RGM = ["uniform", "randint", "lognormal", "truncnormal", "exponential", "randint10"]
+
+
+def parse_size(value):
+    try:
+        n_text, m_text = value.lower().split("x", 1)
+        n, m = int(n_text), int(m_text)
+    except (AttributeError, TypeError, ValueError) as exc:
+        raise argparse.ArgumentTypeError("size must use NxM format, for example 300x300") from exc
+    if n <= 0 or m <= 0:
+        raise argparse.ArgumentTypeError("size dimensions must be positive")
+    return n, m
 
 def _normalize_algorithms(algorithms=None):
     if algorithms is None:
@@ -94,6 +104,12 @@ def run_GFW_vs_EPM(N, M, random_generating_method='uniform', num_seeds=10, appro
             D = truncnorm.rvs(a=1e-3, b=10, size=(N, M), random_state=s)
         elif random_generating_method == 'exponential':
             D = np.random.exponential(size=(N, M))
+        elif random_generating_method == 'randint10':
+            D = np.random.randint(low=1, high=11, size=(N, M))
+        else:
+            raise ValueError(
+                f"Unknown distribution '{random_generating_method}'. Valid options are {RGM}."
+            )
 
         B = np.ones(shape=N)
 
@@ -243,6 +259,8 @@ def run_and_save(size, approx_thr_list=APPROXIMATE_THR_LIST, random_generating_m
 
     algorithms = _normalize_algorithms(algorithms)
     size_list = [size, ]
+    save_dir = Path(save_dir)
+    save_dir.mkdir(parents=True, exist_ok=True)
 
     for approx_thr in approx_thr_list:
         dict_ = {
@@ -338,20 +356,34 @@ def run_and_save(size, approx_thr_list=APPROXIMATE_THR_LIST, random_generating_m
                 size_string += f".{N}x{M}"
 
         df = pd.DataFrame.from_dict(dict_)
-        df.to_csv(f'{save_dir}/{random_generating_method}_{size_string}_{NUM_SEEDS}_{approx_thr}.csv')
+        df.to_csv(save_dir / f'{random_generating_method}_{size_string}_{num_seeds}_{approx_thr:g}.csv')
 
     return dict_
 
-if __name__ == "__main__": 
+def main():
+    script_dir = Path(__file__).resolve().parent
+    parser = argparse.ArgumentParser(description="Run the approximation-threshold experiment.")
+    parser.add_argument("--size", type=parse_size, default=(300, 300), metavar="NxM")
+    parser.add_argument("--epsilons", nargs="+", type=float, default=APPROXIMATE_THR_LIST)
+    parser.add_argument("--distributions", nargs="+", choices=RGM, default=RGM)
+    parser.add_argument("--num-seeds", type=int, default=NUM_SEEDS)
+    parser.add_argument("--algorithms", nargs="+", choices=["GFW", "EPM", "COMB"], default=ALGORITHMS)
+    parser.add_argument("--comb-solver", default="scs_strict")
+    parser.add_argument("--save-dir", type=Path, default=script_dir.parent / "data")
+    args = parser.parse_args()
 
-    for rgm in RGM:
-        print(f"================== {rgm} ==================")
-        data = run_and_save(
-            size=(300, 300),
-            approx_thr_list=APPROXIMATE_THR_LIST,
-            random_generating_method=rgm,
-            num_seeds=NUM_SEEDS,
-            save_dir="../data",
-            comb_solver='scs_strict',
-            algorithms=ALGORITHMS,
+    for distribution in args.distributions:
+        print(f"================== {distribution} ==================")
+        run_and_save(
+            size=args.size,
+            approx_thr_list=args.epsilons,
+            random_generating_method=distribution,
+            num_seeds=args.num_seeds,
+            save_dir=args.save_dir,
+            comb_solver=args.comb_solver,
+            algorithms=args.algorithms,
         )
+
+
+if __name__ == "__main__":
+    main()

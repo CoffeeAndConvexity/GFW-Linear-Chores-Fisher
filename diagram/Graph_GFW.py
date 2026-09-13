@@ -1,19 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
+from pathlib import Path
+import sys
 
 plt.rcParams['text.usetex'] = True
 
-from pypoman import compute_polytope_vertices
-from scipy.spatial import ConvexHull
-
 import gurobipy as gp
-params = {
-    "WLSACCESSID": '0f33ff11-ef92-485a-97f0-af4a28654d6b',
-    "WLSSECRET": '880ecd7e-6fe7-4566-bb77-2590cc321d04',
-    "LICENSEID": 2546016,
-}
-env = gp.Env(params=params)
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "code"))
+from utils import gurobi_license_params
+
+env = gp.Env(params=gurobi_license_params)
 
 N, M = 2, 8
 np.random.seed(6)
@@ -132,17 +130,21 @@ def polytope_dual_A_b_form(N, M, D, B):
 
 beta_1_in_algorithm, beta_2_in_algorithm = GFW(N, M, D, B)
 
-A, b = polytope_dual_A_b_form(N, M, D, B)
-vertices = compute_polytope_vertices(A, b)
+def beta_frontier_vertices(D, total_budget):
+    """Vertices of sum_j min(d_1j beta_1, d_2j beta_2) = total_budget."""
+    ratios = np.unique(D[0] / D[1])
+    vertices = []
+    for ratio in np.sort(ratios):
+        beta_1 = total_budget / np.minimum(D[0], D[1] * ratio).sum()
+        vertices.append((beta_1, ratio * beta_1))
+    return np.asarray(vertices)
 
+
+frontier_vertices = beta_frontier_vertices(D, sum(B))
 vertices_considered = {
-    "beta_1": list(), 
-    "beta_2": list()
+    "beta_1": frontier_vertices[:, 0].tolist(),
+    "beta_2": frontier_vertices[:, 1].tolist(),
 }
-for vertex in vertices:
-    if np.amax(vertex[-2:]) < 99 and np.amax(vertex[:M]) < sum(B) - 0.01 and np.amin(vertex[:M]) > 0.01:
-        vertices_considered["beta_1"].append(vertex[-2])
-        vertices_considered["beta_2"].append(vertex[-1])
 
 
 
